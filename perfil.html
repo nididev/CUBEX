@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi perfil | CUBEX</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <main class="contenedor">
+        <a href="index.html" class="logo">CUBEX</a>
+        <p class="eslogan">El reto está en tus manos</p>
+
+        <section class="tarjeta">
+            <h1>Mi perfil</h1>
+            <p class="descripcion">Consulta tu información de cliente.</p>
+
+            <div class="campo">
+                <label>Nombre de usuario</label>
+                <p id="nombreUsuario">Cargando...</p>
+            </div>
+
+            <div class="campo">
+                <label>Nombre completo</label>
+                <p id="nombreCompleto">Cargando...</p>
+            </div>
+
+            <div class="campo">
+                <label>Correo electrónico</label>
+                <p id="email">Cargando...</p>
+            </div>
+
+            <div class="campo">
+                <label>Tipo de cuenta</label>
+                <p id="rol">Cargando...</p>
+            </div>
+
+            <p id="mensaje" role="status" aria-live="polite"></p>
+
+            <button type="button" id="cerrarSesion">
+                Cerrar sesión
+            </button>
+
+            <a href="index.html" class="volver">
+                ← Volver a la tienda
+            </a>
+        </section>
+    </main>
+
+    <script src="js/perfil.js"></script>
+</body>
+</html>

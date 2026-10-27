@@ -1,0 +1,160 @@
+:root {
+    --fondo: #111827;
+    --fondo-oscuro: #080d16;
+    --tarjeta: #171f2e;
+    --borde: #303b4d;
+    --rojo: #EF233C;
+    --amarillo: #FFD21F;
+    --blanco: #f5f7fa;
+    --gris: #aab7c4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    background:
+        radial-gradient(circle at top right, #173e69, transparent 40%),
+        var(--fondo);
+    color: var(--blanco);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+}
+
+.logo {
+    color: var(--amarillo);
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    text-decoration: none;
+}
+
+.eslogan {
+    margin: 5px 0 28px;
+    color: var(--gris);
+    font-size: 12px;
+}
+
+.tarjeta {
+    padding: 35px;
+    border: 1px solid var(--borde);
+    border-radius: 15px;
+    background: var(--tarjeta);
+    box-shadow: 0 20px 50px #0005;
+    text-align: left;
+}
+
+.tarjeta h1 {
+    margin-bottom: 8px;
+    font-size: 25px;
+}
+
+.descripcion {
+    margin-bottom: 28px;
+    color: var(--gris);
+    font-size: 14px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.campo label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.campo input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    outline: none;
+    background: var(--fondo-oscuro);
+    color: var(--blanco);
+}
+
+.campo input:focus {
+    border-color: var(--amarillo);
+}
+
+.campo input::placeholder {
+    color: #7e8a9b;
+}
+
+.recuperar {
+    display: block;
+    margin: 0 0 22px;
+    color: var(--amarillo);
+    font-size: 12px;
+    text-align: right;
+    text-decoration: none;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 7px;
+    background: var(--amarillo);
+    color: var(--fondo-oscuro);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #ffe36b;
+}
+
+.alternativa {
+    margin-top: 23px;
+    color: var(--gris);
+    font-size: 13px;
+    text-align: center;
+}
+
+.alternativa a {
+    color: var(--amarillo);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.volver {
+    display: block;
+    margin-top: 25px;
+    color: var(--gris);
+    font-size: 13px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.volver:hover {
+    color: var(--blanco);
+}
+
+@media (max-width: 480px) {
+    .tarjeta {
+        padding: 25px 20px;
+    }
+
+    .tarjeta h1 {
+        font-size: 22px;
+    }
+}

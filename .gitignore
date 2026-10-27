@@ -1,0 +1,25 @@
+
+# Dependencias
+**/node_modules/
+
+# Archivos privados
+**/.env
+**/.env.*
+!**/.env.example
+
+
+
+# Variables de entorno y secretos
+**/.env
+**/.env.*
+!**/.env.example
+
+# Registros
+*.log
+npm-debug.log*
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+microservicio-login/.git-respaldo/

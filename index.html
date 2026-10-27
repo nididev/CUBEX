@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBEX | Gira, piensa y conquista</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+
+        <a href="index.html" class="logo">
+            <span class="logo-nombre">CUBEX</span>
+            <span class="eslogan">Gira, piensa y conquista</span>
+        </a>
+
+        <!-- BUSCADOR -->
+        <div class="buscador">
+            <input
+                type="text"
+                id="buscarProducto"
+                placeholder="Buscar cubos..."
+                aria-label="Buscar cubos"
+            >
+            <button type="button" id="btnBuscar" aria-label="Buscar">
+                ⌕
+            </button>
+        </div>
+
+        <!-- OPCIONES DE CUENTA -->
+        <div class="cuenta" id="cuentaUsuario">
+
+            <!-- VISITANTES -->
+            <div id="opcionesInvitado">
+                <a href="login.html" id="iniciarSesion">
+                    Iniciar sesión
+                </a>
+
+                <a href="registro.html" id="registrarse" class="btn-registro">
+                    Registrarse
+                </a>
+            </div>
+
+            <!-- USUARIOS AUTENTICADOS -->
+            <div id="opcionesUsuario" hidden>
+                <span class="nombre-usuario" id="nombreUsuario">
+                    Usuario
+                </span>
+
+                <a href="perfil.html" class="btn-mi-cuenta">
+                    Mi perfil
+                </a>
+
+                <button type="button" id="cerrarSesion">
+                    Cerrar sesión
+                </button>
+            </div>
+
+            <!-- CARRITO -->
+            <button
+                class="btn-carrito"
+                id="abrirCarrito"
+                type="button"
+                aria-label="Abrir carrito"
+            >
+                🛒 <span id="contadorCarrito">0</span>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav class="menu" aria-label="Navegación principal">
+        <a href="index.html" class="activo">Inicio</a>
+        <a href="#productos">Cubos</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+
+        <!-- PRESENTACIÓN -->
+        <section class="hero">
+            <div class="hero-contenido">
+                <span class="etiqueta">DESAFÍA TU MENTE</span>
+
+                <h1>
+                    Gira, piensa y <span>conquista.</span>
+                </h1>
+
+                <p>
+                    Descubre nuestra colección de cubos y rompecabezas.
+                    Pon a prueba tu habilidad, mejora tu concentración
+                    y encuentra tu próximo desafío.
+                </p>
+
+                <a href="#productos" class="btn-principal">
+                    Explorar productos
+                </a>
+            </div>
+
+            <div class="hero-figura" aria-hidden="true">
+                <div class="cubo">
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCTOS -->
+        <section class="productos" id="productos">
+
+            <div class="titulo-seccion">
+                <span class="etiqueta">NUESTRA COLECCIÓN</span>
+                <h2>Encuentra tu próximo desafío</h2>
+                <p>Explora nuestros cubos más populares.</p>
+            </div>
+
+            <div class="productos-grid">
+
+                <!-- PRODUCTO 1 -->
+                <article class="producto">
+                    <div class="producto-imagen imagen-rojo">
+                        <span class="producto-icono">🧩</span>
+                    </div>
+
+                    <div class="producto-info">
+                        <span class="categoria">CLÁSICO</span>
+                        <h3>Cubo 3x3 Clásico</h3>
+                        <p>El desafío perfecto para comenzar.</p>
+
+                        <div class="producto-pie">
+                            <span class="precio">$149.00</span>
+                            <button
+                                class="btn-agregar"
+                                type="button"
+                                data-id="1"
+                                data-nombre="Cubo 3x3 Clásico"
+                                data-precio="149"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- PRODUCTO 2 -->
+                <article class="producto">
+                    <div class="producto-imagen imagen-azul">
+                        <span class="producto-icono">🧊</span>
+                    </div>
+
+                    <div class="producto-info">
+                        <span class="categoria">VELOCIDAD</span>
+                        <h3>Cubo Speed 3x3</h3>
+                        <p>Diseñado para giros rápidos y precisos.</p>
+
+                        <div class="producto-pie">
+                            <span class="precio">$249.00</span>
+                            <button
+                                class="btn-agregar"
+                                type="button"
+                                data-id="2"
+                                data-nombre="Cubo Speed 3x3"
+                                data-precio="249"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- PRODUCTO 3 -->
+                <article class="producto">
+                    <div class="producto-imagen imagen-amarillo">
+                        <span class="producto-icono">🟨</span>
+                    </div>
+
+                    <div class="producto-info">
+                        <span class="categoria">AVANZADO</span>
+                        <h3>Cubo 4x4 Pro</h3>
+                        <p>Un reto adicional para los más hábiles.</p>
+
+                        <div class="producto-pie">
+                            <span class="precio">$329.00</span>
+                            <button
+                                class="btn-agregar"
+                                type="button"
+                                data-id="3"
+                                data-nombre="Cubo 4x4 Pro"
+                                data-precio="329"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- PRODUCTO 4 -->
+                <article class="producto">
+                    <div class="producto-imagen imagen-verde">
+                        <span class="producto-icono">🧠</span>
+                    </div>
+
+                    <div class="producto-info">
+                        <span class="categoria">ESPECIAL</span>
+                        <h3>Cubo Pyraminx</h3>
+                        <p>Una forma diferente de poner a prueba tu lógica.</p>
+
+                        <div class="producto-pie">
+                            <span class="precio">$199.00</span>
+                            <button
+                                class="btn-agregar"
+                                type="button"
+                                data-id="4"
+                                data-nombre="Cubo Pyraminx"
+                                data-precio="199"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="footer" id="contacto">
+        <div>
+            <h2>CUBEX</h2>
+            <p>Gira, piensa y conquista.</p>
+        </div>
+
+        <div class="footer-info">
+            <p>Tu próximo desafío comienza aquí.</p>
+            <p>&copy; 2026 CUBEX. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT DE LA TIENDA -->
+    <script src="js/script.js"></script>
+
+    <!-- SESIÓN DEL CLIENTE -->
+    <script>
+        (() => {
+            const token = sessionStorage.getItem("cubex_token");
+            const usuarioGuardado = sessionStorage.getItem("cubex_usuario");
+
+            const opcionesInvitado =
+                document.getElementById("opcionesInvitado");
+            const opcionesUsuario =
+                document.getElementById("opcionesUsuario");
+            const nombreUsuario =
+                document.getElementById("nombreUsuario");
+            const botonCerrarSesion =
+                document.getElementById("cerrarSesion");
+
+            let usuario = null;
+
+            try {
+                usuario = usuarioGuardado
+                    ? JSON.parse(usuarioGuardado)
+                    : null;
+            } catch {
+                sessionStorage.removeItem("cubex_usuario");
+            }
+
+            if (token && usuario) {
+                opcionesInvitado.hidden = true;
+                opcionesUsuario.hidden = false;
+
+                nombreUsuario.textContent =
+                    usuario.nombreUsuario || "Cliente";
+            } else {
+                opcionesInvitado.hidden = false;
+                opcionesUsuario.hidden = true;
+            }
+
+            botonCerrarSesion.addEventListener("click", () => {
+                sessionStorage.removeItem("cubex_token");
+                sessionStorage.removeItem("cubex_usuario");
+
+                window.location.href = "login.html";
+            });
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBEX | Panel del empleado</title>
+    <link rel="stylesheet" href="css/empleado.css">
+</head>
+<body>
+
+    <!-- BARRA LATERAL -->
+    <aside class="barra-lateral">
+
+        <a href="index.html" class="marca">
+            <span class="marca-logo">CUBEX</span>
+            <span class="marca-eslogan">Gira, piensa y conquista</span>
+        </a>
+
+        <div class="perfil-lateral">
+            <div class="avatar">E</div>
+            <div class="perfil-info">
+                <strong>Empleado</strong>
+                <span>Personal de tienda</span>
+            </div>
+        </div>
+
+        <nav class="navegacion">
+            <p class="titulo-menu">MENÚ PRINCIPAL</p>
+
+            <a href="#resumen" class="enlace-menu">
+                <span class="icono">▦</span>
+                <span>Resumen</span>
+            </a>
+
+            <a href="#pedidos" class="enlace-menu">
+                <span class="icono">▣</span>
+                <span>Pedidos</span>
+            </a>
+
+            <a href="#resenas" class="enlace-menu">
+                <span class="icono">☆</span>
+                <span>Comentarios y reseñas</span>
+            </a>
+
+            <a href="#perfil" class="enlace-menu">
+                <span class="icono">♙</span>
+                <span>Mi perfil</span>
+            </a>
+        </nav>
+
+        <div class="barra-inferior">
+            <a href="index.html" class="volver-tienda">
+                <span class="icono">←</span>
+                Volver a la tienda
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="contenido">
+
+        <!-- ENCABEZADO -->
+        <header class="encabezado-pagina">
+            <div>
+                <span class="etiqueta">ÁREA DE TRABAJO</span>
+                <h1>Panel del empleado</h1>
+                <p>Administra los pedidos y consulta las opiniones de los clientes.</p>
+            </div>
+
+            <div class="estado-empleado">
+                <span class="indicador"></span>
+                Panel de empleado
+            </div>
+        </header>
+
+        <!-- RESUMEN -->
+        <section class="ventana" id="resumen">
+
+            <div class="bienvenida">
+                <div>
+                    <h2>¡Bienvenido a CUBEX!</h2>
+                    <p>
+                        Desde aquí puedes dar seguimiento a los pedidos
+                        y consultar los comentarios de nuestros clientes.
+                    </p>
+                </div>
+
+                <div class="bienvenida-icono">📦</div>
+            </div>
+
+            <div class="estadisticas">
+
+                <article class="tarjeta-estadistica">
+                    <div class="estadistica-icono azul">▣</div>
+                    <div>
+                        <p>Pedidos pendientes</p>
+                        <h3>—</h3>
+                        <span>Dato por conectar al servicio</span>
+                    </div>
+                </article>
+
+                <article class="tarjeta-estadistica">
+                    <div class="estadistica-icono amarillo">◷</div>
+                    <div>
+                        <p>En preparación</p>
+                        <h3>—</h3>
+                        <span>Dato por conectar al servicio</span>
+                    </div>
+                </article>
+
+                <article class="tarjeta-estadistica">
+                    <div class="estadistica-icono verde">✓</div>
+                    <div>
+                        <p>Pedidos entregados</p>
+                        <h3>—</h3>
+                        <span>Dato por conectar al servicio</span>
+                    </div>
+                </article>
+
+                <article class="tarjeta-estadistica">
+                    <div class="estadistica-icono morado">☆</div>
+                    <div>
+                        <p>Reseñas recibidas</p>
+                        <h3>—</h3>
+                        <span>Dato por conectar al servicio</span>
+                    </div>
+                </article>
+
+            </div>
+
+            <section class="panel">
+                <div class="panel-titulo">
+                    <div>
+                        <h2>Funciones del empleado</h2>
+                        <p>Accesos disponibles según tu puesto.</p>
+                    </div>
+                </div>
+
+                <div class="funciones-grid">
+
+                    <a href="#pedidos" class="funcion">
+                        <span class="funcion-icono">📦</span>
+                        <h3>Gestionar pedidos</h3>
+                        <p>Consultar pedidos y actualizar su estado.</p>
+                        <span class="funcion-enlace">Ir a pedidos →</span>
+                    </a>
+
+                    <a href="#resenas" class="funcion">
+                        <span class="funcion-icono">💬</span>
+                        <h3>Ver comentarios</h3>
+                        <p>Consultar las opiniones de los clientes.</p>
+                        <span class="funcion-enlace">Ver reseñas →</span>
+                    </a>
+
+                    <a href="#perfil" class="funcion">
+                        <span class="funcion-icono">👤</span>
+                        <h3>Mi perfil</h3>
+                        <p>Consultar la información de tu cuenta.</p>
+                        <span class="funcion-enlace">Ver perfil →</span>
+                    </a>
+
+                </div>
+            </section>
+
+        </section>
+
+        <!-- PEDIDOS -->
+        <section class="ventana" id="pedidos">
+
+            <div class="titulo-seccion">
+                <span class="etiqueta">OPERACIÓN</span>
+                <h2>Pedidos</h2>
+                <p>Consulta los pedidos y da seguimiento a su preparación.</p>
+            </div>
+
+            <section class="panel">
+
+                <div class="panel-titulo">
+                    <div>
+                        <h2>Listado de pedidos</h2>
+                        <p>Los pedidos se mostrarán al conectar el servicio correspondiente.</p>
+                    </div>
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>N.º de pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="tabla-vacia">
+                                    <span>📦</span>
+                                    <strong>Aún no hay pedidos para mostrar</strong>
+                                    <p>Los datos aparecerán al conectar el microservicio de pedidos.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="nota">
+                    <strong>Permisos:</strong>
+                    el empleado podrá consultar los pedidos y cambiar sus estados
+                    cuando el servicio esté conectado.
+                </div>
+
+            </section>
+
+        </section>
+
+        <!-- COMENTARIOS Y RESEÑAS -->
+        <section class="ventana" id="resenas">
+
+            <div class="titulo-seccion">
+                <span class="etiqueta">OPINIONES DE CLIENTES</span>
+                <h2>Comentarios y reseñas</h2>
+                <p>Consulta las valoraciones y opiniones de los compradores.</p>
+            </div>
+
+            <section class="panel">
+
+                <div class="panel-titulo">
+                    <div>
+                        <h2>Reseñas de los clientes</h2>
+                        <p>Contenido pendiente de conectar al microservicio de reseñas.</p>
+                    </div>
+                </div>
+
+                <div class="estado-vacio">
+                    <span class="vacio-icono">☆</span>
+                    <h3>No hay reseñas para mostrar</h3>
+                    <p>Las opiniones de los clientes aparecerán aquí.</p>
+                </div>
+
+            </section>
+
+        </section>
+
+        <!-- PERFIL -->
+        <section class="ventana" id="perfil">
+
+            <div class="titulo-seccion">
+                <span class="etiqueta">INFORMACIÓN PERSONAL</span>
+                <h2>Mi perfil</h2>
+                <p>Consulta los datos asociados a tu cuenta de empleado.</p>
+            </div>
+
+            <section class="panel">
+
+                <div class="perfil-encabezado">
+                    <div class="avatar avatar-grande">E</div>
+                    <div>
+                        <h2>Empleado</h2>
+                        <p>Personal de CUBEX</p>
+                    </div>
+                </div>
+
+                <div class="perfil-datos">
+
+                    <div class="campo">
+                        <label>Nombre completo</label>
+                        <div class="campo-valor">Pendiente de conectar</div>
+                    </div>
+
+                    <div class="campo">
+                        <label>Correo electrónico</label>
+                        <div class="campo-valor">Pendiente de conectar</div>
+                    </div>
+
+                    <div class="campo">
+                        <label>Tipo de cuenta</label>
+                        <div class="campo-valor">Empleado</div>
+                    </div>
+
+                    <div class="campo">
+                        <label>Estado de la cuenta</label>
+                        <div class="campo-valor">
+                            <span class="estado-activo">Activo</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="nota">
+                    Los datos personales se obtendrán del servicio de autenticación
+                    cuando se integre con el panel.
+                </div>
+
+            </section>
+
+        </section>
+
+        <footer class="pie-pagina">
+            <p>© 2026 CUBEX · Panel del empleado</p>
+            <p>Gira, piensa y conquista.</p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
