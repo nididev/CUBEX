@@ -2,7 +2,103 @@
 const formulario = document.getElementById("formulario-registro");
 const mensaje = document.getElementById("mensaje");
 const boton = document.getElementById("btnRegistro");
+const estadoVerificacion = document.getElementById("estado-verificacion");
+const tokenInput = document.getElementById("tokenVerificacion");
+const campoTrampa = document.getElementById("sitioWeb");
 
+const API_LOGIN = "http://localhost:3000/api/v1";
+const API_BOTS = "http://localhost:3001/api/verify";
+
+let momentoToken = 0;
+
+// Obtener token de verificación
+async function obtenerToken() {
+    estadoVerificacion.textContent = "Preparando verificación de seguridad...";
+
+    const respuesta = await fetch(`${API_BOTS}/challenge`);
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok || !resultado.token) {
+        throw new Error("No se pudo preparar la verificación de seguridad.");
+    }
+
+    tokenInput.value = resultado.token;
+    momentoToken = Date.now();
+
+    estadoVerificacion.textContent =
+        "✓ Verificación de seguridad preparada.";
+
+    boton.disabled = false;
+}
+
+// Esperar el tiempo mínimo requerido por el servidor
+function esperar(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Comprobar que el usuario no sea un bot
+async function verificarUsuario() {
+    if (!tokenInput.value || !momentoToken) {
+        throw new Error("No hay un token de seguridad disponible.");
+    }
+
+    // Si el token está próximo a expirar, solicitar uno nuevo
+    if (Date.now() - momentoToken > 4 * 60 * 1000) {
+        await obtenerToken();
+    }
+
+    // El servidor exige al menos 1500 ms
+    const transcurrido = Date.now() - momentoToken;
+
+    if (transcurrido < 1500) {
+        await esperar(1500 - transcurrido);
+    }
+
+    const respuesta = await fetch(`${API_BOTS}/check`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            token: tokenInput.value,
+            honeypot: campoTrampa.value
+        })
+    });
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok || resultado.verificado !== true) {
+        // Preparar un nuevo token para otro intento
+        tokenInput.value = "";
+        momentoToken = 0;
+
+        await obtenerToken();
+
+        throw new Error(
+            resultado.mensaje || "No se pudo verificar que eres una persona."
+        );
+    }
+
+    estadoVerificacion.textContent =
+        "✓ Usuario verificado correctamente.";
+
+    return true;
+}
+
+// Preparar verificación al abrir la página
+boton.disabled = true;
+
+obtenerToken().catch(error => {
+    console.error("Error de verificación:", error);
+
+    estadoVerificacion.textContent =
+        "No se pudo conectar con el servicio de seguridad.";
+
+    mensaje.textContent =
+        "Comprueba que el microservicio de verificación esté activo.";
+});
+
+// Registro de usuario
 formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
 
@@ -33,11 +129,18 @@ formulario.addEventListener("submit", async (evento) => {
     }
 
     boton.disabled = true;
-    mensaje.textContent = "Registrando cuenta...";
 
     try {
+        // PRIMERA VALIDACIÓN: detectar bots
+        mensaje.textContent = "Verificando seguridad...";
+
+        await verificarUsuario();
+
+        // SEGUNDA VALIDACIÓN: registrar la cuenta
+        mensaje.textContent = "Usuario verificado. Registrando cuenta...";
+
         const respuesta = await fetch(
-            "http://localhost:3000/api/v1/auth/registro",
+            `${API_LOGIN}/auth/registro`,
             {
                 method: "POST",
                 headers: {
@@ -62,7 +165,6 @@ formulario.addEventListener("submit", async (evento) => {
 
         const usuario = resultado.datos;
 
-        // El registro puede crear la cuenta aunque no devuelva un token.
         if (usuario?.token) {
             sessionStorage.setItem("cubex_token", usuario.token);
 
@@ -77,16 +179,23 @@ formulario.addEventListener("submit", async (evento) => {
                 })
             );
 
-            mensaje.textContent = "¡Cuenta creada! Entrando a CUBEX...";
+            mensaje.textContent =
+                "¡Cuenta creada! Entrando a CUBEX...";
 
             setTimeout(() => {
                 window.location.href = "index.html";
             }, 1000);
+
         } else {
             mensaje.textContent =
                 "Cuenta creada correctamente. Ahora puedes iniciar sesión.";
 
             formulario.reset();
+
+            tokenInput.value = "";
+            momentoToken = 0;
+
+            await obtenerToken();
         }
 
     } catch (error) {
@@ -94,9 +203,10 @@ formulario.addEventListener("submit", async (evento) => {
 
         mensaje.textContent =
             error.message === "Failed to fetch"
-                ? "No se pudo conectar con el servidor. Comprueba que el microservicio esté activo."
+                ? "No se pudo conectar con uno de los servicios. Comprueba que ambos estén activos."
                 : error.message;
+
     } finally {
-        boton.disabled = false;
+        boton.disabled = !tokenInput.value;
     }
 });

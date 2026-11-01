@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,47 +6,56 @@
     <title>Iniciar sesión | CUBEX</title>
     <link rel="stylesheet" href="css/login.css">
 </head>
+
 <body>
     <main class="contenedor">
+
         <a href="index.html" class="logo">CUBEX</a>
         <p class="eslogan">El reto está en tus manos</p>
 
         <section class="tarjeta">
+
             <h1>¡Bienvenido de nuevo!</h1>
+
             <p class="descripcion">
                 Inicia sesión para continuar comprando.
             </p>
 
             <form id="formulario-login">
-                
-            <div class="campo">
-                <label for="correo">Nombre de usuario</label>
-                <input
-                    type="text"
-                    id="correo"
-                    name="nombreUsuario"
-                    placeholder="Ingresa tu nombre de usuario"
-                    minlength="3"
-                    maxlength="60"
-                    required
-                >
-            </div>
 
+                <div class="campo">
+                    <label for="correo">Nombre de usuario</label>
+                    <input
+                        type="text"
+                        id="correo"
+                        name="nombreUsuario"
+                        placeholder="Ingresa tu nombre de usuario"
+                        minlength="3"
+                        maxlength="60"
+                        required
+                    >
+                </div>
 
                 <div class="campo">
                     <label for="contrasena">Contraseña</label>
-                    <input type="password" id="contrasena"
-                           name="contrasena"
-                           placeholder="Ingresa tu contraseña" required>
+                    <input
+                        type="password"
+                        id="contrasena"
+                        name="contrasena"
+                        placeholder="Ingresa tu contraseña"
+                        required
+                    >
                 </div>
 
                 <p id="mensaje" role="status" aria-live="polite"></p>
 
-                <a href="#" class="recuperar">
+                <!-- ENLACE A RECUPERACIÓN DE CONTRASEÑA -->
+                <a href="forgot-password.html" class="recuperar">
                     ¿Olvidaste tu contraseña?
                 </a>
 
                 <button type="submit">Iniciar sesión</button>
+
             </form>
 
             <p class="alternativa">
@@ -58,6 +66,7 @@
             <a href="index.html" class="volver">
                 ← Volver a la tienda
             </a>
+
         </section>
     </main>
 
