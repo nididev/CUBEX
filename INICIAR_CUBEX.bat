@@ -1,3 +1,4 @@
+
 @echo off
 title CUBEX - Iniciando sistema
 
@@ -6,7 +7,7 @@ echo       INICIANDO CUBEX
 echo =================================
 
 REM Iniciar microservicio de login
-start "CUBEX - Microservicio" cmd /k "cd /d ""%~dp0microservicio-login"" && npm run dev"
+start "CUBEX - Microservicio Login" cmd /k "cd /d ""%~dp0microservicio-login"" && npm run dev"
 
 REM Iniciar microservicio de verificacion de bots
 start "CUBEX - Verificacion Bot" cmd /k "cd /d ""%~dp0verificacion-bot"" && node server.js"
@@ -14,11 +15,14 @@ start "CUBEX - Verificacion Bot" cmd /k "cd /d ""%~dp0verificacion-bot"" && node
 REM Iniciar microservicio de recuperacion de contrasena
 start "CUBEX - Recuperacion Password" cmd /k "cd /d ""%~dp0soa-servicio-reset-password-main\api"" && npm run dev"
 
+REM Iniciar microservicio de roles
+start "CUBEX - Servicio de Roles" cmd /k "cd /d ""%~dp0servicio-roles"" && npm run dev"
+
 REM Iniciar servidor web
 start "CUBEX - Pagina Web" cmd /k "cd /d ""%~dp0"" && py -m http.server 5500 --bind 127.0.0.1"
 
 REM Esperar a que los servicios arranquen
-timeout /t 5 /nobreak >nul
+timeout /t 7 /nobreak >nul
 
 REM Abrir CUBEX
 start "" "http://127.0.0.1:5500/index.html"

@@ -666,3 +666,230 @@ tbody tr:hover {
     margin-bottom: 10px;
     border: 1px solid var(--borde);
 }
+
+/* Elemento activo del menú lateral */
+.sidebar nav a.active,
+.sidebar .menu a.active,
+.sidebar a.active {
+    background: rgba(0, 123, 255, 0.16);
+    color: #ffffff;
+    border-left: 4px solid #008cff;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Icono del elemento activo */
+.sidebar nav a.active i,
+.sidebar .menu a.active i,
+.sidebar a.active i {
+    color: #008cff;
+}
+
+/* Efecto al pasar el cursor */
+.sidebar nav a:hover,
+.sidebar .menu a:hover,
+.sidebar a:hover {
+    background: rgba(0, 123, 255, 0.10);
+    color: #ffffff;
+}
+
+/* Perfil del administrador en la barra superior */
+.perfil-superior {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.datos-perfil {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    gap: 3px;
+}
+
+.datos-perfil strong {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.datos-perfil small {
+    color: #8da2bd;
+    font-size: 12px;
+}
+
+.avatar-superior {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f51f3b;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.boton-cerrar-sesion {
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid #34445d;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.boton-cerrar-sesion:hover {
+    background: #f51f3b;
+    border-color: #f51f3b;
+}
+
+/* Ocultar enlace anterior a la tienda */
+.volver-tienda {
+    display: none;
+}
+
+/* ========================================
+   MODALES Y NOTIFICACIONES CUBEX
+======================================== */
+
+.modal-cubex {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+}
+
+.modal-cubex.mostrar {
+    display: flex;
+}
+
+.modal-cubex-contenido {
+    width: 100%;
+    max-width: 420px;
+    padding: 28px;
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    animation: aparecerCubex .2s ease;
+}
+
+.modal-cubex-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    color: var(--azul);
+    background: #087cfc20;
+    font-size: 24px;
+}
+
+.modal-cubex-contenido h3 {
+    margin-bottom: 10px;
+    color: var(--blanco);
+    font-size: 19px;
+}
+
+.modal-cubex-contenido p {
+    color: var(--gris);
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+.modal-cubex-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.boton-modal-cubex {
+    padding: 11px 17px;
+    border-radius: 7px;
+    border: 1px solid var(--borde);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.boton-modal-cancelar {
+    color: var(--gris);
+    background: transparent;
+}
+
+.boton-modal-confirmar {
+    color: white;
+    background: var(--azul);
+    border-color: var(--azul);
+}
+
+.boton-modal-peligro {
+    color: white;
+    background: var(--rojo);
+    border-color: var(--rojo);
+}
+
+.boton-modal-cubex:hover {
+    filter: brightness(1.15);
+}
+
+.notificacion-cubex {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: min(380px, calc(100% - 40px));
+    padding: 16px 19px;
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-left: 4px solid var(--verde);
+    border-radius: 10px;
+    color: var(--blanco);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+    animation: aparecerCubex .25s ease;
+}
+
+.notificacion-cubex.error {
+    border-left-color: var(--rojo);
+}
+
+.notificacion-cubex .notificacion-icono {
+    font-size: 21px;
+}
+
+.notificacion-cubex strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.notificacion-cubex span {
+    color: var(--gris);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+@keyframes aparecerCubex {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+

@@ -5,64 +5,338 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CUBEX | Panel de administrador</title>
     <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* PERFIL DEL ADMINISTRADOR */
+        .perfil-admin {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 22px 8px;
+            border: none;
+            border-bottom: 1px solid #303b4d;
+            background: transparent;
+            color: #f5f7fa;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .perfil-admin:hover {
+            background: #171f2e;
+            border-radius: 10px;
+        }
+
+        .avatar-vacio {
+            width: 45px;
+            height: 45px;
+            min-width: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #ef233c;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+        }
+
+        .datos-perfil {
+            min-width: 0;
+        }
+
+        .datos-perfil h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .datos-perfil p {
+            font-size: 12px;
+            color: #aab7c4;
+            overflow-wrap: anywhere;
+        }
+
+        /* BOTÓN CERRAR SESIÓN */
+        .acciones-superiores {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .boton-cerrar-sesion {
+            padding: 11px 17px;
+            border: 1px solid #ef233c;
+            border-radius: 9px;
+            background: transparent;
+            color: #ef233c;
+            cursor: pointer;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .boton-cerrar-sesion:hover {
+            background: #ef233c;
+            color: white;
+        }
+
+        /* ELEMENTO ACTIVO DEL MENÚ */
+        .nav-enlace {
+            transition: background .2s, color .2s, border .2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-enlace.activo {
+            background: #172b45;
+            color: #087cfc;
+            border-left: 3px solid #087cfc;
+            font-weight: bold;
+        }
+
+        .nav-enlace.activo .nav-icono {
+            color: #087cfc;
+        }
+
+        /* VENTANA DE PERFIL */
+        .modal-perfil {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, .75);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-perfil.mostrar {
+            display: flex;
+        }
+
+        .contenido-modal-perfil {
+            width: 100%;
+            max-width: 430px;
+            padding: 30px;
+            border: 1px solid #303b4d;
+            border-radius: 18px;
+            background: #171f2e;
+            color: #f5f7fa;
+            position: relative;
+            animation: aparecer .2s ease;
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cerrar-modal {
+            position: absolute;
+            top: 15px;
+            right: 18px;
+            border: none;
+            background: transparent;
+            color: #aab7c4;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .perfil-modal-avatar {
+            width: 75px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #ef233c;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .contenido-modal-perfil h2 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitulo-modal {
+            text-align: center;
+            color: #aab7c4;
+            margin-bottom: 25px;
+        }
+
+        .dato-modal {
+            padding: 13px 0;
+            border-bottom: 1px solid #303b4d;
+        }
+
+        .dato-modal span {
+            display: block;
+            margin-bottom: 5px;
+            color: #aab7c4;
+            font-size: 12px;
+        }
+
+        .dato-modal strong {
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .boton-modal-cerrar {
+            width: 100%;
+            margin-top: 22px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #087cfc;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .acciones-superiores {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .estado-sistema {
+                display: none;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
 <div class="panel">
 
+    <!-- BARRA LATERAL -->
     <aside class="sidebar">
+
         <a href="#resumen" class="marca">
             <span class="marca-nombre">CUBEX</span>
             <span class="marca-eslogan">Gira, piensa y conquista</span>
         </a>
 
-        <div class="perfil-admin">
-            <div class="avatar-vacio"></div>
-            <div>
-                <h3>Administrador</h3>
-                <p>Panel de control</p>
-            </div>
-        </div>
+        <!-- PERFIL DEL ADMINISTRADOR -->
+        <button type="button" class="perfil-admin" id="abrirPerfil">
 
+            <div class="avatar-vacio" id="inicialAdmin">A</div>
+
+            <div class="datos-perfil">
+                <h3 id="nombreAdmin">Administrador</h3>
+                <p id="usuarioAdmin">Panel de control</p>
+            </div>
+
+        </button>
+
+        <!-- NAVEGACIÓN -->
         <nav class="navegacion" aria-label="Menú principal">
+
             <p class="nav-titulo">MENÚ PRINCIPAL</p>
 
-            <a href="#resumen" class="nav-enlace"><span class="nav-icono">▦</span>Resumen</a>
-            <a href="#productos" class="nav-enlace"><span class="nav-icono">▣</span>Productos</a>
-            <a href="#inventario" class="nav-enlace"><span class="nav-icono">▤</span>Inventario</a>
-            <a href="#usuarios" class="nav-enlace"><span class="nav-icono">♙</span>Usuarios y roles</a>
-            <a href="#proveedores" class="nav-enlace"><span class="nav-icono">▧</span>Proveedores</a>
-            <a href="#compras" class="nav-enlace"><span class="nav-icono">▣</span>Compras a proveedores</a>
-            <a href="#pedidos" class="nav-enlace"><span class="nav-icono">▤</span>Pedidos de clientes</a>
-            <a href="#envios" class="nav-enlace"><span class="nav-icono">➜</span>Envíos y rastreo</a>
-            <a href="#entregas" class="nav-enlace"><span class="nav-icono">✓</span>Validación de entregas</a>
-            <a href="#garantias" class="nav-enlace"><span class="nav-icono">◇</span>Garantías</a>
-            <a href="#devoluciones" class="nav-enlace"><span class="nav-icono">↩</span>Devoluciones</a>
-            <a href="#resenas" class="nav-enlace"><span class="nav-icono">☆</span>Reseñas</a>
-            <a href="#reportes" class="nav-enlace"><span class="nav-icono">▥</span>Reportes</a>
+            <a href="#resumen" class="nav-enlace">
+                <span class="nav-icono">▦</span>Resumen
+            </a>
+
+            <a href="#productos" class="nav-enlace">
+                <span class="nav-icono">▣</span>Productos
+            </a>
+
+            <a href="#inventario" class="nav-enlace">
+                <span class="nav-icono">▤</span>Inventario
+            </a>
+
+            <a href="#usuarios" class="nav-enlace">
+                <span class="nav-icono">♙</span>Usuarios y roles
+            </a>
+
+            <a href="#proveedores" class="nav-enlace">
+                <span class="nav-icono">▧</span>Proveedores
+            </a>
+
+            <a href="#compras" class="nav-enlace">
+                <span class="nav-icono">▣</span>Compras a proveedores
+            </a>
+
+            <a href="#pedidos" class="nav-enlace">
+                <span class="nav-icono">▤</span>Pedidos de clientes
+            </a>
+
+            <a href="#envios" class="nav-enlace">
+                <span class="nav-icono">➜</span>Envíos y rastreo
+            </a>
+
+            <a href="#entregas" class="nav-enlace">
+                <span class="nav-icono">✓</span>Validación de entregas
+            </a>
+
+            <a href="#garantias" class="nav-enlace">
+                <span class="nav-icono">◇</span>Garantías
+            </a>
+
+            <a href="#devoluciones" class="nav-enlace">
+                <span class="nav-icono">↩</span>Devoluciones
+            </a>
+
+            <a href="#resenas" class="nav-enlace">
+                <span class="nav-icono">☆</span>Reseñas
+            </a>
+
+            <a href="#reportes" class="nav-enlace">
+                <span class="nav-icono">▥</span>Reportes
+            </a>
+
         </nav>
 
         <div class="sidebar-pie">
-            <a href="index.html" class="volver-tienda">← Volver a la tienda</a>
             <p>CUBEX © 2026</p>
         </div>
+
     </aside>
 
+
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="contenido">
 
+        <!-- ENCABEZADO -->
         <header class="barra-superior">
+
             <div>
                 <p class="sobrelinea">ADMINISTRACIÓN</p>
                 <h1>Panel de control</h1>
-                <p class="texto-secundario">Gestiona tu tienda CUBEX desde un solo lugar.</p>
+                <p class="texto-secundario">
+                    Gestiona tu tienda CUBEX desde un solo lugar.
+                </p>
             </div>
+
             <div class="acciones-superiores">
-                <div class="estado-sistema"><span class="punto"></span>Vista administrativa</div>
-                <div class="avatar-superior">A</div>
+
+                <div class="estado-sistema">
+                    <span class="punto"></span>
+                    Vista administrativa
+                </div>
+
+                <button type="button" class="boton-cerrar-sesion" id="cerrarSesion">
+                    Cerrar sesión
+                </button>
+
             </div>
+
         </header>
+
 
         <!-- RESUMEN -->
         <section class="vista" id="resumen">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">RESUMEN GENERAL</p>
@@ -71,6 +345,7 @@
             </div>
 
             <div class="estadisticas">
+
                 <article class="tarjeta-estadistica">
                     <div class="estadistica-arriba">
                         <span class="estadistica-icono azul">▣</span>
@@ -110,6 +385,7 @@
                     <p class="estadistica-titulo">Usuarios registrados</p>
                     <p class="estadistica-nota">Clientes y personal</p>
                 </article>
+
             </div>
 
             <div class="encabezado-seccion espacio-arriba">
@@ -120,56 +396,85 @@
             </div>
 
             <div class="accesos-rapidos">
+
                 <a href="#productos" class="acceso">
                     <span class="acceso-icono azul">＋</span>
-                    <span><strong>Productos</strong><small>Consultar catálogo</small></span>
+                    <span>
+                        <strong>Productos</strong>
+                        <small>Consultar catálogo</small>
+                    </span>
                     <span class="flecha">→</span>
                 </a>
 
                 <a href="#inventario" class="acceso">
                     <span class="acceso-icono amarillo">▤</span>
-                    <span><strong>Inventario</strong><small>Revisar existencias</small></span>
+                    <span>
+                        <strong>Inventario</strong>
+                        <small>Revisar existencias</small>
+                    </span>
                     <span class="flecha">→</span>
                 </a>
 
                 <a href="#pedidos" class="acceso">
                     <span class="acceso-icono rojo">▣</span>
-                    <span><strong>Pedidos</strong><small>Consultar pedidos de clientes</small></span>
+                    <span>
+                        <strong>Pedidos</strong>
+                        <small>Consultar pedidos de clientes</small>
+                    </span>
                     <span class="flecha">→</span>
                 </a>
 
                 <a href="#envios" class="acceso">
                     <span class="acceso-icono verde">➜</span>
-                    <span><strong>Envíos y rastreo</strong><small>Consultar guías y estados</small></span>
+                    <span>
+                        <strong>Envíos y rastreo</strong>
+                        <small>Consultar guías y estados</small>
+                    </span>
                     <span class="flecha">→</span>
                 </a>
 
                 <a href="#garantias" class="acceso">
                     <span class="acceso-icono azul">◇</span>
-                    <span><strong>Garantías</strong><small>Revisar solicitudes</small></span>
+                    <span>
+                        <strong>Garantías</strong>
+                        <small>Revisar solicitudes</small>
+                    </span>
                     <span class="flecha">→</span>
                 </a>
 
                 <a href="#devoluciones" class="acceso">
                     <span class="acceso-icono rojo">↩</span>
-                    <span><strong>Devoluciones</strong><small>Consultar solicitudes</small></span>
+                    <span>
+                        <strong>Devoluciones</strong>
+                        <small>Consultar solicitudes</small>
+                    </span>
                     <span class="flecha">→</span>
                 </a>
+
             </div>
+
         </section>
+
 
         <!-- PRODUCTOS -->
         <section class="vista" id="productos">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">CATÁLOGO</p>
                     <h2>Gestión de productos</h2>
-                    <p class="texto-secundario">Consulta y administra los productos de CUBEX.</p>
+                    <p class="texto-secundario">
+                        Consulta y administra los productos de CUBEX.
+                    </p>
                 </div>
-                <a href="#formulario-producto" class="boton-principal">+ Registrar producto</a>
+
+                <a href="#formulario-producto" class="boton-principal">
+                    + Registrar producto
+                </a>
             </div>
 
             <div class="panel-contenido">
+
                 <div class="barra-tabla">
                     <h3>Productos registrados</h3>
                     <span class="etiqueta">Vista de ejemplo</span>
@@ -186,23 +491,26 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <tr>
-                                <td><div class="producto-tabla"><div class="miniatura-vacia"></div><span>Cubo Rubik 3x3</span></div></td>
+                                <td>Cubo Rubik 3x3</td>
                                 <td>3x3</td>
                                 <td>$299.00</td>
                                 <td>--</td>
                                 <td><span class="estado pendiente">Por consultar</span></td>
                             </tr>
+
                             <tr>
-                                <td><div class="producto-tabla"><div class="miniatura-vacia"></div><span>Cubo Rubik 2x2</span></div></td>
+                                <td>Cubo Rubik 2x2</td>
                                 <td>2x2</td>
                                 <td>$199.00</td>
                                 <td>--</td>
                                 <td><span class="estado pendiente">Por consultar</span></td>
                             </tr>
+
                             <tr>
-                                <td><div class="producto-tabla"><div class="miniatura-vacia"></div><span>Cubo Rubik 4x4</span></div></td>
+                                <td>Cubo Rubik 4x4</td>
                                 <td>4x4</td>
                                 <td>$499.00</td>
                                 <td>--</td>
@@ -211,15 +519,23 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="nota-tabla">Los registros son ilustrativos. Los datos reales se cargarán desde el microservicio de inventario.</p>
+
+                <p class="nota-tabla">
+                    Los registros son ilustrativos. Los datos reales se cargarán desde el microservicio de inventario.
+                </p>
+
             </div>
 
             <div class="encabezado-seccion espacio-arriba" id="formulario-producto">
-                <div><p class="sobrelinea">CATÁLOGO</p><h2>Registrar producto</h2></div>
+                <div>
+                    <p class="sobrelinea">CATÁLOGO</p>
+                    <h2>Registrar producto</h2>
+                </div>
             </div>
 
             <div class="panel-contenido">
                 <form class="formulario">
+
                     <div class="campo">
                         <label for="nombre">Nombre del producto</label>
                         <input id="nombre" type="text" placeholder="Ej. Cubo Rubik 3x3">
@@ -270,58 +586,88 @@
                         <button type="reset" class="boton-secundario">Limpiar campos</button>
                         <button type="button" class="boton-principal">Registrar producto</button>
                     </div>
+
                 </form>
+
                 <p class="nota-tabla">Formulario visual; todavía no guarda información.</p>
             </div>
+
         </section>
+
 
         <!-- INVENTARIO -->
         <section class="vista" id="inventario">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">CONTROL DE EXISTENCIAS</p>
                     <h2>Inventario</h2>
-                    <p class="texto-secundario">Consulta existencias y niveles de stock.</p>
+                    <p class="texto-secundario">
+                        Consulta existencias y niveles de stock.
+                    </p>
                 </div>
             </div>
 
             <div class="panel-contenido">
+
                 <div class="alerta-inventario">
                     <span class="alerta-icono">!</span>
                     <div>
                         <strong>Control de stock mínimo y máximo</strong>
-                        <p>Aquí aparecerán alertas de productos con existencias bajas o altas para facilitar la reposición y las promociones.</p>
+                        <p>
+                            Aquí aparecerán alertas de productos con existencias bajas o altas para facilitar la reposición y las promociones.
+                        </p>
                     </div>
                 </div>
 
                 <div class="tabla-contenedor">
                     <table>
                         <thead>
-                            <tr><th>Producto</th><th>Existencias</th><th>Stock mínimo</th><th>Stock máximo</th><th>Estado</th></tr>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Existencias</th>
+                                <th>Stock mínimo</th>
+                                <th>Stock máximo</th>
+                                <th>Estado</th>
+                            </tr>
                         </thead>
+
                         <tbody>
                             <tr>
-                                <td>Cubo Rubik 3x3</td><td>--</td><td>--</td><td>--</td>
+                                <td>Cubo Rubik 3x3</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
                                 <td><span class="estado pendiente">Por consultar</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="nota-tabla">La información se obtendrá del microservicio de inventario.</p>
+
+                <p class="nota-tabla">
+                    La información se obtendrá del microservicio de inventario.
+                </p>
+
             </div>
+
         </section>
+
 
         <!-- USUARIOS Y ROLES -->
         <section class="vista" id="usuarios">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">CONTROL DE ACCESO</p>
                     <h2>Usuarios y roles</h2>
-                    <p class="texto-secundario">Administración de cuentas y permisos.</p>
+                    <p class="texto-secundario">
+                        Administración de cuentas y permisos.
+                    </p>
                 </div>
             </div>
 
             <div class="tarjetas-roles">
+
                 <article class="tarjeta-rol">
                     <div class="rol-icono rojo">A</div>
                     <h3>Administrador</h3>
@@ -339,114 +685,228 @@
                     <h3>Cliente</h3>
                     <p>Compras, perfil, historial y reseñas.</p>
                 </article>
+
             </div>
 
             <div class="panel-contenido">
+
                 <h3 class="titulo-panel">Usuarios registrados</h3>
+
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
                             <tr>
-                                <td>Los usuarios aparecerán aquí</td><td>--</td><td>--</td>
+                                <td>Los usuarios aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
                                 <td><span class="estado pendiente">Sin conectar</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
             </div>
+
         </section>
+
 
         <!-- PROVEEDORES -->
         <section class="vista" id="proveedores">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">ABASTECIMIENTO</p>
                     <h2>Proveedores</h2>
                     <p class="texto-secundario">Consulta datos de contacto y fiscales.</p>
                 </div>
+
                 <a href="#formulario-proveedor" class="boton-principal">+ Registrar proveedor</a>
             </div>
 
             <div class="panel-contenido">
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Nombre</th><th>Razón social</th><th>RFC</th><th>Correo</th><th>Teléfono</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Razón social</th>
+                                <th>RFC</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
-                            <tr><td>Los proveedores aparecerán aquí</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+                            <tr>
+                                <td>Los proveedores aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">Los datos se conectarán al microservicio correspondiente.</p>
             </div>
 
             <div class="encabezado-seccion espacio-arriba" id="formulario-proveedor">
-                <div><p class="sobrelinea">ABASTECIMIENTO</p><h2>Registrar proveedor</h2></div>
+                <div>
+                    <p class="sobrelinea">ABASTECIMIENTO</p>
+                    <h2>Registrar proveedor</h2>
+                </div>
             </div>
 
             <div class="panel-contenido">
                 <form class="formulario">
-                    <div class="campo"><label for="prov-nombre">Nombre</label><input id="prov-nombre" type="text" placeholder="Nombre del proveedor"></div>
-                    <div class="campo"><label for="prov-razon">Razón social</label><input id="prov-razon" type="text" placeholder="Razón social"></div>
-                    <div class="campo"><label for="prov-rfc">RFC</label><input id="prov-rfc" type="text" placeholder="RFC del proveedor"></div>
-                    <div class="campo"><label for="prov-correo">Correo electrónico</label><input id="prov-correo" type="email" placeholder="correo@ejemplo.com"></div>
-                    <div class="campo"><label for="prov-telefono">Teléfono</label><input id="prov-telefono" type="tel" placeholder="Teléfono"></div>
-                    <div class="campo"><label for="prov-direccion">Dirección</label><input id="prov-direccion" type="text" placeholder="Dirección del proveedor"></div>
+
+                    <div class="campo">
+                        <label for="prov-nombre">Nombre</label>
+                        <input id="prov-nombre" type="text" placeholder="Nombre del proveedor">
+                    </div>
+
+                    <div class="campo">
+                        <label for="prov-razon">Razón social</label>
+                        <input id="prov-razon" type="text" placeholder="Razón social">
+                    </div>
+
+                    <div class="campo">
+                        <label for="prov-rfc">RFC</label>
+                        <input id="prov-rfc" type="text" placeholder="RFC del proveedor">
+                    </div>
+
+                    <div class="campo">
+                        <label for="prov-correo">Correo electrónico</label>
+                        <input id="prov-correo" type="email" placeholder="correo@ejemplo.com">
+                    </div>
+
+                    <div class="campo">
+                        <label for="prov-telefono">Teléfono</label>
+                        <input id="prov-telefono" type="tel" placeholder="Teléfono">
+                    </div>
+
+                    <div class="campo">
+                        <label for="prov-direccion">Dirección</label>
+                        <input id="prov-direccion" type="text" placeholder="Dirección del proveedor">
+                    </div>
 
                     <div class="formulario-acciones campo-completo">
                         <button type="reset" class="boton-secundario">Limpiar campos</button>
                         <button type="button" class="boton-principal">Registrar proveedor</button>
                     </div>
+
                 </form>
+
                 <p class="nota-tabla">Formulario visual; todavía no guarda datos.</p>
             </div>
+
         </section>
 
-        <!-- COMPRAS A PROVEEDORES -->
+
+        <!-- COMPRAS -->
         <section class="vista" id="compras">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">ABASTECIMIENTO</p>
                     <h2>Compras a proveedores</h2>
                     <p class="texto-secundario">Consulta órdenes de compra y sus detalles.</p>
                 </div>
+
                 <a href="#nueva-compra" class="boton-principal">+ Nueva compra</a>
             </div>
 
             <div class="panel-contenido">
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Folio</th><th>Proveedor</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Proveedor</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
-                            <tr><td>--</td><td>Las compras aparecerán aquí</td><td>--</td><td>--</td><td><span class="estado pendiente">Sin conectar</span></td></tr>
+                            <tr>
+                                <td>--</td>
+                                <td>Las compras aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td><span class="estado pendiente">Sin conectar</span></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="encabezado-seccion espacio-arriba" id="nueva-compra">
-                <div><p class="sobrelinea">ABASTECIMIENTO</p><h2>Registrar orden de compra</h2></div>
+                <div>
+                    <p class="sobrelinea">ABASTECIMIENTO</p>
+                    <h2>Registrar orden de compra</h2>
+                </div>
             </div>
 
             <div class="panel-contenido">
                 <form class="formulario">
-                    <div class="campo"><label for="compra-proveedor">Proveedor</label><select id="compra-proveedor"><option value="">Selecciona proveedor</option></select></div>
-                    <div class="campo"><label for="compra-fecha">Fecha</label><input id="compra-fecha" type="date"></div>
-                    <div class="campo"><label for="compra-producto">Producto</label><select id="compra-producto"><option value="">Selecciona producto</option></select></div>
-                    <div class="campo"><label for="compra-cantidad">Cantidad</label><input id="compra-cantidad" type="number" min="1" placeholder="Cantidad"></div>
-                    <div class="campo"><label for="compra-costo">Costo unitario (MXN)</label><input id="compra-costo" type="number" min="0" step="0.01" placeholder="0.00"></div>
+
+                    <div class="campo">
+                        <label for="compra-proveedor">Proveedor</label>
+                        <select id="compra-proveedor">
+                            <option value="">Selecciona proveedor</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="compra-fecha">Fecha</label>
+                        <input id="compra-fecha" type="date">
+                    </div>
+
+                    <div class="campo">
+                        <label for="compra-producto">Producto</label>
+                        <select id="compra-producto">
+                            <option value="">Selecciona producto</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="compra-cantidad">Cantidad</label>
+                        <input id="compra-cantidad" type="number" min="1" placeholder="Cantidad">
+                    </div>
+
+                    <div class="campo">
+                        <label for="compra-costo">Costo unitario (MXN)</label>
+                        <input id="compra-costo" type="number" min="0" step="0.01" placeholder="0.00">
+                    </div>
 
                     <div class="formulario-acciones campo-completo">
                         <button type="reset" class="boton-secundario">Limpiar campos</button>
                         <button type="button" class="boton-principal">Guardar compra</button>
                     </div>
+
                 </form>
+
                 <p class="nota-tabla">Formulario visual; todavía no registra compras.</p>
             </div>
+
         </section>
 
-        <!-- PEDIDOS DE CLIENTES -->
+
+        <!-- PEDIDOS -->
         <section class="vista" id="pedidos">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">VENTAS</p>
@@ -456,27 +916,63 @@
             </div>
 
             <div class="estadisticas">
-                <article class="tarjeta-estadistica"><p class="estadistica-titulo">Pedidos registrados</p><p class="estadistica-numero">--</p></article>
-                <article class="tarjeta-estadistica"><p class="estadistica-titulo">Pedidos pendientes</p><p class="estadistica-numero">--</p></article>
-                <article class="tarjeta-estadistica"><p class="estadistica-titulo">Pedidos enviados</p><p class="estadistica-numero">--</p></article>
-                <article class="tarjeta-estadistica"><p class="estadistica-titulo">Pedidos entregados</p><p class="estadistica-numero">--</p></article>
+
+                <article class="tarjeta-estadistica">
+                    <p class="estadistica-titulo">Pedidos registrados</p>
+                    <p class="estadistica-numero">--</p>
+                </article>
+
+                <article class="tarjeta-estadistica">
+                    <p class="estadistica-titulo">Pedidos pendientes</p>
+                    <p class="estadistica-numero">--</p>
+                </article>
+
+                <article class="tarjeta-estadistica">
+                    <p class="estadistica-titulo">Pedidos enviados</p>
+                    <p class="estadistica-numero">--</p>
+                </article>
+
+                <article class="tarjeta-estadistica">
+                    <p class="estadistica-titulo">Pedidos entregados</p>
+                    <p class="estadistica-numero">--</p>
+                </article>
+
             </div>
 
             <div class="panel-contenido espacio-arriba">
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
-                            <tr><td>Los pedidos aparecerán aquí</td><td>--</td><td>--</td><td>--</td><td><span class="estado pendiente">Sin conectar</span></td></tr>
+                            <tr>
+                                <td>Los pedidos aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td><span class="estado pendiente">Sin conectar</span></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">Los pedidos reales se consultarán desde el microservicio de ventas.</p>
             </div>
+
         </section>
 
-        <!-- ENVÍOS Y RASTREO -->
+
+        <!-- ENVÍOS -->
         <section class="vista" id="envios">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">LOGÍSTICA</p>
@@ -486,6 +982,7 @@
             </div>
 
             <div class="panel-contenido">
+
                 <div class="alerta-inventario">
                     <span class="alerta-icono">i</span>
                     <div>
@@ -496,18 +993,39 @@
 
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Pedido</th><th>Paquetería</th><th>Número de guía</th><th>Fecha de envío</th><th>Entrega estimada</th><th>Estado</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Paquetería</th>
+                                <th>Número de guía</th>
+                                <th>Fecha de envío</th>
+                                <th>Entrega estimada</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
-                            <tr><td>--</td><td>--</td><td>Las guías aparecerán aquí</td><td>--</td><td>--</td><td><span class="estado pendiente">Sin conectar</span></td></tr>
+                            <tr>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>Las guías aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td><span class="estado pendiente">Sin conectar</span></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">El rastreo real dependerá de los datos del microservicio de logística.</p>
             </div>
+
         </section>
+
 
         <!-- VALIDACIÓN DE ENTREGAS -->
         <section class="vista" id="entregas">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">ENTREGAS</p>
@@ -519,18 +1037,35 @@
             <div class="panel-contenido">
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Pedido</th><th>Fecha de entrega</th><th>Estado</th><th>Evidencia o firma</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Fecha de entrega</th>
+                                <th>Estado</th>
+                                <th>Evidencia o firma</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
-                            <tr><td>--</td><td>--</td><td><span class="estado pendiente">Pendiente de validar</span></td><td>--</td></tr>
+                            <tr>
+                                <td>--</td>
+                                <td>--</td>
+                                <td><span class="estado pendiente">Pendiente de validar</span></td>
+                                <td>--</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">La confirmación y evidencia se consultarán desde el servicio correspondiente.</p>
             </div>
+
         </section>
+
 
         <!-- GARANTÍAS -->
         <section class="vista" id="garantias">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">POSTVENTA</p>
@@ -540,6 +1075,7 @@
             </div>
 
             <div class="panel-contenido">
+
                 <div class="alerta-inventario">
                     <span class="alerta-icono">i</span>
                     <div>
@@ -551,25 +1087,44 @@
                 <div class="tabla-contenedor">
                     <table>
                         <thead>
-                            <tr><th>Solicitud</th><th>Pedido</th><th>Cliente</th><th>Producto</th><th>Fecha de compra</th><th>Motivo</th><th>Estado</th></tr>
+                            <tr>
+                                <th>Solicitud</th>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Fecha de compra</th>
+                                <th>Motivo</th>
+                                <th>Estado</th>
+                            </tr>
                         </thead>
+
                         <tbody>
                             <tr>
-                                <td>--</td><td>--</td><td>Las solicitudes aparecerán aquí</td><td>--</td><td>--</td><td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>Las solicitudes aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
                                 <td><span class="estado pendiente">Pendiente de revisión</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">Las solicitudes y sus estados se cargarán desde el microservicio correspondiente.</p>
             </div>
 
             <div class="encabezado-seccion espacio-arriba">
-                <div><p class="sobrelinea">POSTVENTA</p><h2>Registrar revisión de garantía</h2></div>
+                <div>
+                    <p class="sobrelinea">POSTVENTA</p>
+                    <h2>Registrar revisión de garantía</h2>
+                </div>
             </div>
 
             <div class="panel-contenido">
                 <form class="formulario">
+
                     <div class="campo">
                         <label for="garantia-pedido">Número de pedido</label>
                         <input id="garantia-pedido" type="text" placeholder="Ej. CUB-0001">
@@ -605,13 +1160,18 @@
                         <button type="reset" class="boton-secundario">Limpiar campos</button>
                         <button type="button" class="boton-principal">Guardar revisión</button>
                     </div>
+
                 </form>
+
                 <p class="nota-tabla">Formulario visual; todavía no guarda información.</p>
             </div>
+
         </section>
+
 
         <!-- DEVOLUCIONES -->
         <section class="vista" id="devoluciones">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">POSTVENTA</p>
@@ -621,6 +1181,7 @@
             </div>
 
             <div class="panel-contenido">
+
                 <div class="alerta-inventario">
                     <span class="alerta-icono">i</span>
                     <div>
@@ -632,25 +1193,46 @@
                 <div class="tabla-contenedor">
                     <table>
                         <thead>
-                            <tr><th>Solicitud</th><th>Pedido</th><th>Cliente</th><th>Producto</th><th>Fecha</th><th>Motivo</th><th>Estado</th><th>Resolución</th></tr>
+                            <tr>
+                                <th>Solicitud</th>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Fecha</th>
+                                <th>Motivo</th>
+                                <th>Estado</th>
+                                <th>Resolución</th>
+                            </tr>
                         </thead>
+
                         <tbody>
                             <tr>
-                                <td>--</td><td>--</td><td>Las solicitudes aparecerán aquí</td><td>--</td><td>--</td><td>--</td>
-                                <td><span class="estado pendiente">Pendiente</span></td><td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>Las solicitudes aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td><span class="estado pendiente">Pendiente</span></td>
+                                <td>--</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">Las solicitudes reales se consultarán desde el microservicio de ventas o devoluciones.</p>
             </div>
 
             <div class="encabezado-seccion espacio-arriba">
-                <div><p class="sobrelinea">POSTVENTA</p><h2>Registrar resolución de devolución</h2></div>
+                <div>
+                    <p class="sobrelinea">POSTVENTA</p>
+                    <h2>Registrar resolución de devolución</h2>
+                </div>
             </div>
 
             <div class="panel-contenido">
                 <form class="formulario">
+
                     <div class="campo">
                         <label for="devolucion-pedido">Número de pedido</label>
                         <input id="devolucion-pedido" type="text" placeholder="Ej. CUB-0001">
@@ -708,13 +1290,18 @@
                         <button type="reset" class="boton-secundario">Limpiar campos</button>
                         <button type="button" class="boton-principal">Guardar resolución</button>
                     </div>
+
                 </form>
+
                 <p class="nota-tabla">Formulario visual; todavía no guarda información.</p>
             </div>
+
         </section>
+
 
         <!-- RESEÑAS -->
         <section class="vista" id="resenas">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">OPINIONES</p>
@@ -726,18 +1313,37 @@
             <div class="panel-contenido">
                 <div class="tabla-contenedor">
                     <table>
-                        <thead><tr><th>Producto</th><th>Cliente</th><th>Calificación</th><th>Comentario</th><th>Fecha</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cliente</th>
+                                <th>Calificación</th>
+                                <th>Comentario</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+
                         <tbody>
-                            <tr><td>--</td><td>Las reseñas aparecerán aquí</td><td>--</td><td>--</td><td>--</td></tr>
+                            <tr>
+                                <td>--</td>
+                                <td>Las reseñas aparecerán aquí</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <p class="nota-tabla">Las reseñas se cargarán desde el servicio correspondiente.</p>
             </div>
+
         </section>
+
 
         <!-- REPORTES -->
         <section class="vista" id="reportes">
+
             <div class="encabezado-seccion">
                 <div>
                     <p class="sobrelinea">INFORMACIÓN</p>
@@ -747,6 +1353,7 @@
             </div>
 
             <div class="reportes-grid">
+
                 <article class="reporte">
                     <span class="reporte-icono azul">▤</span>
                     <h3>Reporte de inventario</h3>
@@ -788,15 +1395,65 @@
                     <p>Solicitudes, motivos, estados y resoluciones.</p>
                     <span class="reporte-estado">Pendiente de conexión</span>
                 </article>
+
             </div>
+
         </section>
 
+
+        <!-- PIE -->
         <footer class="pie-contenido">
             <span>CUBEX · Gira, piensa y conquista</span>
-            <a href="index.html">Volver a la tienda</a>
         </footer>
 
     </main>
+
 </div>
+
+
+<!-- VENTANA DE INFORMACIÓN DEL PERFIL -->
+<div class="modal-perfil" id="modalPerfil">
+
+    <div class="contenido-modal-perfil">
+
+        <button type="button" class="cerrar-modal" id="cerrarModal" aria-label="Cerrar">
+            &times;
+        </button>
+
+        <div class="perfil-modal-avatar" id="inicialModal">A</div>
+
+        <h2 id="modalNombre">Administrador</h2>
+        <p class="subtitulo-modal">Información de la cuenta</p>
+
+        <div class="dato-modal">
+            <span>Nombre completo</span>
+            <strong id="modalNombreCompleto">--</strong>
+        </div>
+
+        <div class="dato-modal">
+            <span>Nombre de usuario</span>
+            <strong id="modalUsuario">--</strong>
+        </div>
+
+        <div class="dato-modal">
+            <span>Correo electrónico</span>
+            <strong id="modalCorreo">--</strong>
+        </div>
+
+        <div class="dato-modal">
+            <span>Rol de usuario</span>
+            <strong id="modalRol">ADMIN</strong>
+        </div>
+
+        <button type="button" class="boton-modal-cerrar" id="botonCerrarModal">
+            Cerrar
+        </button>
+
+    </div>
+
+</div>
+
+<script src="js/admin.js"></script>
+
 </body>
 </html>
