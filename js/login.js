@@ -51,7 +51,7 @@ formulario.addEventListener("submit", async (evento) => {
         // 2. Guardar token para consultar el rol
         sessionStorage.setItem("cubex_token", usuario.token);
 
-        // 3. Consultar el rol actualizado en el microservicio
+        // 3. Consultar el rol actualizado
         const respuestaRol = await fetch(
             `http://localhost:3003/usuarios/${usuario.idUsuario}/rol`,
             {
@@ -64,6 +64,9 @@ formulario.addEventListener("submit", async (evento) => {
         );
 
         const datosRol = await respuestaRol.json();
+        console.log("DATOS COMPLETOS DEL ROL:", datosRol);
+        console.log("ROL RECIBIDO:", datosRol.rol);
+        console.log("USUARIO:", usuario);
 
         console.log("Respuesta del servicio de roles:", datosRol);
 
@@ -83,7 +86,7 @@ formulario.addEventListener("submit", async (evento) => {
 
         console.log("ROL FINAL DETECTADO:", rolActual);
 
-        // 4. Guardar los datos del usuario
+        // 4. Guardar los datos de la sesión
         const usuarioSesion = {
             idUsuario: usuario.idUsuario,
             nombreUsuario: usuario.nombreUsuario,
@@ -98,19 +101,37 @@ formulario.addEventListener("submit", async (evento) => {
         );
 
         // 5. Redireccionar según el rol
-        if (rolActual === "ADMIN") {
-            console.log("REDIRIGIENDO AL PANEL ADMINISTRATIVO");
-            window.location.replace("admin.html");
+        switch (rolActual) {
 
-        } else {
-            console.log("REDIRIGIENDO A LA TIENDA");
-            window.location.replace("index.html");
+            case "ADMIN":
+                console.log("REDIRIGIENDO AL PANEL ADMINISTRATIVO");
+                window.location.replace("admin.html");
+                break;
+
+            case "VENDEDOR":
+                console.log("REDIRIGIENDO AL PANEL DE EMPLEADO");
+                window.location.replace("empleado.html");
+                break;
+
+            case "CLIENTE":
+                console.log("REDIRIGIENDO A LA TIENDA");
+                window.location.replace("index.html");
+                break;
+
+            default:
+                throw new Error(
+                    `El rol "${rolActual}" no tiene una página asignada.`
+                );
         }
 
     } catch (error) {
         console.error("ERROR DE INICIO DE SESIÓN:", error);
 
         mensaje.textContent = error.message;
+
+        // Limpiar la sesión si ocurrió un error
+        sessionStorage.removeItem("cubex_token");
+        sessionStorage.removeItem("cubex_usuario");
 
     } finally {
         boton.disabled = false;

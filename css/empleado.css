@@ -665,3 +665,416 @@ td {
         flex-direction: column;
     }
 }
+
+
+/* Corrección de la tarjeta Mi perfil */
+.funcion-boton {
+    width: 100%;
+    font-family: inherit;
+    text-align: left;
+    color: var(--blanco) !important;
+    cursor: pointer;
+}
+
+.funcion-boton h3 {
+    color: var(--blanco) !important;
+}
+
+.funcion-boton p {
+    color: var(--gris) !important;
+}
+
+/* Botones inferiores */
+.barra-inferior button {
+    width: 100%;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 12px;
+    background: transparent;
+}
+
+.boton-perfil {
+    color: #60a5fa !important;
+    border: 1px solid #087CFC !important;
+}
+
+.boton-cerrar-sesion {
+    color: #ef4444 !important;
+    border: 1px solid #ef4444 !important;
+}
+
+/* Menú seleccionado */
+.enlace-menu.activo {
+    background: #1c293b;
+    color: var(--amarillo);
+}
+
+/* Perfil clicable en la barra lateral */
+.perfil-lateral-boton {
+    width: 100%;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    color: var(--blanco);
+    border: 0;
+}
+
+.perfil-lateral-boton:hover .avatar {
+    box-shadow: 0 0 0 4px rgba(255, 210, 31, .2);
+}
+
+/* Acciones del encabezado */
+.acciones-encabezado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.boton-cerrar-sesion {
+    padding: 10px 15px;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    background: transparent;
+    color: #ef4444;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.boton-cerrar-sesion:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* Ajuste del modal de perfil */
+.modal-fondo {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .75);
+    backdrop-filter: blur(5px);
+}
+
+.modal-fondo.mostrar {
+    display: flex;
+}
+
+.modal-perfil-caja {
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 30px;
+    background: var(--tarjeta);
+    color: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.4);
+}
+
+.modal-perfil-caja h2 {
+    text-align: center;
+    color: var(--blanco);
+}
+
+.perfil-modal-avatar {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: var(--cian);
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.subtitulo-modal {
+    text-align: center;
+    color: var(--gris);
+    margin-bottom: 22px;
+}
+
+.cerrar-modal {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    background: transparent;
+    border: 0;
+    color: var(--gris);
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.perfil-datos-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (max-width: 700px) {
+    .acciones-encabezado {
+        flex-wrap: wrap;
+    }
+}
+
+/* =========================================
+   PERFIL IGUAL AL PANEL DE ADMINISTRADOR
+========================================= */
+
+.perfil-admin {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 22px 8px;
+    border: none;
+    border-bottom: 1px solid #303b4d;
+    background: transparent;
+    color: #f5f7fa;
+    text-align: left;
+    cursor: pointer;
+}
+
+.perfil-admin:hover {
+    background: #171f2e;
+    border-radius: 10px;
+}
+
+.avatar-vacio {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ef233c;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.datos-perfil {
+    min-width: 0;
+}
+
+.datos-perfil h3 {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.datos-perfil p {
+    font-size: 12px;
+    color: #aab7c4;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   BOTÓN CERRAR SESIÓN
+========================================= */
+
+.acciones-encabezado {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.boton-cerrar-sesion {
+    padding: 11px 17px;
+    border: 1px solid #ef233c;
+    border-radius: 9px;
+    background: transparent;
+    color: #ef233c;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.boton-cerrar-sesion:hover {
+    background: #ef233c;
+    color: white;
+}
+
+/* =========================================
+   MODAL DE PERFIL Y CERRAR SESIÓN
+========================================= */
+
+.modal-perfil {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, .75);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-perfil.mostrar {
+    display: flex;
+}
+
+.contenido-modal-perfil {
+    width: 100%;
+    max-width: 430px;
+    padding: 30px;
+    border: 1px solid #303b4d;
+    border-radius: 18px;
+    background: #171f2e;
+    color: #f5f7fa;
+    position: relative;
+    animation: aparecer .2s ease;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cerrar-modal {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    border: none;
+    background: transparent;
+    color: #aab7c4;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.perfil-modal-avatar {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: #ef233c;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.contenido-modal-perfil h2 {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.subtitulo-modal {
+    text-align: center;
+    color: #aab7c4;
+    margin-bottom: 25px;
+}
+
+.dato-modal {
+    padding: 13px 0;
+    border-bottom: 1px solid #303b4d;
+}
+
+.dato-modal span {
+    display: block;
+    margin-bottom: 5px;
+    color: #aab7c4;
+    font-size: 12px;
+}
+
+.dato-modal strong {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.boton-modal-cerrar {
+    width: 100%;
+    margin-top: 22px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #087cfc;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-acciones .boton-modal-cerrar {
+    margin-top: 10px;
+}
+
+.modal-acciones .btn-secundario {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #303b4d;
+    border-radius: 8px;
+    background: transparent;
+    color: #f5f7fa;
+    cursor: pointer;
+}
+
+.modal-acciones .btn-secundario:hover {
+    background: #303b4d;
+}
+
+@media (max-width: 600px) {
+    .acciones-encabezado {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+
+/* Botón cerrar sesión: texto blanco siempre */
+.boton-cerrar-sesion,
+.boton-cerrar-sesion span,
+.boton-cerrar-sesion .icono {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+
+/* BOTÓN CERRAR SESIÓN */
+.boton-cerrar-sesion,
+.boton-cerrar-sesion span,
+.boton-cerrar-sesion .icono {
+    background: transparent !important;
+    color: #e53935 !important;
+    border: 1px solid #e53935 !important;
+    opacity: 1 !important;
+    transition: all 0.25s ease;
+}
+
+/* AL PASAR EL CURSOR O SELECCIONAR */
+.boton-cerrar-sesion:hover,
+.boton-cerrar-sesion:focus,
+.boton-cerrar-sesion:active,
+.boton-cerrar-sesion:hover span,
+.boton-cerrar-sesion:hover .icono {
+    background: #e53935 !important;
+    color: #ffffff !important;
+    border-color: #e53935 !important;
+    opacity: 1 !important;
+}

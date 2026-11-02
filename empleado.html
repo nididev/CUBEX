@@ -17,44 +17,39 @@
             <span class="marca-eslogan">Gira, piensa y conquista</span>
         </a>
 
-        <div class="perfil-lateral">
-            <div class="avatar">E</div>
-            <div class="perfil-info">
-                <strong>Empleado</strong>
-                <span>Personal de tienda</span>
-            </div>
-        </div>
+        <!-- PERFIL CLICABLE -->
+<!-- PERFIL CLICABLE -->
+        <button type="button" class="perfil-admin" id="abrirPerfil">
+            <span class="avatar-vacio" id="inicialEmpleado">E</span>
 
+            <span class="datos-perfil">
+                <h3 id="nombreEmpleado">Empleado</h3>
+                <p id="usuarioEmpleado">Personal de tienda</p>
+            </span>
+        </button>
+
+        <!-- NAVEGACIÓN -->
         <nav class="navegacion">
             <p class="titulo-menu">MENÚ PRINCIPAL</p>
 
-            <a href="#resumen" class="enlace-menu">
+            <a href="#resumen" class="enlace-menu activo" data-seccion="resumen">
                 <span class="icono">▦</span>
                 <span>Resumen</span>
             </a>
 
-            <a href="#pedidos" class="enlace-menu">
+            <a href="#pedidos" class="enlace-menu" data-seccion="pedidos">
                 <span class="icono">▣</span>
                 <span>Pedidos</span>
             </a>
 
-            <a href="#resenas" class="enlace-menu">
+            <a href="#resenas" class="enlace-menu" data-seccion="resenas">
                 <span class="icono">☆</span>
                 <span>Comentarios y reseñas</span>
             </a>
-
-            <a href="#perfil" class="enlace-menu">
-                <span class="icono">♙</span>
-                <span>Mi perfil</span>
-            </a>
         </nav>
 
-        <div class="barra-inferior">
-            <a href="index.html" class="volver-tienda">
-                <span class="icono">←</span>
-                Volver a la tienda
-            </a>
-        </div>
+        <!-- ESPACIO INFERIOR -->
+        <div class="barra-inferior"></div>
 
     </aside>
 
@@ -63,16 +58,27 @@
 
         <!-- ENCABEZADO -->
         <header class="encabezado-pagina">
+
             <div>
                 <span class="etiqueta">ÁREA DE TRABAJO</span>
                 <h1>Panel del empleado</h1>
                 <p>Administra los pedidos y consulta las opiniones de los clientes.</p>
             </div>
 
-            <div class="estado-empleado">
-                <span class="indicador"></span>
-                Panel de empleado
+            <div class="acciones-encabezado">
+
+                <div class="estado-empleado">
+                    <span class="indicador"></span>
+                    Panel de empleado
+                </div>
+
+                <button type="button" class="boton-cerrar-sesion"
+                        id="cerrarSesion">
+                    ↪ Cerrar sesión
+                </button>
+
             </div>
+
         </header>
 
         <!-- RESUMEN -->
@@ -90,6 +96,7 @@
                 <div class="bienvenida-icono">📦</div>
             </div>
 
+            <!-- ESTADÍSTICAS -->
             <div class="estadisticas">
 
                 <article class="tarjeta-estadistica">
@@ -130,7 +137,9 @@
 
             </div>
 
+            <!-- FUNCIONES -->
             <section class="panel">
+
                 <div class="panel-titulo">
                     <div>
                         <h2>Funciones del empleado</h2>
@@ -154,12 +163,13 @@
                         <span class="funcion-enlace">Ver reseñas →</span>
                     </a>
 
-                    <a href="#perfil" class="funcion">
+                    <button type="button" class="funcion funcion-boton"
+                            id="abrirPerfilTarjeta">
                         <span class="funcion-icono">👤</span>
                         <h3>Mi perfil</h3>
                         <p>Consultar la información de tu cuenta.</p>
                         <span class="funcion-enlace">Ver perfil →</span>
-                    </a>
+                    </button>
 
                 </div>
             </section>
@@ -216,7 +226,6 @@
                 </div>
 
             </section>
-
         </section>
 
         <!-- COMENTARIOS Y RESEÑAS -->
@@ -244,61 +253,6 @@
                 </div>
 
             </section>
-
-        </section>
-
-        <!-- PERFIL -->
-        <section class="ventana" id="perfil">
-
-            <div class="titulo-seccion">
-                <span class="etiqueta">INFORMACIÓN PERSONAL</span>
-                <h2>Mi perfil</h2>
-                <p>Consulta los datos asociados a tu cuenta de empleado.</p>
-            </div>
-
-            <section class="panel">
-
-                <div class="perfil-encabezado">
-                    <div class="avatar avatar-grande">E</div>
-                    <div>
-                        <h2>Empleado</h2>
-                        <p>Personal de CUBEX</p>
-                    </div>
-                </div>
-
-                <div class="perfil-datos">
-
-                    <div class="campo">
-                        <label>Nombre completo</label>
-                        <div class="campo-valor">Pendiente de conectar</div>
-                    </div>
-
-                    <div class="campo">
-                        <label>Correo electrónico</label>
-                        <div class="campo-valor">Pendiente de conectar</div>
-                    </div>
-
-                    <div class="campo">
-                        <label>Tipo de cuenta</label>
-                        <div class="campo-valor">Empleado</div>
-                    </div>
-
-                    <div class="campo">
-                        <label>Estado de la cuenta</label>
-                        <div class="campo-valor">
-                            <span class="estado-activo">Activo</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="nota">
-                    Los datos personales se obtendrán del servicio de autenticación
-                    cuando se integre con el panel.
-                </div>
-
-            </section>
-
         </section>
 
         <footer class="pie-pagina">
@@ -307,6 +261,87 @@
         </footer>
 
     </main>
+
+   <!-- VENTANA DE INFORMACIÓN DEL PERFIL -->
+<div class="modal-perfil" id="modalPerfil">
+
+    <div class="contenido-modal-perfil">
+
+        <button type="button" class="cerrar-modal"
+                id="cerrarModal" aria-label="Cerrar">
+            &times;
+        </button>
+
+        <div class="perfil-modal-avatar" id="inicialModal">E</div>
+
+        <h2 id="modalNombre">Empleado</h2>
+        <p class="subtitulo-modal">Información de la cuenta</p>
+
+        <div class="dato-modal">
+            <span>Nombre completo</span>
+            <strong id="modalNombreCompleto">--</strong>
+        </div>
+
+        <div class="dato-modal">
+            <span>Nombre de usuario</span>
+            <strong id="modalUsuario">--</strong>
+        </div>
+
+        <div class="dato-modal">
+            <span>Correo electrónico</span>
+            <strong id="modalCorreo">--</strong>
+        </div>
+
+        <div class="dato-modal">
+            <span>Rol de usuario</span>
+            <strong id="modalRol">VENDEDOR</strong>
+        </div>
+
+        <button type="button" class="boton-modal-cerrar"
+                id="botonCerrarModal">
+            Cerrar
+        </button>
+
+    </div>
+</div>
+
+    <!-- MODAL CERRAR SESIÓN -->
+   <!-- MODAL CERRAR SESIÓN -->
+<div class="modal-perfil" id="modalCerrarSesion">
+
+    <div class="contenido-modal-perfil">
+
+        <div class="perfil-modal-avatar">↪</div>
+
+        <h2>¿Cerrar sesión?</h2>
+
+        <p class="subtitulo-modal">
+            ¿Estás seguro de que deseas salir de tu cuenta?
+        </p>
+
+        <div class="modal-acciones">
+
+            <button type="button" class="boton-modal-cerrar"
+                    id="confirmarCerrarSesion">
+                Sí, cerrar sesión
+            </button>
+
+            <button type="button" class="btn-secundario"
+                    id="cancelarCerrarSesion">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+    <!-- NOTIFICACIONES -->
+    <div class="contenedor-notificaciones"
+         id="contenedorNotificaciones"
+         aria-live="polite"></div>
+
+    <script src="js/empleado.js"></script>
 
 </body>
 </html>
