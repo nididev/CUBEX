@@ -6,6 +6,7 @@ const path = require('path');
 
 const productoRoutes = require('./routes/producto.routes');
 const swaggerSpec = require('./config/swagger');
+const stockRoutes = require('./routes/stock.routes');
 
 const {
     rutaNoEncontrada,
@@ -48,7 +49,7 @@ app.get('/api/health', (req, res) => {
 
 // Rutas de productos
 app.use('/api/productos', productoRoutes);
-
+app.use('/api/stock', stockRoutes);
 
 // Ruta no encontrada
 // IMPORTANTE: debe ir después de las rutas existentes.

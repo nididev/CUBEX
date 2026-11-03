@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBEX | Reportes</title>
+
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+</head>
+
+<body class="pagina-reportes">
+
+    <main class="contenido-reportes">
+
+        <div class="encabezado-seccion">
+            <div>
+                <p class="sobrelinea">INFORMACIÓN</p>
+                <h2>Reportes</h2>
+                <p class="texto-secundario">
+                    Consulta información resumida de las operaciones de CUBEX.
+                </p>
+            </div>
+
+            <button type="button" class="boton-secundario" id="btnActualizar">
+                ↻ Actualizar
+            </button>
+        </div>
+
+        <!-- SELECTOR DE REPORTES -->
+        <section class="selector-reportes">
+            <button type="button" class="opcion-reporte activa" data-reporte="inventario">
+                <span class="opcion-icono azul">▤</span>
+                <span>
+                    <strong>Reporte de inventario</strong>
+                    <small>Productos, precios y existencias</small>
+                </span>
+                <span class="opcion-flecha">→</span>
+            </button>
+
+            <button type="button" class="opcion-reporte" data-reporte="compras">
+                <span class="opcion-icono amarillo">▣</span>
+                <span>
+                    <strong>Reporte de compras</strong>
+                    <small>Proveedores, fechas y costos</small>
+                </span>
+                <span class="opcion-flecha">→</span>
+            </button>
+        </section>
+
+        <!-- REPORTE DE INVENTARIO -->
+        <section class="contenido-reporte" id="reporteInventario">
+
+            <div class="titulo-reporte">
+                <div>
+                    <p class="sobrelinea">CONTROL DE EXISTENCIAS</p>
+                    <h2>Reporte de inventario</h2>
+                    <p class="texto-secundario">
+                        Resumen de productos, cantidades y valor del inventario.
+                    </p>
+                </div>
+
+                <button type="button" class="boton-principal" id="btnExportarInventario">
+                    ↓ Exportar CSV
+                </button>
+            </div>
+
+            <div class="mensaje-reporte" id="mensajeInventario" role="status">
+                Consultando información del inventario...
+            </div>
+
+            <!-- RESUMEN -->
+            <div class="estadisticas-reportes">
+
+                <article class="tarjeta-reporte">
+                    <div class="reporte-tarjeta-arriba">
+                        <span class="reporte-icono azul">▣</span>
+                        <span class="etiqueta">Catálogo</span>
+                    </div>
+                    <p class="reporte-numero" id="totalProductos">--</p>
+                    <p class="reporte-descripcion">Productos registrados</p>
+                </article>
+
+                <article class="tarjeta-reporte">
+                    <div class="reporte-tarjeta-arriba">
+                        <span class="reporte-icono amarillo">▤</span>
+                        <span class="etiqueta">Existencias</span>
+                    </div>
+                    <p class="reporte-numero" id="totalUnidades">--</p>
+                    <p class="reporte-descripcion">Unidades disponibles</p>
+                </article>
+
+                <article class="tarjeta-reporte">
+                    <div class="reporte-tarjeta-arriba">
+                        <span class="reporte-icono rojo">!</span>
+                        <span class="etiqueta">Atención</span>
+                    </div>
+                    <p class="reporte-numero" id="productosStockBajo">--</p>
+                    <p class="reporte-descripcion">Productos con stock bajo</p>
+                </article>
+
+                <article class="tarjeta-reporte">
+                    <div class="reporte-tarjeta-arriba">
+                        <span class="reporte-icono verde">$</span>
+                        <span class="etiqueta">Valorización</span>
+                    </div>
+                    <p class="reporte-numero" id="valorInventario">$0.00</p>
+                    <p class="reporte-descripcion">Valor del inventario</p>
+                </article>
+
+            </div>
+
+            <!-- FILTROS -->
+            <div class="panel-contenido filtros-reporte">
+                <div>
+                    <label for="filtroStock">Filtrar productos</label>
+                    <select id="filtroStock">
+                        <option value="todos">Todos los productos</option>
+                        <option value="bajo">Solo stock bajo</option>
+                        <option value="normal">Stock normal</option>
+                        <option value="excedido">Stock máximo alcanzado</option>
+                        <option value="sin-stock">Sin existencias</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="buscarProducto">Buscar producto</label>
+                    <input
+                        type="search"
+                        id="buscarProducto"
+                        placeholder="Escribe el nombre del producto...">
+                </div>
+            </div>
+
+            <!-- TABLA -->
+            <div class="panel-contenido">
+                <div class="encabezado-tabla-reporte">
+                    <div>
+                        <h3 class="titulo-panel">Detalle del inventario</h3>
+                        <p class="texto-secundario">
+                            Existencias actuales y valor por producto.
+                        </p>
+                    </div>
+                    <span class="contador-registros" id="contadorProductos">
+                        0 productos
+                    </span>
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table class="tabla-reportes">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Precio unitario</th>
+                                <th>Stock actual</th>
+                                <th>Stock mínimo</th>
+                                <th>Stock máximo</th>
+                                <th>Valor total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tablaInventario">
+                            <tr>
+                                <td colspan="8" class="tabla-vacia">
+                                    Cargando productos...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="nota-tabla" id="fechaReporte">
+                    El reporte se actualizará al consultar el servicio.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- REPORTE DE COMPRAS -->
+        <section class="contenido-reporte oculto" id="reporteCompras">
+
+            <div class="titulo-reporte">
+                <div>
+                    <p class="sobrelinea">ABASTECIMIENTO</p>
+                    <h2>Reporte de compras</h2>
+                    <p class="texto-secundario">
+                        Consulta las compras realizadas a proveedores.
+                    </p>
+                </div>
+            </div>
+
+            <div class="panel-contenido compras-pendiente">
+                <div class="compras-icono">▣</div>
+                <h3>Reporte de compras</h3>
+                <p>
+                    Aquí se mostrarán las órdenes de compra, proveedores,
+                    fechas, productos, cantidades y costos.
+                </p>
+                <span class="estado-reporte-pendiente">
+                    Pendiente de conexión
+                </span>
+                <p class="nota-tabla">
+                    Este reporte se conectará al microservicio de compras
+                    cuando definamos su endpoint.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="../js/reportes.js"></script>
+</body>
+</html>

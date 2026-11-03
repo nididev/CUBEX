@@ -87,8 +87,8 @@
         </a>
 
             <a href="#reportes" class="nav-enlace">
-                <span class="nav-icono">▥</span>Reportes
-            </a>
+    <span class="nav-icono">▥</span>Reportes
+</a>
 
         </nav>
 
@@ -266,61 +266,17 @@
 
 
         <!-- INVENTARIO -->
-        <section class="vista" id="inventario">
+        <!-- INVENTARIO -->
+<section class="vista" id="inventario">
 
-            <div class="encabezado-seccion">
-                <div>
-                    <p class="sobrelinea">CONTROL DE EXISTENCIAS</p>
-                    <h2>Inventario</h2>
-                    <p class="texto-secundario">
-                        Consulta existencias y niveles de stock.
-                    </p>
-                </div>
-            </div>
+    <iframe
+        src="pages/inventario.html"
+        title="Control de inventario CUBEX"
+        class="iframe-productos"
+        scrolling="no">
+    </iframe>
 
-            <div class="panel-contenido">
-
-                <div class="alerta-inventario">
-                    <span class="alerta-icono">!</span>
-                    <div>
-                        <strong>Control de stock mínimo y máximo</strong>
-                        <p>
-                            Aquí aparecerán alertas de productos con existencias bajas o altas para facilitar la reposición y las promociones.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="tabla-contenedor">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Existencias</th>
-                                <th>Stock mínimo</th>
-                                <th>Stock máximo</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>Cubo Rubik 3x3</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td><span class="estado pendiente">Por consultar</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <p class="nota-tabla">
-                    La información se obtendrá del microservicio de inventario.
-                </p>
-
-            </div>
-
-        </section>
+</section>
 
 
         <!-- USUARIOS Y ROLES -->
@@ -983,65 +939,17 @@
 </section>
 
 
-        <!-- REPORTES -->
-        <section class="vista" id="reportes">
+       <!-- REPORTES -->
+<section class="vista" id="reportes">
 
-            <div class="encabezado-seccion">
-                <div>
-                    <p class="sobrelinea">INFORMACIÓN</p>
-                    <h2>Reportes</h2>
-                    <p class="texto-secundario">Consulta información resumida de las operaciones de la tienda.</p>
-                </div>
-            </div>
+    <iframe
+        src="pages/reportes.html"
+        title="Reportes CUBEX"
+        class="iframe-productos"
+        scrolling="no">
+    </iframe>
 
-            <div class="reportes-grid">
-
-                <article class="reporte">
-                    <span class="reporte-icono azul">▤</span>
-                    <h3>Reporte de inventario</h3>
-                    <p>Productos, precios y cantidades disponibles.</p>
-                    <span class="reporte-estado">Pendiente de conexión</span>
-                </article>
-
-                <article class="reporte">
-                    <span class="reporte-icono amarillo">▣</span>
-                    <h3>Reporte de compras</h3>
-                    <p>Fechas, proveedores, cantidades y costos.</p>
-                    <span class="reporte-estado">Pendiente de conexión</span>
-                </article>
-
-                <article class="reporte">
-                    <span class="reporte-icono rojo">▤</span>
-                    <h3>Reporte de pedidos</h3>
-                    <p>Pedidos de clientes, fechas, importes y estados.</p>
-                    <span class="reporte-estado">Pendiente de conexión</span>
-                </article>
-
-                <article class="reporte">
-                    <span class="reporte-icono verde">➜</span>
-                    <h3>Reporte de envíos</h3>
-                    <p>Envíos, guías y validaciones de entrega.</p>
-                    <span class="reporte-estado">Pendiente de conexión</span>
-                </article>
-
-                <article class="reporte">
-                    <span class="reporte-icono azul">◇</span>
-                    <h3>Reporte de garantías</h3>
-                    <p>Solicitudes recibidas, aprobadas, rechazadas y resueltas.</p>
-                    <span class="reporte-estado">Pendiente de conexión</span>
-                </article>
-
-                <article class="reporte">
-                    <span class="reporte-icono rojo">↩</span>
-                    <h3>Reporte de devoluciones</h3>
-                    <p>Solicitudes, motivos, estados y resoluciones.</p>
-                    <span class="reporte-estado">Pendiente de conexión</span>
-                </article>
-
-            </div>
-
-        </section>
-
+</section>
 
         <!-- PIE -->
         <footer class="pie-contenido">

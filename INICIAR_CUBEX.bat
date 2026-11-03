@@ -24,6 +24,9 @@ start "CUBEX - Microservicio Inventario" cmd /k "cd /d "%~dp0inventario-service-
 REM Iniciar microservicio de comentarios y resenas
 start "CUBEX - Comentarios y Resenas" cmd /k "cd /d "%~dp0comentarios-resenas-service" && node src/server.js"
 
+REM Iniciar microservicio de reportes de inventario
+start "CUBEX - Reportes de Inventario" cmd /k "cd /d ""%~dp0Inventario"" && npm run dev"
+
 REM Iniciar servidor web
 start "CUBEX - Pagina Web" cmd /k "cd /d "%~dp0" && py -m http.server 5500 --bind 127.0.0.1"
 
