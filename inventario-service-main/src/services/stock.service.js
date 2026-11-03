@@ -1,3 +1,4 @@
+
 const pool = require('../config/database');
 
 // Consultar todos los productos y sus existencias
@@ -10,10 +11,15 @@ const obtenerInventario = async () => {
             p.imagen,
             s.stock_actual,
             s.stock_minimo,
-            s.stock_maximo
+            s.stock_maximo,
+            o.activa AS oferta_activa,
+            o.porcentaje_descuento,
+            o.precio_oferta
         FROM productos p
         LEFT JOIN stock s
             ON p.id = s.id_producto
+        LEFT JOIN ofertas o
+            ON p.id = o.id_producto
         ORDER BY p.nombre ASC
     `);
 
@@ -46,6 +52,7 @@ const guardarStock = async (
     stockMinimo,
     stockMaximo
 ) => {
+    // Guardar las existencias y límites
     await pool.query(`
         INSERT INTO stock (
             id_producto,
@@ -64,6 +71,55 @@ const guardarStock = async (
         stockMinimo,
         stockMaximo
     ]);
+
+    // Consultar si el producto tiene una oferta activa
+    const [ofertas] = await pool.query(`
+        SELECT activa
+        FROM ofertas
+        WHERE id_producto = ?
+    `, [idProducto]);
+
+    if (ofertas.length > 0 && ofertas[0].activa) {
+        const actual = Number(stockActual);
+        const maximo = Number(stockMaximo);
+
+        // Si baja del 80% del máximo, desactivar la oferta
+        if (maximo <= 0 || actual < maximo * 0.8) {
+            await pool.query(`
+                UPDATE ofertas
+                SET activa = FALSE
+                WHERE id_producto = ?
+            `, [idProducto]);
+
+        } else {
+            // Si sigue en nivel alto, actualizar el descuento
+            const porcentaje = actual >= maximo ? 20 : 10;
+
+            const [productos] = await pool.query(
+                'SELECT precio FROM productos WHERE id = ?',
+                [idProducto]
+            );
+
+            if (productos.length > 0) {
+                const precioOriginal = Number(productos[0].precio);
+
+                const precioOferta = Number(
+                    (precioOriginal * (1 - porcentaje / 100)).toFixed(2)
+                );
+
+                await pool.query(`
+                    UPDATE ofertas
+                    SET porcentaje_descuento = ?,
+                        precio_oferta = ?
+                    WHERE id_producto = ?
+                `, [
+                    porcentaje,
+                    precioOferta,
+                    idProducto
+                ]);
+            }
+        }
+    }
 
     return obtenerPorId(idProducto);
 };

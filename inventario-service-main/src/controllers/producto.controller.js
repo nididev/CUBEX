@@ -1,7 +1,7 @@
 
 const productoService = require('../services/producto.service');
 
-// Obtener todos los productos
+// Obtener todos los productos con sus precios y ofertas
 const obtenerProductos = async (req, res) => {
     try {
         const productos = await productoService.obtenerTodos();
@@ -22,7 +22,7 @@ const obtenerProductos = async (req, res) => {
     }
 };
 
-// Obtener un producto por su ID
+// Obtener un producto por su ID con información de oferta
 const obtenerProductoPorId = async (req, res) => {
     try {
         const { id } = req.params;

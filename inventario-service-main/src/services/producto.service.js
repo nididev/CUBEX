@@ -2,13 +2,30 @@
 const pool = require('../config/database');
 
 const obtenerTodos = async () => {
-    const [productos] = await pool.query(
-        'SELECT * FROM productos'
-    );
+    const [productos] = await pool.query(`
+        SELECT
+            p.*,
+            p.precio AS precio_original,
+            CASE
+                WHEN o.activa = TRUE THEN o.precio_oferta
+                ELSE p.precio
+            END AS precio_mostrar,
+            CASE
+                WHEN o.activa = TRUE THEN TRUE
+                ELSE FALSE
+            END AS oferta_activa,
+            CASE
+                WHEN o.activa = TRUE THEN o.porcentaje_descuento
+                ELSE 0
+            END AS porcentaje_descuento
+        FROM productos p
+        LEFT JOIN ofertas o
+            ON p.id = o.id_producto
+        ORDER BY p.id DESC
+    `);
 
     return productos;
 };
-
 const obtenerPorId = async (id) => {
     const [productos] = await pool.query(
         'SELECT * FROM productos WHERE id = ?',
