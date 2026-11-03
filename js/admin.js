@@ -345,18 +345,59 @@ document.addEventListener("DOMContentLoaded", () => {
     // 7. NAVEGACIÓN
     // =====================================
 
+   
+    // =====================================
+    // 7. NAVEGACIÓN ENTRE SECCIONES
+    // =====================================
+
     const enlaces = document.querySelectorAll(".nav-enlace");
     const secciones = document.querySelectorAll(".vista");
 
-    function marcarEnlaceActivo(id) {
+    function mostrarSeccion(id) {
+
+        let seccionEncontrada = false;
+
+        secciones.forEach(seccion => {
+
+            if (seccion.id === id) {
+                seccion.style.display = "block";
+                seccionEncontrada = true;
+            } else {
+                seccion.style.display = "none";
+            }
+
+        });
+
+        // Si el apartado no existe, mostrar el resumen
+        if (!seccionEncontrada) {
+            id = "resumen";
+
+            secciones.forEach(seccion => {
+                seccion.style.display =
+                    seccion.id === "resumen" ? "block" : "none";
+            });
+        }
+
+        // Marcar enlace activo
         enlaces.forEach(enlace => {
             enlace.classList.toggle(
                 "activo",
                 enlace.getAttribute("href") === "#" + id
             );
         });
+
+        // Cambiar dirección y volver al inicio
+        if (window.location.hash !== "#" + id) {
+            history.replaceState(null, "", "#" + id);
+        }
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
+    // Navegación al hacer clic
     enlaces.forEach(enlace => {
 
         if (enlace.id === "cerrarSesion") return;
@@ -365,37 +406,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const destino = enlace.getAttribute("href");
 
-            if (destino?.startsWith("#")) {
+            if (destino && destino.startsWith("#")) {
                 evento.preventDefault();
 
-                marcarEnlaceActivo(destino.substring(1));
-                window.location.hash = destino.substring(1);
+                mostrarSeccion(destino.substring(1));
             }
+
         });
     });
 
+    // Mostrar sección al cambiar el hash
     window.addEventListener("hashchange", () => {
         const id = window.location.hash.substring(1) || "resumen";
-        marcarEnlaceActivo(id);
+        mostrarSeccion(id);
     });
 
-    if ("IntersectionObserver" in window) {
-
-        const observador = new IntersectionObserver(entradas => {
-            entradas.forEach(entrada => {
-                if (entrada.isIntersecting) {
-                    marcarEnlaceActivo(entrada.target.id);
-                }
-            });
-        }, {
-            rootMargin: "-20% 0px -65% 0px",
-            threshold: 0
-        });
-
-        secciones.forEach(seccion => observador.observe(seccion));
-    }
-
-    marcarEnlaceActivo(window.location.hash.substring(1) || "resumen");
+    // Mostrar apartado inicial
+    mostrarSeccion(
+        window.location.hash.substring(1) || "resumen"
+    );
 
 
     // =====================================

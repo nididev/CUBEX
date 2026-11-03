@@ -6,212 +6,7 @@
     <title>CUBEX | Panel de administrador</title>
     <link rel="stylesheet" href="css/admin.css">
 
-    <style>
-        /* PERFIL DEL ADMINISTRADOR */
-        .perfil-admin {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 22px 8px;
-            border: none;
-            border-bottom: 1px solid #303b4d;
-            background: transparent;
-            color: #f5f7fa;
-            text-align: left;
-            cursor: pointer;
-        }
 
-        .perfil-admin:hover {
-            background: #171f2e;
-            border-radius: 10px;
-        }
-
-        .avatar-vacio {
-            width: 45px;
-            height: 45px;
-            min-width: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #ef233c;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            border: none;
-        }
-
-        .datos-perfil {
-            min-width: 0;
-        }
-
-        .datos-perfil h3 {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .datos-perfil p {
-            font-size: 12px;
-            color: #aab7c4;
-            overflow-wrap: anywhere;
-        }
-
-        /* BOTÓN CERRAR SESIÓN */
-        .acciones-superiores {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .boton-cerrar-sesion {
-            padding: 11px 17px;
-            border: 1px solid #ef233c;
-            border-radius: 9px;
-            background: transparent;
-            color: #ef233c;
-            cursor: pointer;
-            font-weight: 600;
-            transition: .2s;
-        }
-
-        .boton-cerrar-sesion:hover {
-            background: #ef233c;
-            color: white;
-        }
-
-        /* ELEMENTO ACTIVO DEL MENÚ */
-        .nav-enlace {
-            transition: background .2s, color .2s, border .2s;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-enlace.activo {
-            background: #172b45;
-            color: #087cfc;
-            border-left: 3px solid #087cfc;
-            font-weight: bold;
-        }
-
-        .nav-enlace.activo .nav-icono {
-            color: #087cfc;
-        }
-
-        /* VENTANA DE PERFIL */
-        .modal-perfil {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(0, 0, 0, .75);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-perfil.mostrar {
-            display: flex;
-        }
-
-        .contenido-modal-perfil {
-            width: 100%;
-            max-width: 430px;
-            padding: 30px;
-            border: 1px solid #303b4d;
-            border-radius: 18px;
-            background: #171f2e;
-            color: #f5f7fa;
-            position: relative;
-            animation: aparecer .2s ease;
-        }
-
-        @keyframes aparecer {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .cerrar-modal {
-            position: absolute;
-            top: 15px;
-            right: 18px;
-            border: none;
-            background: transparent;
-            color: #aab7c4;
-            font-size: 25px;
-            cursor: pointer;
-        }
-
-        .perfil-modal-avatar {
-            width: 75px;
-            height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            background: #ef233c;
-            color: white;
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .contenido-modal-perfil h2 {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .subtitulo-modal {
-            text-align: center;
-            color: #aab7c4;
-            margin-bottom: 25px;
-        }
-
-        .dato-modal {
-            padding: 13px 0;
-            border-bottom: 1px solid #303b4d;
-        }
-
-        .dato-modal span {
-            display: block;
-            margin-bottom: 5px;
-            color: #aab7c4;
-            font-size: 12px;
-        }
-
-        .dato-modal strong {
-            font-size: 14px;
-            overflow-wrap: anywhere;
-        }
-
-        .boton-modal-cerrar {
-            width: 100%;
-            margin-top: 22px;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #087cfc;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        @media (max-width: 600px) {
-            .acciones-superiores {
-                flex-wrap: wrap;
-                justify-content: flex-end;
-            }
-
-            .estado-sistema {
-                display: none;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -288,8 +83,8 @@
             </a>
 
             <a href="#resenas" class="nav-enlace">
-                <span class="nav-icono">☆</span>Reseñas
-            </a>
+            <span class="nav-icono">☆</span>Reseñas
+        </a>
 
             <a href="#reportes" class="nav-enlace">
                 <span class="nav-icono">▥</span>Reportes
@@ -457,140 +252,15 @@
 
 
         <!-- PRODUCTOS -->
+        <!-- PRODUCTOS -->
         <section class="vista" id="productos">
 
-            <div class="encabezado-seccion">
-                <div>
-                    <p class="sobrelinea">CATÁLOGO</p>
-                    <h2>Gestión de productos</h2>
-                    <p class="texto-secundario">
-                        Consulta y administra los productos de CUBEX.
-                    </p>
-                </div>
-
-                <a href="#formulario-producto" class="boton-principal">
-                    + Registrar producto
-                </a>
-            </div>
-
-            <div class="panel-contenido">
-
-                <div class="barra-tabla">
-                    <h3>Productos registrados</h3>
-                    <span class="etiqueta">Vista de ejemplo</span>
-                </div>
-
-                <div class="tabla-contenedor">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Tipo</th>
-                                <th>Precio</th>
-                                <th>Existencias</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>Cubo Rubik 3x3</td>
-                                <td>3x3</td>
-                                <td>$299.00</td>
-                                <td>--</td>
-                                <td><span class="estado pendiente">Por consultar</span></td>
-                            </tr>
-
-                            <tr>
-                                <td>Cubo Rubik 2x2</td>
-                                <td>2x2</td>
-                                <td>$199.00</td>
-                                <td>--</td>
-                                <td><span class="estado pendiente">Por consultar</span></td>
-                            </tr>
-
-                            <tr>
-                                <td>Cubo Rubik 4x4</td>
-                                <td>4x4</td>
-                                <td>$499.00</td>
-                                <td>--</td>
-                                <td><span class="estado pendiente">Por consultar</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <p class="nota-tabla">
-                    Los registros son ilustrativos. Los datos reales se cargarán desde el microservicio de inventario.
-                </p>
-
-            </div>
-
-            <div class="encabezado-seccion espacio-arriba" id="formulario-producto">
-                <div>
-                    <p class="sobrelinea">CATÁLOGO</p>
-                    <h2>Registrar producto</h2>
-                </div>
-            </div>
-
-            <div class="panel-contenido">
-                <form class="formulario">
-
-                    <div class="campo">
-                        <label for="nombre">Nombre del producto</label>
-                        <input id="nombre" type="text" placeholder="Ej. Cubo Rubik 3x3">
-                    </div>
-
-                    <div class="campo">
-                        <label for="tipo">Tipo de cubo</label>
-                        <select id="tipo">
-                            <option value="">Selecciona un tipo</option>
-                            <option>2x2</option>
-                            <option>3x3</option>
-                            <option>4x4</option>
-                            <option>5x5</option>
-                            <option>Pyraminx</option>
-                            <option>Otro</option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label for="marca">Marca</label>
-                        <input id="marca" type="text" placeholder="Marca del cubo">
-                    </div>
-
-                    <div class="campo">
-                        <label for="precio">Precio de venta (MXN)</label>
-                        <input id="precio" type="number" min="0" step="0.01" placeholder="0.00">
-                    </div>
-
-                    <div class="campo campo-completo">
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" rows="4" placeholder="Descripción del producto"></textarea>
-                    </div>
-
-                    <div class="campo">
-                        <label for="stock">Existencias iniciales</label>
-                        <input id="stock" type="number" min="0" placeholder="Cantidad">
-                    </div>
-
-                    <div class="campo">
-                        <label>Imagen del producto</label>
-                        <div class="cuadro-imagen">
-                            <span class="icono-imagen">＋</span>
-                            <p>Espacio reservado para la imagen</p>
-                        </div>
-                    </div>
-
-                    <div class="formulario-acciones campo-completo">
-                        <button type="reset" class="boton-secundario">Limpiar campos</button>
-                        <button type="button" class="boton-principal">Registrar producto</button>
-                    </div>
-
-                </form>
-
-                <p class="nota-tabla">Formulario visual; todavía no guarda información.</p>
-            </div>
+            <iframe
+                src="pages/productos.html"
+                title="Gestión de productos CUBEX"
+                class="iframe-productos"
+                scrolling="no">
+            </iframe>
 
         </section>
 
@@ -1299,46 +969,18 @@
         </section>
 
 
-        <!-- RESEÑAS -->
-        <section class="vista" id="resenas">
+                <!-- RESEÑAS -->
+<!-- RESEÑAS -->
+<section class="vista" id="resenas">
 
-            <div class="encabezado-seccion">
-                <div>
-                    <p class="sobrelinea">OPINIONES</p>
-                    <h2>Reseñas de clientes</h2>
-                    <p class="texto-secundario">Consulta calificaciones y comentarios de los productos.</p>
-                </div>
-            </div>
+    <iframe
+        src="pages/comentarios.html"
+        title="Gestión de reseñas CUBEX"
+        class="iframe-productos"
+        scrolling="no">
+    </iframe>
 
-            <div class="panel-contenido">
-                <div class="tabla-contenedor">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Cliente</th>
-                                <th>Calificación</th>
-                                <th>Comentario</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>--</td>
-                                <td>Las reseñas aparecerán aquí</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td>--</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <p class="nota-tabla">Las reseñas se cargarán desde el servicio correspondiente.</p>
-            </div>
-
-        </section>
+</section>
 
 
         <!-- REPORTES -->
@@ -1452,8 +1094,84 @@
     </div>
 
 </div>
+<!-- MODAL DE CONFIRMACIÓN PARA ELIMINAR RESEÑA -->
+<div id="modalEliminarResena">
 
+    <div class="modal-eliminar-contenido">
+
+        <div class="icono-eliminar">!</div>
+
+        <h2>Eliminar reseña</h2>
+
+        <p>
+            ¿Estás seguro de que deseas eliminar esta reseña?
+            Esta acción no se puede deshacer.
+        </p>
+
+        <div class="acciones-eliminar">
+
+            <button
+                type="button"
+                class="btn-cancelar"
+                id="cancelarEliminarResena">
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="btn-confirmar"
+                id="confirmarEliminarResena">
+                Sí, eliminar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+/* CONFIRMACIÓN DE ELIMINACIÓN PARA EL IFRAME */
+window.confirmarEliminacionResena = function () {
+
+    return new Promise((resolve) => {
+
+        const modal = document.getElementById("modalEliminarResena");
+        const confirmar = document.getElementById("confirmarEliminarResena");
+        const cancelar = document.getElementById("cancelarEliminarResena");
+
+        if (!modal || !confirmar || !cancelar) {
+            resolve(false);
+            return;
+        }
+
+        modal.classList.add("activo");
+
+        function cerrar(resultado) {
+
+            modal.classList.remove("activo");
+
+            confirmar.removeEventListener("click", aceptar);
+            cancelar.removeEventListener("click", rechazar);
+
+            resolve(resultado);
+        }
+
+        function aceptar() {
+            cerrar(true);
+        }
+
+        function rechazar() {
+            cerrar(false);
+        }
+
+        confirmar.addEventListener("click", aceptar);
+        cancelar.addEventListener("click", rechazar);
+
+    });
+
+};
+</script>
 <script src="js/admin.js"></script>
-
+<script src="js/comentarios.js"></script>
 </body>
 </html>

@@ -229,31 +229,59 @@
         </section>
 
         <!-- COMENTARIOS Y RESEÑAS -->
-        <section class="ventana" id="resenas">
+       
+<!-- COMENTARIOS Y RESEÑAS -->
+<section class="ventana" id="resenas">
 
-            <div class="titulo-seccion">
-                <span class="etiqueta">OPINIONES DE CLIENTES</span>
-                <h2>Comentarios y reseñas</h2>
-                <p>Consulta las valoraciones y opiniones de los compradores.</p>
+    <div class="titulo-seccion">
+        <span class="etiqueta">OPINIONES DE CLIENTES</span>
+        <h2>Comentarios y reseñas</h2>
+        <p>Consulta las valoraciones y opiniones de los compradores.</p>
+    </div>
+
+    <section class="panel">
+
+        <div class="panel-titulo">
+            <div>
+                <h2>Reseñas de los clientes</h2>
+                <p>Opiniones compartidas por los compradores de CUBEX.</p>
             </div>
 
-            <section class="panel">
+            <span class="etiqueta" id="totalResenas">
+                Consultando...
+            </span>
+        </div>
 
-                <div class="panel-titulo">
-                    <div>
-                        <h2>Reseñas de los clientes</h2>
-                        <p>Contenido pendiente de conectar al microservicio de reseñas.</p>
-                    </div>
-                </div>
+        <div class="tabla-contenedor">
 
-                <div class="estado-vacio">
-                    <span class="vacio-icono">☆</span>
-                    <h3>No hay reseñas para mostrar</h3>
-                    <p>Las opiniones de los clientes aparecerán aquí.</p>
-                </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cliente</th>
+                        <th>Calificación</th>
+                        <th>Comentario</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
 
-            </section>
-        </section>
+                <tbody id="contenedorResenas">
+                    <tr>
+                        <td colspan="5" class="tabla-vacia">
+                            Cargando reseñas...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <p id="mensajeResenas" class="nota"></p>
+
+    </section>
+
+</section>
+
 
         <footer class="pie-pagina">
             <p>© 2026 CUBEX · Panel del empleado</p>
@@ -342,6 +370,7 @@
          aria-live="polite"></div>
 
     <script src="js/empleado.js"></script>
+    <script src="js/comentarios.js"></script>
 
 </body>
 </html>

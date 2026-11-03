@@ -1078,3 +1078,109 @@ td {
     border-color: #e53935 !important;
     opacity: 1 !important;
 }
+/* CONTENEDOR DE RESEÑAS */
+.seccion-resenas {
+    width: 100%;
+    min-width: 0;
+}
+
+.seccion-resenas h2 {
+    margin-bottom: 12px;
+}
+
+.seccion-resenas p {
+    margin-bottom: 25px;
+}
+
+/* IFRAME DE RESEÑAS */
+.iframe-resenas {
+    display: block;
+    width: 100%;
+    min-height: 650px;
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* Vista integrada dentro del panel del empleado */
+body.modo-empleado {
+    padding: 0;
+    background: transparent;
+}
+
+body.modo-empleado .encabezado {
+    display: none;
+}
+
+body.modo-empleado .panel-contenido {
+    border: none;
+    padding: 0;
+    background: transparent;
+}
+
+body.modo-empleado .barra-tabla {
+    margin-bottom: 20px;
+}
+
+body.modo-empleado .tabla-contenedor {
+    width: 100%;
+}
+
+body.modo-empleado .mensaje {
+    margin-top: 15px;
+}
+
+#resenas {
+    width: 100%;
+    min-width: 0;
+}
+
+#resenas iframe {
+    display: block;
+    width: 100%;
+    height: 650px;
+    border: none;
+    overflow: auto;
+}
+
+/* TABLA DE RESEÑAS DEL EMPLEADO */
+#resenas .tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#resenas table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+}
+
+#resenas th {
+    color: var(--amarillo);
+    text-align: left;
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 12px;
+}
+
+#resenas td {
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 12px;
+}
+
+#resenas .calificacion {
+    color: var(--amarillo);
+    white-space: nowrap;
+}   
+
+/* Encabezado fijo al desplazarse */
+.encabezado-pagina {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #111827;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

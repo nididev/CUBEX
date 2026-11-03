@@ -1,12 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>CUBEX | Gira, piensa y conquista</title>
+
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
     <!-- ENCABEZADO -->
@@ -25,6 +28,7 @@
                 placeholder="Buscar cubos..."
                 aria-label="Buscar cubos"
             >
+
             <button type="button" id="btnBuscar" aria-label="Buscar">
                 ⌕
             </button>
@@ -46,6 +50,7 @@
 
             <!-- USUARIOS AUTENTICADOS -->
             <div id="opcionesUsuario" hidden>
+
                 <span class="nombre-usuario" id="nombreUsuario">
                     Usuario
                 </span>
@@ -57,6 +62,7 @@
                 <button type="button" id="cerrarSesion">
                     Cerrar sesión
                 </button>
+
             </div>
 
             <!-- CARRITO -->
@@ -70,21 +76,28 @@
             </button>
 
         </div>
+
     </header>
+
 
     <!-- MENÚ DE NAVEGACIÓN -->
     <nav class="menu" aria-label="Navegación principal">
+
         <a href="index.html" class="activo">Inicio</a>
         <a href="#productos">Cubos</a>
         <a href="#contacto">Contacto</a>
+
     </nav>
+
 
     <!-- CONTENIDO PRINCIPAL -->
     <main>
 
         <!-- PRESENTACIÓN -->
-        <section class="hero">
+        <section class="hero" id="inicio">
+
             <div class="hero-contenido">
+
                 <span class="etiqueta">DESAFÍA TU MENTE</span>
 
                 <h1>
@@ -100,196 +113,351 @@
                 <a href="#productos" class="btn-principal">
                     Explorar productos
                 </a>
+
             </div>
 
             <div class="hero-figura" aria-hidden="true">
+
                 <div class="cubo">
                     <span></span><span></span><span></span>
                     <span></span><span></span><span></span>
                     <span></span><span></span><span></span>
                 </div>
+
             </div>
+
         </section>
 
-        <!-- PRODUCTOS -->
+
+        <!-- CATÁLOGO DE PRODUCTOS -->
         <section class="productos" id="productos">
 
             <div class="titulo-seccion">
+
                 <span class="etiqueta">NUESTRA COLECCIÓN</span>
+
                 <h2>Encuentra tu próximo desafío</h2>
-                <p>Explora nuestros cubos más populares.</p>
-            </div>
 
-            <div class="productos-grid">
-
-                <!-- PRODUCTO 1 -->
-                <article class="producto">
-                    <div class="producto-imagen imagen-rojo">
-                        <span class="producto-icono">🧩</span>
-                    </div>
-
-                    <div class="producto-info">
-                        <span class="categoria">CLÁSICO</span>
-                        <h3>Cubo 3x3 Clásico</h3>
-                        <p>El desafío perfecto para comenzar.</p>
-
-                        <div class="producto-pie">
-                            <span class="precio">$149.00</span>
-                            <button
-                                class="btn-agregar"
-                                type="button"
-                                data-id="1"
-                                data-nombre="Cubo 3x3 Clásico"
-                                data-precio="149"
-                            >
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- PRODUCTO 2 -->
-                <article class="producto">
-                    <div class="producto-imagen imagen-azul">
-                        <span class="producto-icono">🧊</span>
-                    </div>
-
-                    <div class="producto-info">
-                        <span class="categoria">VELOCIDAD</span>
-                        <h3>Cubo Speed 3x3</h3>
-                        <p>Diseñado para giros rápidos y precisos.</p>
-
-                        <div class="producto-pie">
-                            <span class="precio">$249.00</span>
-                            <button
-                                class="btn-agregar"
-                                type="button"
-                                data-id="2"
-                                data-nombre="Cubo Speed 3x3"
-                                data-precio="249"
-                            >
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- PRODUCTO 3 -->
-                <article class="producto">
-                    <div class="producto-imagen imagen-amarillo">
-                        <span class="producto-icono">🟨</span>
-                    </div>
-
-                    <div class="producto-info">
-                        <span class="categoria">AVANZADO</span>
-                        <h3>Cubo 4x4 Pro</h3>
-                        <p>Un reto adicional para los más hábiles.</p>
-
-                        <div class="producto-pie">
-                            <span class="precio">$329.00</span>
-                            <button
-                                class="btn-agregar"
-                                type="button"
-                                data-id="3"
-                                data-nombre="Cubo 4x4 Pro"
-                                data-precio="329"
-                            >
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- PRODUCTO 4 -->
-                <article class="producto">
-                    <div class="producto-imagen imagen-verde">
-                        <span class="producto-icono">🧠</span>
-                    </div>
-
-                    <div class="producto-info">
-                        <span class="categoria">ESPECIAL</span>
-                        <h3>Cubo Pyraminx</h3>
-                        <p>Una forma diferente de poner a prueba tu lógica.</p>
-
-                        <div class="producto-pie">
-                            <span class="precio">$199.00</span>
-                            <button
-                                class="btn-agregar"
-                                type="button"
-                                data-id="4"
-                                data-nombre="Cubo Pyraminx"
-                                data-precio="199"
-                            >
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                </article>
+                <p>
+                    Explora nuestros cubos disponibles.
+                </p>
 
             </div>
+
+            <!-- PRODUCTOS CARGADOS DESDE EL INVENTARIO -->
+            <div class="productos-grid" id="catalogoProductos">
+
+                <p class="mensaje-catalogo">
+                    Cargando productos...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- DETALLE DEL PRODUCTO -->
+        <section id="detalleProducto" class="detalle-producto" hidden>
+
+            <!-- BOTÓN PARA REGRESAR -->
+            <button
+                type="button"
+                id="btnRegresarCatalogo"
+                class="btn-regresar-catalogo"
+            >
+                ← Regresar al catálogo
+            </button>
+
+
+            <div class="detalle-contenido">
+
+                <!-- COLUMNA IZQUIERDA: PRODUCTO -->
+                <section class="detalle-producto-principal">
+
+                    <div class="detalle-producto-imagen">
+
+                        <img
+                            id="detalleImagen"
+                            src=""
+                            alt="Imagen del producto"
+                        >
+
+                    </div>
+
+                    <div class="detalle-producto-info">
+
+                        <span class="etiqueta">
+                            PRODUCTO CUBEX
+                        </span>
+
+                        <h2 id="detalleNombre"></h2>
+
+                        <p id="detalleDescripcion"></p>
+
+                        <strong
+                            id="detallePrecio"
+                            class="detalle-precio"
+                        ></strong>
+
+                        <button
+                            type="button"
+                            id="btnAgregarDetalle"
+                        >
+                            Agregar al carrito
+                        </button>
+
+                        <p id="mensajeCarrito"></p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- COLUMNA DERECHA: RESEÑAS -->
+                <section class="seccion-resenas">
+
+                    <div class="titulo-seccion">
+
+                        <span class="etiqueta">
+                            OPINIONES DE CLIENTES
+                        </span>
+
+                        <h2>Comentarios y reseñas</h2>
+
+                        <p>
+                            Conoce las experiencias de otros compradores.
+                        </p>
+
+                    </div>
+
+
+                    <!-- LISTA DE RESEÑAS -->
+                    <div
+                        id="listaResenas"
+                        class="contenedor-resenas"
+                    >
+
+                        <p class="mensaje-catalogo">
+                            Las reseñas de este producto aparecerán aquí.
+                        </p>
+
+                    </div>
+
+
+                    <!-- FORMULARIO DE RESEÑAS -->
+                    <form id="formularioResena">
+
+                        <h3>Escribe tu opinión</h3>
+
+                        <label for="calificacionResena">
+                            Calificación
+                        </label>
+
+                        <select id="calificacionResena" required>
+
+                            <option value="5">
+                                ★★★★★ - Excelente
+                            </option>
+
+                            <option value="4">
+                                ★★★★ - Muy bueno
+                            </option>
+
+                            <option value="3">
+                                ★★★ - Bueno
+                            </option>
+
+                            <option value="2">
+                                ★★ - Regular
+                            </option>
+
+                            <option value="1">
+                                ★ - Malo
+                            </option>
+
+                        </select>
+
+
+                        <label for="comentarioResena">
+                            Comentario
+                        </label>
+
+                        <textarea
+                            id="comentarioResena"
+                            placeholder="Comparte tu experiencia con este producto..."
+                            required
+                        ></textarea>
+
+
+                        <button
+                            type="submit"
+                            class="btn-enviar-resena"
+                        >
+                            Publicar comentario
+                        </button>
+
+                        <p
+                            id="mensajeResena"
+                            class="mensaje-resena"
+                            role="status"
+                            aria-live="polite"
+                        ></p>
+
+                    </form>
+
+                </section>
+
+            </div>
+
         </section>
 
     </main>
 
+
     <!-- PIE DE PÁGINA -->
     <footer class="footer" id="contacto">
+
         <div>
+
             <h2>CUBEX</h2>
+
             <p>Gira, piensa y conquista.</p>
+
         </div>
 
         <div class="footer-info">
+
             <p>Tu próximo desafío comienza aquí.</p>
-            <p>&copy; 2026 CUBEX. Todos los derechos reservados.</p>
+
+            <p>
+                &copy; 2026 CUBEX. Todos los derechos reservados.
+            </p>
+
         </div>
+
     </footer>
 
- 
 
-    <!-- SESIÓN DEL CLIENTE -->
-    <script>
-        (() => {
-            const token = sessionStorage.getItem("cubex_token");
-            const usuarioGuardado = sessionStorage.getItem("cubex_usuario");
+<!-- CONTROL DE SESIÓN DEL CLIENTE -->
+<script>
+    (() => {
 
-            const opcionesInvitado =
-                document.getElementById("opcionesInvitado");
-            const opcionesUsuario =
-                document.getElementById("opcionesUsuario");
-            const nombreUsuario =
-                document.getElementById("nombreUsuario");
-            const botonCerrarSesion =
-                document.getElementById("cerrarSesion");
+        const token = sessionStorage.getItem("cubex_token");
 
-            let usuario = null;
+        const usuarioGuardado =
+            sessionStorage.getItem("cubex_usuario");
 
-            try {
-                usuario = usuarioGuardado
-                    ? JSON.parse(usuarioGuardado)
-                    : null;
-            } catch {
-                sessionStorage.removeItem("cubex_usuario");
-            }
+        const opcionesInvitado =
+            document.getElementById("opcionesInvitado");
 
-            if (token && usuario) {
-                opcionesInvitado.hidden = true;
-                opcionesUsuario.hidden = false;
+        const opcionesUsuario =
+            document.getElementById("opcionesUsuario");
 
-                nombreUsuario.textContent =
-                    usuario.nombreUsuario || "Cliente";
-            } else {
-                opcionesInvitado.hidden = false;
-                opcionesUsuario.hidden = true;
-            }
+        const nombreUsuario =
+            document.getElementById("nombreUsuario");
 
-            botonCerrarSesion.addEventListener("click", () => {
-                sessionStorage.removeItem("cubex_token");
-                sessionStorage.removeItem("cubex_usuario");
+        const botonCerrarSesion =
+            document.getElementById("cerrarSesion");
 
-                window.location.href = "login.html";
+        let usuario = null;
+
+        try {
+            usuario = usuarioGuardado
+                ? JSON.parse(usuarioGuardado)
+                : null;
+        } catch {
+            sessionStorage.removeItem("cubex_usuario");
+        }
+
+        if (token && usuario) {
+
+            opcionesInvitado.hidden = true;
+            opcionesUsuario.hidden = false;
+
+            nombreUsuario.textContent =
+                usuario.nombreUsuario || "Cliente";
+
+        } else {
+
+            opcionesInvitado.hidden = false;
+            opcionesUsuario.hidden = true;
+
+        }
+
+        if (botonCerrarSesion) {
+
+            botonCerrarSesion.type = "button";
+
+            botonCerrarSesion.addEventListener("click", (evento) => {
+
+                evento.preventDefault();
+
+                const modal = document.createElement("div");
+
+                modal.className = "modal-cerrar-sesion";
+
+                modal.innerHTML = `
+                    <div class="contenido-cerrar-sesion">
+
+                        <div class="icono-cerrar-sesion">
+                            ↪
+                        </div>
+
+                        <h2>¿Cerrar sesión?</h2>
+
+                        <p>
+                            ¿Estás seguro de que deseas cerrar
+                            tu sesión en CUBEX?
+                        </p>
+
+                        <div class="acciones-cerrar-sesion">
+
+                            <button
+                                type="button"
+                                id="cancelarCerrarSesion">
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                id="confirmarCerrarSesion">
+                                Sí, cerrar sesión
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                document.getElementById("cancelarCerrarSesion")
+                    .addEventListener("click", () => {
+                        modal.remove();
+                    });
+
+                document.getElementById("confirmarCerrarSesion")
+                    .addEventListener("click", () => {
+
+                        sessionStorage.removeItem("cubex_token");
+                        sessionStorage.removeItem("cubex_usuario");
+
+                        window.location.href = "login.html";
+
+                    });
+
             });
-        })();
-    </script>
+
+        }
+
+    })();
+</script>
+
+
+
+    <!-- CATÁLOGO DINÁMICO Y DETALLE -->
+    <script src="js/main.js"></script>
 
 </body>
+
 </html>

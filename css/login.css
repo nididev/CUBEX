@@ -158,3 +158,28 @@ button:hover {
         font-size: 22px;
     }
 }
+
+
+/* BOTÓN CERRAR SESIÓN CUBEX */
+#cerrarSesion {
+    background: transparent;
+    color: #ffcc00;
+    border: 1.5px solid #ffcc00;
+    border-radius: 9px;
+    padding: 11px 17px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+#cerrarSesion:hover {
+    background: #ffcc00;
+    color: #111827;
+    box-shadow: 0 0 14px rgba(255, 204, 0, 0.25);
+    transform: translateY(-2px);
+}
+
+#cerrarSesion:active {
+    transform: scale(0.97);
+}

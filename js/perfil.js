@@ -34,7 +34,6 @@ async function cargarPerfil() {
             );
         }
 
-        // Combinar datos de la API con los guardados en el navegador.
         const usuarioGuardado = JSON.parse(
             sessionStorage.getItem("cubex_usuario") || "{}"
         );
@@ -69,12 +68,7 @@ async function cargarPerfil() {
     } catch (error) {
         mensaje.textContent =
             "No se pudo cargar tu perfil. Verifica la conexión con el servidor.";
+
         console.error("Error al cargar el perfil:", error);
     }
 }
-
-document.getElementById("cerrarSesion").addEventListener("click", () => {
-    sessionStorage.removeItem("cubex_token");
-    sessionStorage.removeItem("cubex_usuario");
-    window.location.replace("login.html");
-});
