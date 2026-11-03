@@ -2897,3 +2897,368 @@ body:has(#detalleProducto:not([hidden])) .menu {
     transform: scale(0.97);
 }
 
+.producto-precio-oferta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin: 12px 0;
+}
+
+.precio-anterior {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+}
+
+.precio-descuento {
+    color: #00d99a;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.etiqueta-descuento {
+    background: #00d99a;
+    color: #101827;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 5px;
+}
+
+
+/* =====================================
+   ENCABEZADO Y NAVBAR FIJOS
+===================================== */
+
+:root {
+    --alto-encabezado: 96px;
+    --alto-menu: 66px;
+}
+
+html {
+    scroll-padding-top: calc(
+        var(--alto-encabezado) + var(--alto-menu) + 15px
+    );
+}
+
+.encabezado {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-encabezado);
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+.menu {
+    position: fixed;
+    top: var(--alto-encabezado);
+    left: 0;
+    width: 100%;
+    height: var(--alto-menu);
+    z-index: 999;
+    box-sizing: border-box;
+}
+
+/* Evita que el contenido quede debajo de las barras */
+body {
+    padding-top: calc(
+        var(--alto-encabezado) + var(--alto-menu)
+    );
+}
+
+/* Ajuste de navegación hacia las secciones */
+#productos,
+#contacto,
+#detalleProducto {
+    scroll-margin-top: calc(
+        var(--alto-encabezado) + var(--alto-menu) + 15px
+    );
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 768px) {
+    :root {
+        --alto-encabezado: 145px;
+        --alto-menu: 58px;
+    }
+
+    .encabezado {
+        height: var(--alto-encabezado);
+        flex-wrap: wrap;
+    }
+}
+
+.contacto-item a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.contacto-item a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* ==============================
+   SECCIÓN DE CONTACTO CUBEX
+============================== */
+
+.contacto-section {
+    background: #111827;
+    padding: 85px 7%;
+    color: #f3f4f6;
+    scroll-margin-top: 150px;
+}
+
+.contacto-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.contacto-encabezado {
+    text-align: center;
+    margin-bottom: 55px;
+}
+
+.contacto-etiqueta {
+    color: #ffcc00;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.contacto-encabezado h2 {
+    font-size: 38px;
+    margin: 15px 0;
+    color: #ffffff;
+}
+
+.contacto-encabezado p {
+    color: #b9c7dc;
+    font-size: 17px;
+}
+
+.contacto-contenido {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 35px;
+    align-items: stretch;
+}
+
+.contacto-info,
+.contacto-formulario {
+    background: #1a2639;
+    border: 1px solid #2b3b53;
+    border-radius: 18px;
+    padding: 38px;
+}
+
+.contacto-info h3,
+.contacto-formulario h3 {
+    font-size: 24px;
+    color: #ffffff;
+    margin: 0 0 15px;
+}
+
+.contacto-info > p,
+.contacto-formulario > p {
+    color: #bdcbe0;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.contacto-dato {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    margin: 28px 0;
+}
+
+.contacto-icono {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 204, 0, 0.12);
+    color: #ffcc00;
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+.contacto-dato h4 {
+    color: #ffffff;
+    margin: 0 0 7px;
+}
+
+.contacto-dato p,
+.contacto-dato a {
+    color: #bdcbe0;
+    margin: 0;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.contacto-dato a:hover {
+    color: #ffcc00;
+}
+
+.contacto-mensaje {
+    margin-top: 35px;
+    padding: 20px;
+    border-left: 4px solid #ffcc00;
+    background: #111d30;
+    border-radius: 8px;
+}
+
+.contacto-mensaje span {
+    color: #ffcc00;
+    font-weight: 700;
+}
+
+.contacto-mensaje p {
+    color: #bdcbe0;
+    margin: 8px 0 0;
+}
+
+.contacto-formulario form {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+
+.campo-contacto {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.campo-contacto label {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.campo-contacto input,
+.campo-contacto textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid #34445e;
+    border-radius: 9px;
+    outline: none;
+    background: #111827;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo-contacto input {
+    height: 49px;
+}
+
+.campo-contacto textarea {
+    resize: vertical;
+    min-height: 130px;
+}
+
+.campo-contacto input::placeholder,
+.campo-contacto textarea::placeholder {
+    color: #8997aa;
+}
+
+.campo-contacto input:focus,
+.campo-contacto textarea:focus {
+    border-color: #0785f9;
+    box-shadow: 0 0 0 3px rgba(7, 133, 249, 0.15);
+}
+
+.btn-contacto {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 9px;
+    background: #ffcc00;
+    color: #101827;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-contacto:hover {
+    background: #ffdb4d;
+    transform: translateY(-2px);
+}
+
+.contacto-nota {
+    color: #8997aa;
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 850px) {
+    .contacto-section {
+        padding: 60px 5%;
+    }
+
+    .contacto-contenido {
+        grid-template-columns: 1fr;
+    }
+
+    .contacto-encabezado h2 {
+        font-size: 30px;
+    }
+
+    .contacto-info,
+    .contacto-formulario {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contacto-encabezado h2 {
+        font-size: 27px;
+    }
+
+    .contacto-info,
+    .contacto-formulario {
+        padding: 20px;
+    }
+}
+
+.mensaje-confirmacion {
+    display: none;
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.mensaje-confirmacion.exito {
+    display: block;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.mensaje-confirmacion.error {
+    display: block;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}

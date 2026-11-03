@@ -1,5 +1,6 @@
 
 const API_INVENTARIO = 'http://localhost:3005/api/stock';
+const API_OFERTAS = 'http://localhost:3005/api/ofertas';
 
 // Elementos del HTML
 const tablaInventario = document.getElementById('tablaInventario');
@@ -14,6 +15,8 @@ let productosInventario = [];
 function mostrarMensaje(texto, tipo = 'exito') {
     const mensaje = document.getElementById('mensajeInventario');
 
+    if (!mensaje) return;
+
     mensaje.textContent = texto;
     mensaje.className = `mensaje ${tipo}`;
 
@@ -23,11 +26,11 @@ function mostrarMensaje(texto, tipo = 'exito') {
     }, 4000);
 }
 
-// Consultar inventario desde el microservicio
+// Consultar inventario
 async function cargarInventario() {
     tablaInventario.innerHTML = `
         <tr>
-            <td colspan="6" class="mensaje-tabla">
+            <td colspan="7" class="mensaje-tabla">
                 Cargando productos...
             </td>
         </tr>
@@ -38,12 +41,14 @@ async function cargarInventario() {
         const resultado = await respuesta.json();
 
         if (!respuesta.ok || !resultado.success) {
-            throw new Error(resultado.message || 'No se pudo consultar el inventario');
+            throw new Error(
+                resultado.message || 'No se pudo consultar el inventario'
+            );
         }
 
         productosInventario = resultado.data || [];
 
-        mostrarInventario(productosInventario);
+        await mostrarInventario(productosInventario);
         actualizarResumen(productosInventario);
 
     } catch (error) {
@@ -51,9 +56,9 @@ async function cargarInventario() {
 
         tablaInventario.innerHTML = `
             <tr>
-                <td colspan="6" class="mensaje-tabla">
-                    No se pudo cargar el inventario. Verifica que el microservicio
-                    esté funcionando en el puerto 3005.
+                <td colspan="7" class="mensaje-tabla">
+                    No se pudo cargar el inventario.
+                    Verifica que el microservicio funcione en el puerto 3005.
                 </td>
             </tr>
         `;
@@ -69,8 +74,10 @@ function obtenerEstado(producto) {
     const minimo = producto.stock_minimo;
     const maximo = producto.stock_maximo;
 
-    if (minimo === null || maximo === null ||
-        minimo === undefined || maximo === undefined) {
+    if (
+        minimo === null || maximo === null ||
+        minimo === undefined || maximo === undefined
+    ) {
         return {
             texto: 'Sin configurar',
             clase: 'sin-configurar'
@@ -97,12 +104,120 @@ function obtenerEstado(producto) {
     };
 }
 
+// Consultar la oferta sugerida
+async function consultarOferta(producto) {
+    const idProducto = Number(producto.id_producto);
+
+    if (!idProducto) {
+        return '<span class="oferta-error">ID no válido</span>';
+    }
+
+    try {
+        const respuesta = await fetch(
+            `${API_OFERTAS}/evaluar-descuento`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    IdProducto: idProducto
+                })
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || !resultado.success) {
+            throw new Error(
+                resultado.message || 'No se pudo evaluar la oferta'
+            );
+        }
+
+        const oferta = resultado.data;
+
+        const porcentaje = Number(oferta.PorcentajeDescuento);
+        const precioOriginal = Number(oferta.PrecioOriginal);
+        const precioFinal = Number(oferta.PrecioFinal);
+
+        // No existe una oferta sugerida
+        if (porcentaje === 0) {
+            return `
+                <div class="oferta-normal">
+                    <span>Sin oferta disponible</span>
+                    <small>Precio normal: $${precioOriginal.toFixed(2)}</small>
+                </div>
+            `;
+        }
+
+        // La oferta ya fue aplicada
+        if (oferta.OfertaActiva) {
+            return `
+                <div class="oferta-disponible">
+                    <strong>${porcentaje}% OFF</strong>
+                    <span>
+                        Antes: $${precioOriginal.toFixed(2)}
+                    </span>
+                    <span>
+                        Oferta sugerida: $${precioFinal.toFixed(2)}
+                    </span>
+                    <span class="oferta-activa">
+                        Oferta activa
+                    </span>
+                    <button
+                        type="button"
+                        class="btn-desactivar-oferta"
+                        data-accion="desactivar"
+                        data-id="${idProducto}">
+                        Desactivar oferta
+                    </button>
+                </div>
+            `;
+        }
+
+        // Hay una sugerencia, pero el administrador todavía no la acepta
+        return `
+            <div class="oferta-disponible">
+                <strong>${porcentaje}% OFF</strong>
+                <span>
+                    Precio original: $${precioOriginal.toFixed(2)}
+                </span>
+                <span>
+                    Precio con oferta: $${precioFinal.toFixed(2)}
+                </span>
+                <span class="oferta-sugerida">
+                    Oferta sugerida
+                </span>
+                <button
+                    type="button"
+                    class="btn-aplicar-oferta"
+                    data-accion="aplicar"
+                    data-id="${idProducto}">
+                    Aplicar oferta
+                </button>
+            </div>
+        `;
+
+    } catch (error) {
+        console.error(
+            `Error al consultar oferta del producto ${idProducto}:`,
+            error
+        );
+
+        return `
+            <span class="oferta-error">
+                No disponible
+            </span>
+        `;
+    }
+}
+
 // Mostrar productos en la tabla
-function mostrarInventario(productos) {
+async function mostrarInventario(productos) {
     if (!productos.length) {
         tablaInventario.innerHTML = `
             <tr>
-                <td colspan="6" class="mensaje-tabla">
+                <td colspan="7" class="mensaje-tabla">
                     No hay productos registrados.
                 </td>
             </tr>
@@ -110,43 +225,109 @@ function mostrarInventario(productos) {
         return;
     }
 
-    tablaInventario.innerHTML = productos.map(producto => {
-        const estado = obtenerEstado(producto);
+    const filas = await Promise.all(
+        productos.map(async producto => {
+            const estado = obtenerEstado(producto);
+            const ofertaHTML = await consultarOferta(producto);
 
-        return `
-            <tr>
-                <td>${escaparHTML(producto.nombre || 'Sin nombre')}</td>
+            return `
+                <tr>
+                    <td>${escaparHTML(producto.nombre || 'Sin nombre')}</td>
 
-                <td>${Number(producto.stock_actual ?? 0)}</td>
+                    <td>${Number(producto.stock_actual ?? 0)}</td>
 
-                <td>
-                    ${producto.stock_minimo ?? '—'}
-                </td>
+                    <td>${producto.stock_minimo ?? '—'}</td>
 
-                <td>
-                    ${producto.stock_maximo ?? '—'}
-                </td>
+                    <td>${producto.stock_maximo ?? '—'}</td>
 
-                <td>
-                    <span class="estado ${estado.clase}">
-                        ${estado.texto}
-                    </span>
-                </td>
+                    <td>
+                        <span class="estado ${estado.clase}">
+                            ${estado.texto}
+                        </span>
+                    </td>
 
-                <td>
-                    <button
-                        type="button"
-                        class="btn-configurar"
-                        onclick="abrirModal(${Number(producto.id_producto)})">
-                        Configurar
-                    </button>
-                </td>
-            </tr>
-        `;
-    }).join('');
+                    <td>${ofertaHTML}</td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="btn-configurar"
+                            data-accion="configurar"
+                            data-id="${Number(producto.id_producto)}">
+                            Configurar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        })
+    );
+
+    tablaInventario.innerHTML = filas.join('');
 }
 
-// Evitar insertar texto HTML proveniente de la base de datos
+// Aplicar oferta aceptada por el administrador
+async function aplicarOferta(idProducto) {
+    try {
+        const respuesta = await fetch(
+            `${API_OFERTAS}/${idProducto}/aplicar`,
+            {
+                method: 'POST'
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || !resultado.success) {
+            throw new Error(
+                resultado.message || 'No se pudo aplicar la oferta.'
+            );
+        }
+
+        mostrarMensaje(
+            resultado.message || 'Oferta aplicada correctamente.',
+            'exito'
+        );
+
+        await cargarInventario();
+
+    } catch (error) {
+        console.error('Error al aplicar oferta:', error);
+        mostrarMensaje(error.message, 'error');
+    }
+}
+
+// Desactivar oferta
+async function desactivarOferta(idProducto) {
+    try {
+        const respuesta = await fetch(
+            `${API_OFERTAS}/${idProducto}/desactivar`,
+            {
+                method: 'PUT'
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || !resultado.success) {
+            throw new Error(
+                resultado.message || 'No se pudo desactivar la oferta.'
+            );
+        }
+
+        mostrarMensaje(
+            resultado.message || 'Oferta desactivada correctamente.',
+            'exito'
+        );
+
+        await cargarInventario();
+
+    } catch (error) {
+        console.error('Error al desactivar oferta:', error);
+        mostrarMensaje(error.message, 'error');
+    }
+}
+
+// Evitar insertar HTML proveniente de la base de datos
 function escaparHTML(valor) {
     return String(valor).replace(/[&<>"']/g, caracter => {
         const equivalencias = {
@@ -161,7 +342,7 @@ function escaparHTML(valor) {
     });
 }
 
-// Actualizar las tarjetas de resumen
+// Actualizar tarjetas de resumen
 function actualizarResumen(productos) {
     let bajos = 0;
     let normales = 0;
@@ -175,20 +356,25 @@ function actualizarResumen(productos) {
         if (estado.clase === 'stock-excedido') excedidos++;
     });
 
-    document.getElementById('totalProductos').textContent = productos.length;
+    document.getElementById('totalProductos').textContent =
+        productos.length;
+
     document.getElementById('totalBajo').textContent = bajos;
     document.getElementById('totalNormal').textContent = normales;
     document.getElementById('totalExceso').textContent = excedidos;
 }
 
-// Abrir modal para configurar los límites
+// Abrir modal para configurar límites
 function abrirModal(idProducto) {
     const producto = productosInventario.find(
         p => Number(p.id_producto) === Number(idProducto)
     );
 
     if (!producto) {
-        mostrarMensaje('No se encontró el producto seleccionado.', 'error');
+        mostrarMensaje(
+            'No se encontró el producto seleccionado.',
+            'error'
+        );
         return;
     }
 
@@ -213,7 +399,7 @@ function cerrarModal() {
     document.body.classList.remove('modal-abierto');
 }
 
-// Guardar los límites de stock
+// Guardar límites de stock
 async function guardarStock(evento) {
     evento.preventDefault();
 
@@ -242,20 +428,23 @@ async function guardarStock(evento) {
         stockMinimo < 0 ||
         stockMaximo < 0
     ) {
-        mostrarMensaje('Las cantidades deben ser números enteros no negativos.', 'error');
+        mostrarMensaje(
+            'Las cantidades deben ser números enteros no negativos.',
+            'error'
+        );
         return;
     }
 
-    if (stockMaximo < stockMinimo) {
-        mostrarMensaje('El stock máximo no puede ser menor que el mínimo.', 'error');
+    if (stockMaximo <= stockMinimo) {
+        mostrarMensaje(
+            'El stock máximo debe ser mayor que el stock mínimo.',
+            'error'
+        );
         return;
     }
-
-    // Conservar las existencias actuales del producto
-    const stockActual = Number(producto.stock_actual ?? 0);
 
     const datos = {
-        stock_actual: stockActual,
+        stock_actual: Number(producto.stock_actual ?? 0),
         stock_minimo: stockMinimo,
         stock_maximo: stockMaximo
     };
@@ -289,20 +478,18 @@ async function guardarStock(evento) {
 
         cerrarModal();
 
+        // Al recargar se vuelve a evaluar la oferta.
+        // Si el stock ya no cumple la condición, se desactiva.
         await cargarInventario();
 
         mostrarMensaje(
-            'Los límites de inventario se guardaron correctamente.',
+            'Los límites se guardaron correctamente.',
             'exito'
         );
 
     } catch (error) {
         console.error('Error al guardar stock:', error);
-
-        mostrarMensaje(
-            error.message || 'Error al guardar los límites de inventario.',
-            'error'
-        );
+        mostrarMensaje(error.message, 'error');
 
     } finally {
         botonGuardar.disabled = false;
@@ -310,23 +497,46 @@ async function guardarStock(evento) {
     }
 }
 
-// Eventos
+// Eventos de la tabla: aplicar, desactivar y configurar
+tablaInventario.addEventListener('click', evento => {
+    const boton = evento.target.closest('button[data-accion]');
+
+    if (!boton) return;
+
+    const idProducto = Number(boton.dataset.id);
+    const accion = boton.dataset.accion;
+
+    if (accion === 'aplicar') {
+        aplicarOferta(idProducto);
+    }
+
+    if (accion === 'desactivar') {
+        desactivarOferta(idProducto);
+    }
+
+    if (accion === 'configurar') {
+        abrirModal(idProducto);
+    }
+});
+
+// Eventos generales
 btnActualizar.addEventListener('click', cargarInventario);
-
 btnCancelar.addEventListener('click', cerrarModal);
-
 formStock.addEventListener('submit', guardarStock);
 
-// Cerrar al hacer clic fuera del cuadro
+// Cerrar al hacer clic fuera del modal
 modalStock.addEventListener('click', evento => {
     if (evento.target === modalStock) {
         cerrarModal();
     }
 });
 
-// Cerrar con la tecla Escape
+// Cerrar con Escape
 document.addEventListener('keydown', evento => {
-    if (evento.key === 'Escape' && modalStock.style.display === 'flex') {
+    if (
+        evento.key === 'Escape' &&
+        modalStock.style.display === 'flex'
+    ) {
         cerrarModal();
     }
 });

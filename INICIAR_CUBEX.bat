@@ -5,6 +5,7 @@ title CUBEX - Iniciando sistema
 echo =================================
 echo          INICIANDO CUBEX
 echo =================================
+echo.
 
 REM Iniciar microservicio de login
 start "CUBEX - Microservicio Login" cmd /k "cd /d "%~dp0microservicio-login" && npm run dev"
@@ -21,11 +22,14 @@ start "CUBEX - Servicio de Roles" cmd /k "cd /d "%~dp0servicio-roles" && npm run
 REM Iniciar microservicio de inventario
 start "CUBEX - Microservicio Inventario" cmd /k "cd /d "%~dp0inventario-service-main" && npm run dev"
 
+REM Iniciar microservicio de proveedores
+start "CUBEX - Microservicio Proveedores" cmd /k "cd /d "%~dp0servicio_proveedores" && py app.py"
+
 REM Iniciar microservicio de comentarios y resenas
 start "CUBEX - Comentarios y Resenas" cmd /k "cd /d "%~dp0comentarios-resenas-service" && node src/server.js"
 
-REM Iniciar microservicio de reportes de inventario
-start "CUBEX - Reportes de Inventario" cmd /k "cd /d ""%~dp0Inventario"" && npm run dev"
+REM Iniciar servidor de reportes de inventario
+start "CUBEX - Reportes de Inventario" cmd /k "cd /d "%~dp0Inventario" && npm run dev"
 
 REM Iniciar servidor web
 start "CUBEX - Pagina Web" cmd /k "cd /d "%~dp0" && py -m http.server 5500 --bind 127.0.0.1"

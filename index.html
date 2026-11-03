@@ -314,28 +314,133 @@
     </main>
 
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="footer" id="contacto">
 
+    
+<!-- SECCIÓN DE CONTACTO -->
+
+<section id="contacto" class="contacto-section">
+    <div class="contacto-container">
+
+        <div class="contacto-encabezado">
+            <span class="contacto-etiqueta">ESTAMOS PARA AYUDARTE</span>
+            <h2>Contáctanos</h2>
+            <p>
+                ¿Tienes dudas sobre nuestros cubos?
+                Escríbenos y con gusto te atenderemos.
+            </p>
+        </div>
+
+        <div class="contacto-contenido">
+
+            <!-- Información de contacto -->
+            <div class="contacto-info">
+                <h3>Hablemos de tu próximo desafío</h3>
+
+                <p>
+                    En CUBEX queremos ofrecerte la mejor experiencia.
+                    Estamos disponibles para resolver tus preguntas,
+                    comentarios y solicitudes.
+                </p>
+
+                <div class="contacto-dato">
+                    <div class="contacto-icono">✉</div>
+                    <div>
+                        <h4>Correo electrónico</h4>
+                        <a href="mailto:cubexshop2@gmail.com">
+                            cubexshop2@gmail.com
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contacto-dato">
+                    <div class="contacto-icono">💬</div>
+                    <div>
+                        <h4>Atención al cliente</h4>
+                        <p>Estamos para ayudarte con tus compras.</p>
+                    </div>
+                </div>
+
+                <div class="contacto-mensaje">
+                    <span>¿Listo para resolver tus dudas?</span>
+                    <p>Tu próximo desafío comienza con un mensaje.</p>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="contacto-formulario">
+                <h3>Envíanos un mensaje</h3>
+                <p>Completa los siguientes campos.</p>
+
+
+                <form id="formularioContacto">
+
+                    <div class="campo-contacto">
+                        <label for="contactoNombre">Nombre</label>
+                        <input
+                            type="text"
+                            id="contactoNombre"
+                            name="nombre"
+                            placeholder="Tu nombre"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo-contacto">
+                        <label for="contactoAsunto">Asunto</label>
+                        <input
+                            type="text"
+                            id="contactoAsunto"
+                            name="asunto"
+                            placeholder="¿Sobre qué trata tu consulta?"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo-contacto">
+                        <label for="contactoMensaje">Mensaje</label>
+                        <textarea
+                            id="contactoMensaje"
+                            name="mensaje"
+                            rows="5"
+                            placeholder="Escribe aquí tu mensaje..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <p id="estadoContacto" class="contacto-nota">
+                        Tu correo registrado se utilizará automáticamente.
+                    </p>
+
+                    <button type="submit" class="btn-contacto">
+                        Enviar mensaje <span>➜</span>
+                    </button>
+                    <div id="mensajeConfirmacion" class="mensaje-confirmacion"></div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- PIE DE PÁGINA -->
+    <footer class="footer">
         <div>
-
             <h2>CUBEX</h2>
-
             <p>Gira, piensa y conquista.</p>
-
         </div>
 
         <div class="footer-info">
-
             <p>Tu próximo desafío comienza aquí.</p>
-
-            <p>
-                &copy; 2026 CUBEX. Todos los derechos reservados.
-            </p>
-
+            <p>&copy; 2026 CUBEX. Todos los derechos reservados.</p>
         </div>
-
     </footer>
+
+
+
+
 
 
 <!-- CONTROL DE SESIÓN DEL CLIENTE -->

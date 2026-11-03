@@ -6,7 +6,7 @@
 const API_PRODUCTOS = 'http://localhost:3005/api/productos';
 const API_IMAGENES = 'http://localhost:3005';
 const API_RESENAS = 'http://localhost:3007/api/resenas';
-
+const API_OFERTAS = 'http://localhost:3005/api/ofertas';
 
 // ========================================
 // ELEMENTOS DEL DOM
@@ -22,7 +22,6 @@ const btnBuscar = document.getElementById('btnBuscar');
 const btnRegresar = document.getElementById('btnRegresarCatalogo');
 
 const formularioResena = document.getElementById('formularioResena');
-
 
 // ========================================
 // VARIABLES GLOBALES
@@ -56,7 +55,7 @@ function limpiarMensajeResena() {
 }
 
 // ========================================
-// CARGAR PRODUCTOS DESDE INVENTARIO
+// CARGAR PRODUCTOS Y OFERTAS
 // ========================================
 
 async function cargarProductos() {
@@ -69,32 +68,67 @@ async function cargarProductos() {
             `;
         }
 
-        const respuesta = await fetch(API_PRODUCTOS);
-        const resultado = await respuesta.json();
+        const respuestaProductos = await fetch(API_PRODUCTOS);
+        const resultadoProductos = await respuestaProductos.json();
 
-        if (!respuesta.ok) {
+        if (!respuestaProductos.ok) {
             throw new Error(
-                resultado.message ||
-                resultado.mensaje ||
+                resultadoProductos.message ||
+                resultadoProductos.mensaje ||
                 'Error al consultar productos'
             );
         }
 
-        productosCargados = Array.isArray(resultado)
-            ? resultado
-            : resultado.data || [];
+        productosCargados = Array.isArray(resultadoProductos)
+            ? resultadoProductos
+            : resultadoProductos.data || [];
 
         if (!Array.isArray(productosCargados) ||
             productosCargados.length === 0) {
 
-            catalogo.innerHTML = `
-                <p class="mensaje-catalogo">
-                    Todavía no hay productos disponibles.
-                </p>
-            `;
+            if (catalogo) {
+                catalogo.innerHTML = `
+                    <p class="mensaje-catalogo">
+                        Todavía no hay productos disponibles.
+                    </p>
+                `;
+            }
 
             return;
         }
+
+        // Consultar ofertas activas
+        let ofertas = [];
+
+        try {
+            const respuestaOfertas = await fetch(
+                `${API_OFERTAS}/activas`
+            );
+
+            const resultadoOfertas = await respuestaOfertas.json();
+
+            if (respuestaOfertas.ok && resultadoOfertas.success) {
+                ofertas = resultadoOfertas.data || [];
+            }
+
+        } catch (error) {
+            console.error(
+                'No se pudieron consultar las ofertas:',
+                error
+            );
+        }
+
+        // Relacionar cada oferta con su producto
+        productosCargados = productosCargados.map(producto => {
+            const oferta = ofertas.find(
+                o => Number(o.id_producto) === Number(producto.id)
+            );
+
+            return {
+                ...producto,
+                ofertaActiva: oferta || null
+            };
+        });
 
         mostrarCatalogo(productosCargados);
 
@@ -112,6 +146,45 @@ async function cargarProductos() {
     }
 }
 
+// ========================================
+// OBTENER PRECIO DEL PRODUCTO
+// ========================================
+
+function obtenerPrecioHTML(producto) {
+    const precioOriginal = Number(producto.precio);
+    const oferta = producto.ofertaActiva;
+
+    const tieneOferta =
+        oferta &&
+        Number(oferta.activa) === 1 &&
+        Number(oferta.precio_oferta) < precioOriginal;
+
+    if (tieneOferta) {
+        return `
+            <div class="producto-precios">
+
+                <span class="precio-anterior">
+                    ${formatearPrecio(precioOriginal)}
+                </span>
+
+                <strong class="precio-descuento">
+                    ${formatearPrecio(oferta.precio_oferta)}
+                </strong>
+
+                <span class="etiqueta-descuento">
+                    ${Number(oferta.porcentaje_descuento)}% OFF
+                </span>
+
+            </div>
+        `;
+    }
+
+    return `
+        <strong class="producto-precio">
+            ${formatearPrecio(precioOriginal)}
+        </strong>
+    `;
+}
 
 // ========================================
 // MOSTRAR CATÁLOGO
@@ -121,6 +194,15 @@ function mostrarCatalogo(productos) {
     if (!catalogo) return;
 
     catalogo.innerHTML = '';
+
+    if (!productos || productos.length === 0) {
+        catalogo.innerHTML = `
+            <p class="mensaje-catalogo">
+                No hay productos disponibles.
+            </p>
+        `;
+        return;
+    }
 
     productos.forEach(producto => {
         const tarjeta = document.createElement('article');
@@ -132,13 +214,18 @@ function mostrarCatalogo(productos) {
             <div class="producto-card-imagen">
                 ${
                     imagen
-                        ? `<img src="${escaparHTML(imagen)}"
-                               alt="${escaparHTML(producto.nombre)}">`
+                        ? `
+                            <img
+                                src="${escaparHTML(imagen)}"
+                                alt="${escaparHTML(producto.nombre)}"
+                            >
+                        `
                         : '<span>Sin fotografía</span>'
                 }
             </div>
 
             <div class="producto-card-info">
+
                 <h3>${escaparHTML(producto.nombre)}</h3>
 
                 <p>
@@ -148,13 +235,15 @@ function mostrarCatalogo(productos) {
                     )}
                 </p>
 
-                <strong class="producto-precio">
-                    ${formatearPrecio(producto.precio)}
-                </strong>
+                ${obtenerPrecioHTML(producto)}
 
-                <button type="button" class="btn-ver-producto">
+                <button
+                    type="button"
+                    class="btn-ver-producto"
+                >
                     Ver producto
                 </button>
+
             </div>
         `;
 
@@ -167,7 +256,6 @@ function mostrarCatalogo(productos) {
         catalogo.appendChild(tarjeta);
     });
 }
-
 
 // ========================================
 // MOSTRAR DETALLE DEL PRODUCTO
@@ -182,8 +270,6 @@ function mostrarDetalle(producto) {
     const elementoNombre = document.getElementById('detalleNombre');
     const elementoDescripcion = document.getElementById('detalleDescripcion');
     const elementoPrecio = document.getElementById('detallePrecio');
-
-    // Información del producto
 
     if (elementoImagen) {
         elementoImagen.src = imagen || '';
@@ -201,10 +287,8 @@ function mostrarDetalle(producto) {
     }
 
     if (elementoPrecio) {
-        elementoPrecio.textContent = formatearPrecio(producto.precio);
+        elementoPrecio.innerHTML = obtenerPrecioHTML(producto);
     }
-
-    // Ocultar página principal
 
     if (hero) {
         hero.hidden = true;
@@ -214,21 +298,15 @@ function mostrarDetalle(producto) {
         seccionProductos.hidden = true;
     }
 
-    // Mostrar detalle
-
     if (detalleProducto) {
         detalleProducto.hidden = false;
     }
-
-    // Limpiar mensaje anterior del formulario
 
     const mensaje = document.getElementById('mensajeResena');
 
     if (mensaje) {
         mensaje.textContent = '';
     }
-
-    // Cargar reseñas del producto seleccionado
 
     cargarResenas(producto.id);
 
@@ -237,7 +315,6 @@ function mostrarDetalle(producto) {
         behavior: 'smooth'
     });
 }
-
 
 // ========================================
 // REGRESAR AL CATÁLOGO
@@ -261,7 +338,9 @@ function regresarAlCatalogo() {
     mostrarCatalogo(productosCargados);
 
     window.scrollTo({
-        top: seccionProductos.offsetTop - 100,
+        top: seccionProductos
+            ? seccionProductos.offsetTop - 100
+            : 0,
         behavior: 'smooth'
     });
 }
@@ -270,24 +349,30 @@ if (btnRegresar) {
     btnRegresar.addEventListener('click', regresarAlCatalogo);
 }
 
+// ========================================
+// BUSCADOR: SOLO POR NOMBRE DEL PRODUCTO
+// ========================================
 
-// ========================================
-// BUSCADOR
-// ========================================
+function normalizarTexto(texto) {
+    return String(texto || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+}
 
 function buscarEnCatalogo() {
-    const texto = buscarProducto.value.trim().toLowerCase();
+    const textoOriginal = buscarProducto.value.trim();
+    const texto = normalizarTexto(textoOriginal);
 
-    const filtrados = productosCargados.filter(producto => {
-        const nombre = String(producto.nombre || '').toLowerCase();
-        const descripcion = String(producto.descripcion || '').toLowerCase();
+    // Filtrar exclusivamente por el nombre.
+    const filtrados = texto === ''
+        ? [...productosCargados]
+        : productosCargados.filter(producto =>
+            normalizarTexto(producto.nombre).includes(texto)
+        );
 
-        return nombre.includes(texto) ||
-            descripcion.includes(texto);
-    });
-
-    // Si estaba viendo un producto, regresar al catálogo
-
+    // Mostrar nuevamente la sección del catálogo.
     if (detalleProducto) {
         detalleProducto.hidden = true;
     }
@@ -296,57 +381,76 @@ function buscarEnCatalogo() {
         seccionProductos.hidden = false;
     }
 
-    productoActual = null;
-
     if (hero) {
         hero.hidden = false;
     }
 
+    productoActual = null;
+
+    if (!catalogo || !seccionProductos) return;
+
+    // Mostrar resultados o mensaje de búsqueda vacía.
     if (filtrados.length === 0) {
         catalogo.innerHTML = `
             <p class="mensaje-catalogo">
-                No se encontraron productos con ese nombre.
+                No encontramos cubos cuyo nombre coincida con
+                "${escaparHTML(textoOriginal)}".
             </p>
         `;
     } else {
         mostrarCatalogo(filtrados);
     }
 
-    window.scrollTo({
-        top: seccionProductos.offsetTop - 100,
-        behavior: 'smooth'
+    // Bajar al catálogo dejando espacio para el encabezado fijo.
+    requestAnimationFrame(() => {
+        const posicion =
+            seccionProductos.getBoundingClientRect().top +
+            window.scrollY;
+
+        window.scrollTo({
+            top: Math.max(0, posicion - 180),
+            behavior: 'smooth'
+        });
     });
 }
 
+// Botón de búsqueda
 if (btnBuscar && buscarProducto) {
-    btnBuscar.addEventListener('click', buscarEnCatalogo);
+    btnBuscar.addEventListener('click', evento => {
+        evento.preventDefault();
+        buscarEnCatalogo();
+    });
 
+    // Buscar al presionar Enter
     buscarProducto.addEventListener('keydown', evento => {
         if (evento.key === 'Enter') {
+            evento.preventDefault();
             buscarEnCatalogo();
         }
     });
+
+    // Evitar que el formulario recargue la página.
+    const formularioBusqueda = buscarProducto.closest('form');
+
+    if (formularioBusqueda) {
+        formularioBusqueda.addEventListener('submit', evento => {
+            evento.preventDefault();
+            buscarEnCatalogo();
+        });
+    }
 }
-
-
-// ========================================
-// PUBLICAR RESEÑA
-// ========================================
 
 // ========================================
 // PUBLICAR RESEÑA
 // ========================================
 
 if (formularioResena) {
-
     formularioResena.addEventListener('submit', async evento => {
-
         evento.preventDefault();
 
         const token = sessionStorage.getItem('cubex_token');
 
         // Verificar sesión
-
         if (!token) {
             mostrarMensajeResena(
                 'Debes iniciar sesión para publicar una reseña.',
@@ -356,20 +460,20 @@ if (formularioResena) {
         }
 
         // Obtener información del usuario
-
         let usuario = {};
 
         try {
             usuario = JSON.parse(
                 sessionStorage.getItem('cubex_usuario') || '{}'
             );
-
         } catch (error) {
-            console.error('Error al leer los datos del usuario:', error);
+            console.error(
+                'Error al leer los datos del usuario:',
+                error
+            );
         }
 
         // Verificar rol
-
         if (usuario.rol !== 'CLIENTE') {
             mostrarMensajeResena(
                 'Solo los clientes pueden publicar reseñas.',
@@ -379,7 +483,6 @@ if (formularioResena) {
         }
 
         // Verificar producto seleccionado
-
         if (!productoActual || !productoActual.id) {
             mostrarMensajeResena(
                 'No se encontró el producto seleccionado.',
@@ -394,16 +497,17 @@ if (formularioResena) {
         const elementoComentario =
             document.getElementById('comentarioResena');
 
+        if (!elementoCalificacion || !elementoComentario) return;
+
         const calificacion = Number(elementoCalificacion.value);
         const comentario = elementoComentario.value.trim();
-
-        // Validar comentario
 
         if (!comentario) {
             mostrarMensajeResena(
                 'Escribe un comentario antes de publicar.',
                 'advertencia'
             );
+
             elementoComentario.focus();
             return;
         }
@@ -415,8 +519,6 @@ if (formularioResena) {
             );
             return;
         }
-
-        // Validar calificación
 
         if (
             !Number.isInteger(calificacion) ||
@@ -439,7 +541,6 @@ if (formularioResena) {
             : 'Publicar comentario';
 
         try {
-
             if (boton) {
                 boton.disabled = true;
                 boton.textContent = 'Publicando...';
@@ -450,23 +551,17 @@ if (formularioResena) {
                 'info'
             );
 
-            // Enviar reseña al microservicio
-
             const respuesta = await fetch(API_RESENAS, {
-
                 method: 'POST',
-
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-
                 body: JSON.stringify({
                     id_producto: productoActual.id,
                     calificacion: calificacion,
                     comentario: comentario
                 })
-
             });
 
             const resultado = await respuesta.json();
@@ -480,22 +575,14 @@ if (formularioResena) {
                 );
             }
 
-            // Limpiar comentario
-
             elementoComentario.value = '';
-
-            // Mostrar confirmación
 
             mostrarMensajeResena(
                 '¡Tu reseña se publicó correctamente!',
                 'exito'
             );
 
-            // Actualizar reseñas del producto
-
             await cargarResenas(productoActual.id);
-
-            // Mantener visible el mensaje de éxito
 
             mostrarMensajeResena(
                 '¡Tu reseña se publicó correctamente!',
@@ -503,30 +590,26 @@ if (formularioResena) {
             );
 
         } catch (error) {
-
             console.error('Error al publicar reseña:', error);
 
             mostrarMensajeResena(
-                error.message || 'Ocurrió un error al publicar tu reseña.',
+                error.message ||
+                'Ocurrió un error al publicar tu reseña.',
                 'error'
             );
 
         } finally {
-
             if (boton) {
                 boton.disabled = false;
                 boton.textContent = textoOriginal;
             }
-
         }
-
     });
-
 }
 
-
-
-
+// ========================================
+// OBTENER ID DEL USUARIO DE LA SESIÓN
+// ========================================
 
 function obtenerIdUsuarioSesion() {
     try {
@@ -545,26 +628,26 @@ function obtenerIdUsuarioSesion() {
         return Number(payload.sub) || null;
 
     } catch (error) {
-        console.error('No se pudo obtener el usuario del token:', error);
+        console.error(
+            'No se pudo obtener el usuario del token:',
+            error
+        );
+
         return null;
     }
 }
 
-
-
-
-
 // ========================================
 // CARGAR RESEÑAS DE UN PRODUCTO
-// ==
-
+// ========================================
 
 async function cargarResenas(idProducto) {
     const lista = document.getElementById('listaResenas');
+
     if (!lista) return;
 
     try {
-        lista.innerHTML = `<p>Cargando reseñas...</p>`;
+        lista.innerHTML = '<p>Cargando reseñas...</p>';
 
         const respuesta = await fetch(
             `${API_RESENAS}/${encodeURIComponent(idProducto)}`
@@ -593,9 +676,11 @@ async function cargarResenas(idProducto) {
         }
 
         const idUsuario = obtenerIdUsuarioSesion();
+
         let indiceActual = 0;
         let resenaActual = null;
 
+        // MOSTRAR RESEÑA
         function mostrarResena() {
             resenaActual = resenas[indiceActual];
 
@@ -624,7 +709,9 @@ async function cargarResenas(idProducto) {
                     <article class="resena-item">
 
                         <strong>
-                            ${escaparHTML(resenaActual.nombre_usuario || 'Cliente')}
+                            ${escaparHTML(
+                                resenaActual.nombre_usuario || 'Cliente'
+                            )}
                         </strong>
 
                         <p class="resena-estrellas">
@@ -635,26 +722,33 @@ async function cargarResenas(idProducto) {
                             ${escaparHTML(resenaActual.comentario || '')}
                         </p>
 
-                        ${fecha
-                            ? `<small>${escaparHTML(fecha)}</small>`
-                            : ''
+                        ${
+                            fecha
+                                ? `<small>${escaparHTML(fecha)}</small>`
+                                : ''
                         }
 
-                        ${esPropietario ? `
-                            <div class="acciones-resena">
-                                <button
-                                    type="button"
-                                    class="btn-editar-resena"
-                                    id="editarResena"
-                                >✏️ Editar</button>
+                        ${
+                            esPropietario
+                                ? `
+                                    <div class="acciones-resena">
 
-                                <button
-                                    type="button"
-                                    class="btn-eliminar-resena"
-                                    id="eliminarResena"
-                                >🗑 Eliminar</button>
-                            </div>
-                        ` : ''}
+                                        <button
+                                            type="button"
+                                            class="btn-editar-resena"
+                                            id="editarResena"
+                                        >✏️ Editar</button>
+
+                                        <button
+                                            type="button"
+                                            class="btn-eliminar-resena"
+                                            id="eliminarResena"
+                                        >🗑 Eliminar</button>
+
+                                    </div>
+                                `
+                                : ''
+                        }
 
                     </article>
 
@@ -675,6 +769,7 @@ async function cargarResenas(idProducto) {
                 .addEventListener('click', () => {
                     indiceActual =
                         (indiceActual - 1 + resenas.length) % resenas.length;
+
                     mostrarResena();
                 });
 
@@ -682,39 +777,54 @@ async function cargarResenas(idProducto) {
                 .addEventListener('click', () => {
                     indiceActual =
                         (indiceActual + 1) % resenas.length;
+
                     mostrarResena();
                 });
 
             const editar = document.getElementById('editarResena');
+
             if (editar) {
-                editar.addEventListener('click', mostrarFormularioEdicion);
+                editar.addEventListener(
+                    'click',
+                    mostrarFormularioEdicion
+                );
             }
 
             const eliminar = document.getElementById('eliminarResena');
+
             if (eliminar) {
                 eliminar.addEventListener('click', eliminarResena);
             }
         }
 
-        // EDITAR
+        // ========================================
+        // EDITAR RESEÑA
+        // ========================================
+
         function mostrarFormularioEdicion() {
             const tarjeta = lista.querySelector('.resena-item');
 
             tarjeta.innerHTML = `
                 <h3>Editar mi reseña</h3>
 
-                <label for="editarCalificacion">Calificación</label>
+                <label for="editarCalificacion">
+                    Calificación
+                </label>
 
                 <select id="editarCalificacion">
                     ${[5, 4, 3, 2, 1].map(valor => `
                         <option
                             value="${valor}"
                             ${Number(resenaActual.calificacion) === valor ? 'selected' : ''}
-                        >${valor} estrellas</option>
+                        >
+                            ${valor} estrellas
+                        </option>
                     `).join('')}
                 </select>
 
-                <label for="editarComentario">Comentario</label>
+                <label for="editarComentario">
+                    Comentario
+                </label>
 
                 <textarea
                     id="editarComentario"
@@ -723,6 +833,7 @@ async function cargarResenas(idProducto) {
                 >${escaparHTML(resenaActual.comentario || '')}</textarea>
 
                 <div class="acciones-resena">
+
                     <button
                         type="button"
                         class="btn-editar-resena"
@@ -734,6 +845,7 @@ async function cargarResenas(idProducto) {
                         class="btn-eliminar-resena"
                         id="cancelarEdicion"
                     >Cancelar</button>
+
                 </div>
             `;
 
@@ -744,6 +856,7 @@ async function cargarResenas(idProducto) {
                 .addEventListener('click', guardarEdicion);
         }
 
+        // GUARDAR EDICIÓN
         async function guardarEdicion() {
             const token = sessionStorage.getItem('cubex_token');
 
@@ -755,9 +868,15 @@ async function cargarResenas(idProducto) {
                 'editarComentario'
             ).value.trim();
 
-            if (!comentario || comentario.length > 500) {
+            if (
+                !comentario ||
+                comentario.length > 500 ||
+                !Number.isInteger(calificacion) ||
+                calificacion < 1 ||
+                calificacion > 5
+            ) {
                 mostrarMensajeResena(
-                    'Escribe un comentario de máximo 500 caracteres.',
+                    'Escribe un comentario y selecciona una calificación válida.',
                     'advertencia'
                 );
                 return;
@@ -812,7 +931,10 @@ async function cargarResenas(idProducto) {
             }
         }
 
-        // ELIMINAR CON VENTANA PERSONALIZADA
+        // ========================================
+        // ELIMINAR RESEÑA
+        // ========================================
+
         async function eliminarResena() {
             const modal = document.createElement('div');
 
@@ -820,6 +942,7 @@ async function cargarResenas(idProducto) {
 
             modal.innerHTML = `
                 <div class="modal-resena-contenido">
+
                     <div class="icono-eliminar-resena">!</div>
 
                     <h3>¿Eliminar reseña?</h3>
@@ -830,14 +953,23 @@ async function cargarResenas(idProducto) {
                     </p>
 
                     <div class="modal-resena-acciones">
-                        <button type="button" id="cancelarEliminar">
+
+                        <button
+                            type="button"
+                            id="cancelarEliminar"
+                        >
                             Cancelar
                         </button>
 
-                        <button type="button" id="confirmarEliminar">
+                        <button
+                            type="button"
+                            id="confirmarEliminar"
+                        >
                             Sí, eliminar
                         </button>
+
                     </div>
+
                 </div>
             `;
 
@@ -886,7 +1018,10 @@ async function cargarResenas(idProducto) {
                         await cargarResenas(idProducto);
 
                     } catch (error) {
-                        console.error('Error al eliminar reseña:', error);
+                        console.error(
+                            'Error al eliminar reseña:',
+                            error
+                        );
 
                         modal.remove();
 
@@ -911,9 +1046,7 @@ async function cargarResenas(idProducto) {
 // ========================================
 
 // Obtener dirección de imagen
-
 function obtenerUrlImagen(imagen) {
-
     if (!imagen) return '';
 
     if (imagen.startsWith('http')) {
@@ -923,11 +1056,8 @@ function obtenerUrlImagen(imagen) {
     return `${API_IMAGENES}${imagen.startsWith('/') ? '' : '/'}${imagen}`;
 }
 
-
 // Formatear precios
-
 function formatearPrecio(precio) {
-
     const numero = Number(precio);
 
     if (!Number.isFinite(numero)) {
@@ -940,11 +1070,8 @@ function formatearPrecio(precio) {
     });
 }
 
-
 // Evitar insertar HTML no deseado
-
 function escaparHTML(valor) {
-
     return String(valor).replace(/[&<>"']/g, caracter => ({
         '&': '&amp;',
         '<': '&lt;',
@@ -954,9 +1081,139 @@ function escaparHTML(valor) {
     })[caracter]);
 }
 
-
 // ========================================
 // INICIAR CATÁLOGO
 // ========================================
 
 cargarProductos();
+
+
+// ==========================================
+// FORMULARIO DE CONTACTO CUBEX
+// ==========================================
+
+function obtenerUsuarioContacto() {
+    const posiblesClaves = [
+        'cubex_usuario',
+        'usuario',
+        'usuarioActual',
+        'user'
+    ];
+
+    for (const almacenamiento of [sessionStorage, localStorage]) {
+        for (const clave of posiblesClaves) {
+            const valor = almacenamiento.getItem(clave);
+
+            if (!valor) continue;
+
+            try {
+                const usuario = JSON.parse(valor);
+
+                if (usuario && typeof usuario === 'object') {
+                    const correo =
+                        usuario.email ||
+                        usuario.correo ||
+                        usuario.correo_electronico;
+
+                    if (correo) {
+                        return {
+                            ...usuario,
+                            email: correo
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('No se pudo leer la sesión:', clave);
+            }
+        }
+    }
+
+    return null;
+}
+
+function configurarFormularioContacto() {
+    const formulario = document.getElementById('formularioContacto');
+
+    if (!formulario) return;
+
+    const estado = document.getElementById('estadoContacto');
+
+    formulario.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const usuario = obtenerUsuarioContacto();
+
+        // Impedir el envío si no existe una sesión con correo.
+        if (!usuario || !usuario.email) {
+            alert('Debes iniciar sesión para enviar un mensaje.');
+
+            if (estado) {
+                estado.textContent =
+                    'Inicia sesión para poder contactar con CUBEX.';
+            }
+
+            return;
+        }
+
+        const nombre = document.getElementById('contactoNombre').value.trim();
+        const asunto = document.getElementById('contactoAsunto').value.trim();
+        const mensaje = document.getElementById('contactoMensaje').value.trim();
+
+        if (!nombre || !asunto || !mensaje) {
+            alert('Completa todos los campos.');
+            return;
+        }
+
+        const boton = formulario.querySelector('button[type="submit"]');
+        const textoOriginal = boton.innerHTML;
+
+        boton.disabled = true;
+        boton.textContent = 'Enviando mensaje...';
+
+        try {
+            const respuesta = await fetch('http://localhost:3005/api/contacto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre,
+                    correo: usuario.email,
+                    asunto,
+                    mensaje
+                })
+            });
+
+            const resultado = await respuesta.json();
+
+            if (!respuesta.ok || !resultado.success) {
+                throw new Error(
+                    resultado.message || 'No se pudo enviar el mensaje.'
+                );
+            }
+
+            const confirmacion = document.getElementById('mensajeConfirmacion');
+
+confirmacion.textContent = '✓ ¡Mensaje enviado correctamente! Gracias por contactar a CUBEX.';
+confirmacion.className = 'mensaje-confirmacion exito';;    
+
+            formulario.reset();
+
+            if (estado) {
+                estado.textContent = 'Tu mensaje fue enviado correctamente.';
+            }
+
+        } catch (error) {
+            console.error('Error al enviar contacto:', error);
+
+            confirmacion.textContent = 'No se pudo enviar tu mensaje. Inténtalo nuevamente.';
+confirmacion.className = 'mensaje-confirmacion error';
+
+        } finally {
+            boton.disabled = false;
+            boton.innerHTML = textoOriginal;
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', configurarFormularioContacto);

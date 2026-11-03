@@ -339,3 +339,30 @@ body.modal-abierto {
     background: rgba(239, 68, 68, 0.12);
     border: 1px solid rgba(239, 68, 68, 0.35);
 }
+
+.oferta-disponible {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #00d68f;
+    font-size: 13px;
+}
+
+.oferta-disponible strong {
+    font-size: 14px;
+}
+
+.oferta-normal {
+    color: #aab4c5;
+    font-size: 13px;
+}
+
+.oferta-sin-configurar {
+    color: #f0b84b;
+    font-size: 12px;
+}
+
+.oferta-error {
+    color: #ff6b75;
+    font-size: 12px;
+}
