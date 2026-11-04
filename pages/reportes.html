@@ -180,35 +180,188 @@
         </section>
 
         <!-- REPORTE DE COMPRAS -->
-        <section class="contenido-reporte oculto" id="reporteCompras">
+        
+<!-- REPORTE DE COMPRAS -->
+<section class="contenido-reporte oculto" id="reporteCompras">
 
-            <div class="titulo-reporte">
-                <div>
-                    <p class="sobrelinea">ABASTECIMIENTO</p>
-                    <h2>Reporte de compras</h2>
-                    <p class="texto-secundario">
-                        Consulta las compras realizadas a proveedores.
-                    </p>
-                </div>
+    <div class="titulo-reporte">
+        <div>
+            <p class="sobrelinea">ABASTECIMIENTO</p>
+            <h2>Reporte de compras</h2>
+            <p class="texto-secundario">
+                Consulta las compras realizadas a proveedores.
+            </p>
+        </div>
+
+        <button type="button" class="boton-principal" id="btnExportarCompras">
+            ↓ Exportar CSV
+        </button>
+    </div>
+
+    <div class="mensaje-reporte" id="mensajeCompras" role="status">
+        Consultando información de compras...
+    </div>
+
+    <!-- TARJETAS DE RESUMEN -->
+    <div class="estadisticas-reportes">
+
+        <article class="tarjeta-reporte">
+            <div class="reporte-tarjeta-arriba">
+                <span class="reporte-icono azul">▣</span>
+                <span class="etiqueta">Operaciones</span>
+            </div>
+            <p class="reporte-numero" id="totalCompras">--</p>
+            <p class="reporte-descripcion">Compras registradas</p>
+        </article>
+
+        <article class="tarjeta-reporte">
+            <div class="reporte-tarjeta-arriba">
+                <span class="reporte-icono verde">$</span>
+                <span class="etiqueta">Inversión</span>
+            </div>
+            <p class="reporte-numero" id="totalGastado">$0.00</p>
+            <p class="reporte-descripcion">Dinero gastado</p>
+        </article>
+
+        <article class="tarjeta-reporte">
+            <div class="reporte-tarjeta-arriba">
+                <span class="reporte-icono amarillo">↗</span>
+                <span class="etiqueta">Promedio</span>
+            </div>
+            <p class="reporte-numero" id="promedioCompra">$0.00</p>
+            <p class="reporte-descripcion">Importe promedio por compra</p>
+        </article>
+
+    </div>
+
+    <!-- FILTROS -->
+    <div class="panel-contenido filtros-reporte filtros-compras">
+
+        <div>
+            <label for="fechaDesdeCompra">Desde</label>
+            <input type="date" id="fechaDesdeCompra">
+        </div>
+
+        <div>
+            <label for="fechaHastaCompra">Hasta</label>
+            <input type="date" id="fechaHastaCompra">
+        </div>
+
+        <div>
+            <label for="filtroProveedorCompra">Proveedor</label>
+            <select id="filtroProveedorCompra">
+                <option value="">Todos los proveedores</option>
+            </select>
+        </div>
+
+        <div class="acciones-filtros-compras">
+            <button type="button" class="boton-principal" id="btnFiltrarCompras">
+                Aplicar filtros
+            </button>
+
+            <button type="button" class="boton-secundario" id="btnLimpiarCompras">
+                Limpiar
+            </button>
+        </div>
+
+    </div>
+
+    <!-- TABLA DE COMPRAS -->
+    <div class="panel-contenido">
+
+        <div class="encabezado-tabla-reporte">
+            <div>
+                <h3 class="titulo-panel">Historial de compras</h3>
+                <p class="texto-secundario">
+                    Compras realizadas y sus importes.
+                </p>
             </div>
 
-            <div class="panel-contenido compras-pendiente">
-                <div class="compras-icono">▣</div>
-                <h3>Reporte de compras</h3>
-                <p>
-                    Aquí se mostrarán las órdenes de compra, proveedores,
-                    fechas, productos, cantidades y costos.
-                </p>
-                <span class="estado-reporte-pendiente">
-                    Pendiente de conexión
-                </span>
-                <p class="nota-tabla">
-                    Este reporte se conectará al microservicio de compras
-                    cuando definamos su endpoint.
+            <span class="contador-registros" id="contadorCompras">
+                0 compras
+            </span>
+        </div>
+
+        <div class="tabla-contenedor">
+            <table class="tabla-reportes">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaCompras">
+                    <tr>
+                        <td colspan="6" class="tabla-vacia">
+                            Cargando compras...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="paginacion-compras">
+            <button type="button" class="boton-secundario" id="btnComprasAnterior">
+                ← Anterior
+            </button>
+
+            <span id="paginaCompras">Página 1 de 1</span>
+
+            <button type="button" class="boton-secundario" id="btnComprasSiguiente">
+                Siguiente →
+            </button>
+        </div>
+
+    </div>
+
+    <!-- DETALLE DE COMPRA -->
+    <div class="panel-contenido detalle-compra-panel oculto" id="panelDetalleCompra">
+
+        <div class="encabezado-tabla-reporte">
+            <div>
+                <h3 class="titulo-panel">Detalle de la compra</h3>
+                <p class="texto-secundario" id="subtituloDetalleCompra">
+                    Información de la compra seleccionada.
                 </p>
             </div>
 
-        </section>
+            <button type="button" class="boton-secundario" id="btnCerrarDetalleCompra">
+                Cerrar
+            </button>
+        </div>
+
+        <div id="informacionDetalleCompra"></div>
+
+        <div class="tabla-contenedor">
+            <table class="tabla-reportes">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Costo unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaDetalleCompra">
+                    <tr>
+                        <td colspan="4" class="tabla-vacia">
+                            Selecciona una compra para consultar su detalle.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</section>
+
 
     </main>
 

@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
 });
 
 // Puerto del servicio
-const PORT = Number(process.env.PORT || 3003);
+const PORT = Number(process.env.PORT || 3023);
 
 app.listen(PORT, () => {
     console.log(`Servicio de roles funcionando en http://localhost:${PORT}`);

@@ -2815,3 +2815,575 @@ body {
     background-color: #FF5268 !important;
     transform: translateY(-2px);
 }
+
+/* =========================================
+   CUBEX - COMPRAS A PROVEEDORES
+========================================= */
+
+.contenido-compras {
+    width: 100%;
+    padding: 20px;
+    color: #e0e0e0;
+    box-sizing: border-box;
+}
+
+.encabezado-seccion {
+    margin-bottom: 25px;
+}
+
+.etiqueta-seccion {
+    color: #008cff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.encabezado-seccion h2 {
+    margin: 8px 0;
+    font-size: 25px;
+}
+
+.encabezado-seccion p,
+.titulo-panel p {
+    color: #aab6c8;
+    font-size: 14px;
+}
+
+.resumen-compras {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.tarjeta-resumen,
+.panel-compras {
+    background: #182131;
+    border: 1px solid #2b394d;
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.tarjeta-resumen span {
+    display: block;
+    color: #aab6c8;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.tarjeta-resumen strong {
+    font-size: 25px;
+    color: #ffffff;
+}
+
+.panel-compras {
+    margin-bottom: 25px;
+}
+
+.titulo-panel {
+    margin-bottom: 22px;
+}
+
+.titulo-panel h3 {
+    margin: 0 0 8px;
+    font-size: 21px;
+    color: #ffffff;
+}
+
+.formulario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.campo label {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.campo input,
+.campo select,
+.buscador-compras input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    color: #ffffff;
+    background: #080e19;
+    border: 1px solid #344258;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.campo input:focus,
+.campo select:focus,
+.buscador-compras input:focus {
+    border-color: #008cff;
+}
+
+.campo input[readonly] {
+    color: #9bb8d6;
+}
+
+.campo select option {
+    background: #080e19;
+    color: #ffffff;
+}
+
+.acciones-formulario {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 23px;
+}
+
+.btn-secundario,
+.btn-guardar {
+    padding: 13px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-secundario {
+    color: #b8c9df;
+    background: transparent;
+    border: 1px solid #344258;
+}
+
+.btn-secundario:hover {
+    background: #24334a;
+}
+
+.btn-guardar {
+    color: #ffffff;
+    background: #f5223e;
+    border: 1px solid #f5223e;
+}
+
+.btn-guardar:hover {
+    background: #d71935;
+}
+
+.btn-guardar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mensaje-compra {
+    margin-top: 18px;
+    color: #aab6c8;
+    font-size: 13px;
+}
+
+.mensaje-compra.error {
+    color: #ff6678;
+}
+
+.mensaje-compra.exito {
+    color: #42d392;
+}
+
+.encabezado-historial {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.buscador-compras {
+    max-width: 400px;
+    margin-bottom: 18px;
+}
+
+.tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-compras {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+.tabla-compras th,
+.tabla-compras td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #2b394d;
+    font-size: 13px;
+}
+
+.tabla-compras th {
+    color: #8db9ed;
+    font-weight: 700;
+}
+
+.tabla-compras td {
+    color: #dce5f1;
+}
+
+.tabla-vacia {
+    text-align: center !important;
+    padding: 25px !important;
+    color: #9aa9bd !important;
+}
+
+.contador-compras {
+    margin-top: 15px;
+    color: #9aa9bd;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+    .resumen-compras {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .encabezado-historial {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* =========================================
+   CUBEX - AJUSTES VISUALES COMPRAS
+========================================= */
+
+.contenido-compras {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 35px 30px;
+    box-sizing: border-box;
+}
+
+/* Encabezado */
+.encabezado-seccion {
+    margin-bottom: 26px;
+}
+
+.encabezado-seccion h2 {
+    font-size: 26px;
+    margin: 10px 0;
+    color: #f1f5fb;
+}
+
+.encabezado-seccion p {
+    color: #a9bad0;
+}
+
+/* Tarjetas de resumen */
+.resumen-compras {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 26px;
+}
+
+.tarjeta-resumen {
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px;
+    background: #192436;
+    border: 1px solid #2b3a50;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.tarjeta-resumen span {
+    font-size: 15px;
+    color: #b6c6dc;
+    margin-bottom: 12px;
+}
+
+.tarjeta-resumen strong {
+    font-size: 27px;
+    color: #ffffff;
+}
+
+/* Paneles */
+.panel-compras {
+    width: 100%;
+    padding: 25px;
+    margin-bottom: 26px;
+    background: #192436;
+    border: 1px solid #2b3a50;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.titulo-panel h3 {
+    font-size: 22px;
+    color: #ffffff;
+}
+
+.titulo-panel p {
+    color: #a9bad0;
+    margin-top: 7px;
+}
+
+/* Formulario */
+.formulario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 24px;
+}
+
+.campo {
+    min-width: 0;
+}
+
+.campo label {
+    font-size: 14px;
+    color: #f1f5fb;
+    font-weight: 600;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+    height: 46px;
+    background: #080e19;
+    border: 1px solid #344258;
+    border-radius: 8px;
+    color: #ffffff;
+    padding: 0 14px;
+    box-sizing: border-box;
+}
+
+.campo input:focus,
+.campo select:focus {
+    border-color: #008cff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 140, 255, 0.12);
+}
+
+.campo input[readonly] {
+    color: #8fc5ff;
+}
+
+/* Botones */
+.acciones-formulario {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn-secundario {
+    background: transparent;
+    border: 1px solid #344258;
+    color: #c4d4e8;
+}
+
+.btn-guardar {
+    background: #f5223e;
+    border: 1px solid #f5223e;
+    color: white;
+}
+
+.btn-guardar:hover {
+    background: #d71935;
+}
+
+/* Historial */
+.encabezado-historial {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buscador-compras {
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 20px;
+}
+
+.buscador-compras input {
+    width: 100%;
+    height: 44px;
+    background: #080e19;
+    border: 1px solid #344258;
+    border-radius: 8px;
+    color: white;
+    padding: 0 14px;
+    box-sizing: border-box;
+}
+
+.tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-compras {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+}
+
+.tabla-compras th {
+    color: #80baff;
+    background: #121c2c;
+    padding: 15px;
+    text-align: left;
+}
+
+.tabla-compras td {
+    padding: 15px;
+    border-bottom: 1px solid #2b3a50;
+    color: #dce5f1;
+}
+
+.contador-compras {
+    color: #9eafc5;
+    margin-top: 16px;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 700px) {
+    .contenido-compras {
+        padding: 22px 15px;
+    }
+
+    .resumen-compras,
+    .formulario-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .encabezado-historial {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* =========================================
+   CUBEX - MÓDULO DE PEDIDOS
+========================================= */
+
+.iframe-pedidos {
+    display: block;
+    width: 100%;
+    min-height: 950px;
+    height: 1100px;
+    border: none;
+    border-radius: 10px;
+    background: var(--fondo);
+}
+
+/* Acceso al módulo de pedidos, si lo utilizas */
+.acceso-pedidos {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 11px;
+}
+
+.icono-pedidos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    color: var(--azul);
+    background: #087cfc1a;
+    font-size: 24px;
+}
+
+.informacion-pedidos {
+    flex: 1;
+}
+
+.informacion-pedidos h3 {
+    margin-bottom: 7px;
+    font-size: 15px;
+}
+
+.informacion-pedidos p {
+    color: var(--gris);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.btn-ir-pedidos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 16px;
+    border-radius: 7px;
+    background: var(--azul);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn-ir-pedidos:hover {
+    filter: brightness(1.15);
+}
+
+@media (max-width: 650px) {
+    .acceso-pedidos {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .iframe-pedidos {
+        min-height: 1100px;
+    }
+}
+.tabla-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 10px;
+}
+
+.tabla-responsive table {
+    width: 100%;
+    min-width: 1250px;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.tabla-responsive th,
+.tabla-responsive td {
+    padding: 14px;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.tabla-responsive td:nth-child(5) {
+    white-space: normal;
+    min-width: 220px;
+    max-width: 350px;
+    overflow-wrap: break-word;
+}
+
+.tabla-responsive img {
+    max-width: 65px;
+    height: 65px;
+    object-fit: contain;
+}

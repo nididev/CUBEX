@@ -1,4 +1,3 @@
-
 // ========================================
 // CONFIGURACIÓN DE API
 // ========================================
@@ -59,73 +58,109 @@ function limpiarMensajeResena() {
 // ========================================
 
 async function cargarProductos() {
-    try {
-        if (catalogo) {
-            catalogo.innerHTML = `
-                <p class="mensaje-catalogo">
-                    Cargando productos...
-                </p>
-            `;
-        }
+    if (!catalogo) {
+        console.warn('No se encontró el elemento #catalogoProductos en index.html.');
+        return;
+    }
 
-        const respuestaProductos = await fetch(API_PRODUCTOS);
-        const resultadoProductos = await respuestaProductos.json();
+    catalogo.innerHTML = `
+        <p class="mensaje-catalogo">Cargando productos...</p>
+    `;
+
+    try {
+        const respuestaProductos = await fetch(API_PRODUCTOS, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        const tipoContenido = respuestaProductos.headers.get('content-type') || '';
+        let resultadoProductos;
+
+        if (tipoContenido.includes('application/json')) {
+            resultadoProductos = await respuestaProductos.json();
+        } else {
+            const textoRespuesta = await respuestaProductos.text();
+
+            throw new Error(
+                `El servicio de productos no devolvió JSON. Respuesta: ${textoRespuesta.slice(0, 180)}`
+            );
+        }
 
         if (!respuestaProductos.ok) {
             throw new Error(
                 resultadoProductos.message ||
                 resultadoProductos.mensaje ||
-                'Error al consultar productos'
+                `Error HTTP ${respuestaProductos.status} al consultar productos`
             );
         }
 
-        productosCargados = Array.isArray(resultadoProductos)
-            ? resultadoProductos
-            : resultadoProductos.data || [];
+        // Aceptar los formatos de respuesta más comunes del microservicio.
+        if (Array.isArray(resultadoProductos)) {
+            productosCargados = resultadoProductos;
+        } else if (Array.isArray(resultadoProductos.data)) {
+            productosCargados = resultadoProductos.data;
+        } else if (Array.isArray(resultadoProductos.productos)) {
+            productosCargados = resultadoProductos.productos;
+        } else if (Array.isArray(resultadoProductos.resultado)) {
+            productosCargados = resultadoProductos.resultado;
+        } else {
+            console.error(
+                'Formato de respuesta de productos no reconocido:',
+                resultadoProductos
+            );
 
-        if (!Array.isArray(productosCargados) ||
-            productosCargados.length === 0) {
+            throw new Error(
+                'El servicio respondió, pero no se encontró una lista de productos.'
+            );
+        }
 
-            if (catalogo) {
-                catalogo.innerHTML = `
-                    <p class="mensaje-catalogo">
-                        Todavía no hay productos disponibles.
-                    </p>
-                `;
-            }
+        if (productosCargados.length === 0) {
+            catalogo.innerHTML = `
+                <p class="mensaje-catalogo">
+                    Todavía no hay productos disponibles.
+                </p>
+            `;
 
             return;
         }
 
-        // Consultar ofertas activas
+        // Las ofertas son opcionales: si el endpoint falla,
+        // el catálogo seguirá mostrando los productos normalmente.
         let ofertas = [];
 
         try {
-            const respuestaOfertas = await fetch(
-                `${API_OFERTAS}/activas`
-            );
+            const respuestaOfertas = await fetch(`${API_OFERTAS}/activas`, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
 
-            const resultadoOfertas = await respuestaOfertas.json();
+            if (respuestaOfertas.ok) {
+                const resultadoOfertas = await respuestaOfertas.json();
 
-            if (respuestaOfertas.ok && resultadoOfertas.success) {
-                ofertas = resultadoOfertas.data || [];
+                if (Array.isArray(resultadoOfertas)) {
+                    ofertas = resultadoOfertas;
+                } else if (Array.isArray(resultadoOfertas.data)) {
+                    ofertas = resultadoOfertas.data;
+                }
             }
-
         } catch (error) {
-            console.error(
-                'No se pudieron consultar las ofertas:',
+            console.warn(
+                'No se pudieron consultar las ofertas. Se mostrarán los precios normales:',
                 error
             );
         }
 
-        // Relacionar cada oferta con su producto
+        // Relacionar cada oferta con su producto.
         productosCargados = productosCargados.map(producto => {
-            const oferta = ofertas.find(
-                o => Number(o.id_producto) === Number(producto.id)
+            const idProducto = producto.id ?? producto.id_producto;
+
+            const oferta = ofertas.find(o =>
+                Number(o.id_producto) === Number(idProducto)
             );
 
             return {
                 ...producto,
+                id: idProducto,
                 ofertaActiva: oferta || null
             };
         });
@@ -135,14 +170,15 @@ async function cargarProductos() {
     } catch (error) {
         console.error('Error al cargar productos:', error);
 
-        if (catalogo) {
-            catalogo.innerHTML = `
-                <p class="mensaje-catalogo">
-                    No fue posible cargar los productos.
-                    Intenta más tarde.
-                </p>
-            `;
-        }
+        catalogo.innerHTML = `
+            <p class="mensaje-catalogo">
+                No fue posible cargar los productos.
+                ${escaparHTML(
+                    error.message ||
+                    'Verifica que el servicio de inventario esté encendido.'
+                )}
+            </p>
+        `;
     }
 }
 
@@ -201,6 +237,7 @@ function mostrarCatalogo(productos) {
                 No hay productos disponibles.
             </p>
         `;
+
         return;
     }
 
@@ -262,6 +299,17 @@ function mostrarCatalogo(productos) {
 // ========================================
 
 function mostrarDetalle(producto) {
+    const btnAgregar = document.getElementById("btnAgregarDetalle");
+
+if (btnAgregar) {
+    btnAgregar.onclick = function () {
+        if (typeof window.agregarAlCarrito === "function") {
+            window.agregarAlCarrito(producto);
+        } else {
+            console.error("No se ha cargado carrito.js");
+        }
+    };
+}
     productoActual = producto;
 
     const imagen = obtenerUrlImagen(producto.imagen);
@@ -456,6 +504,7 @@ if (formularioResena) {
                 'Debes iniciar sesión para publicar una reseña.',
                 'info'
             );
+
             return;
         }
 
@@ -479,6 +528,7 @@ if (formularioResena) {
                 'Solo los clientes pueden publicar reseñas.',
                 'advertencia'
             );
+
             return;
         }
 
@@ -488,6 +538,7 @@ if (formularioResena) {
                 'No se encontró el producto seleccionado.',
                 'error'
             );
+
             return;
         }
 
@@ -517,6 +568,7 @@ if (formularioResena) {
                 'El comentario no puede superar los 500 caracteres.',
                 'advertencia'
             );
+
             return;
         }
 
@@ -529,6 +581,7 @@ if (formularioResena) {
                 'Selecciona una calificación válida.',
                 'advertencia'
             );
+
             return;
         }
 
@@ -672,6 +725,7 @@ async function cargarResenas(idProducto) {
             lista.innerHTML = `
                 <p>Las reseñas de este producto aparecerán aquí.</p>
             `;
+
             return;
         }
 
@@ -879,6 +933,7 @@ async function cargarResenas(idProducto) {
                     'Escribe un comentario y selecciona una calificación válida.',
                     'advertencia'
                 );
+
                 return;
             }
 
@@ -1087,7 +1142,6 @@ function escaparHTML(valor) {
 
 cargarProductos();
 
-
 // ==========================================
 // FORMULARIO DE CONTACTO CUBEX
 // ==========================================
@@ -1194,8 +1248,12 @@ function configurarFormularioContacto() {
 
             const confirmacion = document.getElementById('mensajeConfirmacion');
 
-confirmacion.textContent = '✓ ¡Mensaje enviado correctamente! Gracias por contactar a CUBEX.';
-confirmacion.className = 'mensaje-confirmacion exito';;    
+            if (confirmacion) {
+                confirmacion.textContent =
+                    '✓ ¡Mensaje enviado correctamente! Gracias por contactar a CUBEX.';
+
+                confirmacion.className = 'mensaje-confirmacion exito';
+            }
 
             formulario.reset();
 
@@ -1206,8 +1264,14 @@ confirmacion.className = 'mensaje-confirmacion exito';;
         } catch (error) {
             console.error('Error al enviar contacto:', error);
 
-            confirmacion.textContent = 'No se pudo enviar tu mensaje. Inténtalo nuevamente.';
-confirmacion.className = 'mensaje-confirmacion error';
+            const confirmacion = document.getElementById('mensajeConfirmacion');
+
+            if (confirmacion) {
+                confirmacion.textContent =
+                    'No se pudo enviar tu mensaje. Inténtalo nuevamente.';
+
+                confirmacion.className = 'mensaje-confirmacion error';
+            }
 
         } finally {
             boton.disabled = false;

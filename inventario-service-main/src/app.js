@@ -8,6 +8,7 @@ const productoRoutes = require('./routes/producto.routes');
 const stockRoutes = require('./routes/stock.routes');
 const ofertasRoutes = require('./routes/ofertas.routes');
 const contactoRoutes = require('./routes/contacto.routes');
+const comprasRoutes = require('./routes/compra.routes');
 
 const swaggerSpec = require('./config/swagger');
 
@@ -22,6 +23,8 @@ const PORT = process.env.PORT || 3005;
 // Middlewares generales
 app.use(cors());
 app.use(express.json());
+
+// Rutas de contacto
 app.use('/api/contacto', contactoRoutes);
 
 // Permitir consultar las imágenes de los productos
@@ -55,12 +58,16 @@ app.use('/api/stock', stockRoutes);
 // Rutas de ofertas
 app.use('/api/ofertas', ofertasRoutes);
 
+// Rutas de compras a proveedores
+app.use('/api/compras', comprasRoutes);
+
 // Ruta no encontrada
 app.use(rutaNoEncontrada);
 
 // Manejador general de errores
 app.use(manejarErrores);
 
+// Iniciar servidor
 app.listen(PORT, () => {
     console.log(
         `Servidor de inventario ejecutándose en http://localhost:${PORT}`
@@ -68,5 +75,9 @@ app.listen(PORT, () => {
 
     console.log(
         `Documentación disponible en http://localhost:${PORT}/api/docs`
+    );
+
+    console.log(
+        `Compras disponibles en http://localhost:${PORT}/api/compras`
     );
 });

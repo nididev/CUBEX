@@ -9,10 +9,10 @@ const obtenerInventario = async () => {
             p.nombre,
             p.precio,
             p.imagen,
-            s.stock_actual,
-            s.stock_minimo,
-            s.stock_maximo,
-            o.activa AS oferta_activa,
+            COALESCE(s.stock_actual, 0) AS stock_actual,
+            COALESCE(s.stock_minimo, 0) AS stock_minimo,
+            COALESCE(s.stock_maximo, 0) AS stock_maximo,
+            COALESCE(o.activa, 0) AS oferta_activa,
             o.porcentaje_descuento,
             o.precio_oferta
         FROM productos p
@@ -33,9 +33,9 @@ const obtenerPorId = async (idProducto) => {
             p.id AS id_producto,
             p.nombre,
             p.precio,
-            s.stock_actual,
-            s.stock_minimo,
-            s.stock_maximo
+            COALESCE(s.stock_actual, 0) AS stock_actual,
+            COALESCE(s.stock_minimo, 0) AS stock_minimo,
+            COALESCE(s.stock_maximo, 0) AS stock_maximo
         FROM productos p
         LEFT JOIN stock s
             ON p.id = s.id_producto
@@ -45,14 +45,13 @@ const obtenerPorId = async (idProducto) => {
     return productos[0];
 };
 
-// Registrar o actualizar las cantidades
+// Registrar o actualizar las cantidades de inventario
 const guardarStock = async (
     idProducto,
     stockActual,
     stockMinimo,
     stockMaximo
 ) => {
-    // Guardar las existencias y límites
     await pool.query(`
         INSERT INTO stock (
             id_producto,
@@ -72,7 +71,7 @@ const guardarStock = async (
         stockMaximo
     ]);
 
-    // Consultar si el producto tiene una oferta activa
+    // Revisar si el producto tiene una oferta activa
     const [ofertas] = await pool.query(`
         SELECT activa
         FROM ofertas
@@ -83,16 +82,14 @@ const guardarStock = async (
         const actual = Number(stockActual);
         const maximo = Number(stockMaximo);
 
-        // Si baja del 80% del máximo, desactivar la oferta
+        // Desactivar oferta si el stock baja del 80% del máximo
         if (maximo <= 0 || actual < maximo * 0.8) {
             await pool.query(`
                 UPDATE ofertas
                 SET activa = FALSE
                 WHERE id_producto = ?
             `, [idProducto]);
-
         } else {
-            // Si sigue en nivel alto, actualizar el descuento
             const porcentaje = actual >= maximo ? 20 : 10;
 
             const [productos] = await pool.query(
@@ -121,7 +118,7 @@ const guardarStock = async (
         }
     }
 
-    return obtenerPorId(idProducto);
+    return await obtenerPorId(idProducto);
 };
 
 // Verificar que el producto exista

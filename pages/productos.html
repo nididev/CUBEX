@@ -591,6 +591,41 @@
             }, 0);
         });
     </script>
+    <script>
+    function actualizarAlturaProductos() {
+        const altura = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+        );
 
+        window.parent.postMessage({
+            tipo: 'altura-productos',
+            altura: altura + 30
+        }, '*');
+    }
+
+    window.addEventListener('load', actualizarAlturaProductos);
+
+    window.addEventListener('resize', actualizarAlturaProductos);
+
+    const observadorAltura = new ResizeObserver(() => {
+        actualizarAlturaProductos();
+    });
+
+    observadorAltura.observe(document.documentElement);
+
+    const observadorContenido = new MutationObserver(() => {
+        actualizarAlturaProductos();
+    });
+
+    observadorContenido.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    setTimeout(actualizarAlturaProductos, 500);
+    setTimeout(actualizarAlturaProductos, 1500);
+    setTimeout(actualizarAlturaProductos, 3000);
+</script>
 </body>
 </html>

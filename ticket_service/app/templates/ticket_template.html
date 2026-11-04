@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 22mm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 10px; color: #222; }
+  .header { text-align: center; border-bottom: 2px solid #d6a900; padding-bottom: 12px; margin-bottom: 18px; }
+  .brand { font-size: 25px; letter-spacing: 5px; font-weight: bold; color: #111; margin: 0; }
+  .tagline { color: #a88300; font-size: 9px; margin: 4px 0 10px; }
+  .subtitle { font-size: 13px; font-weight: bold; margin: 5px 0; }
+  .folio { background: #f5f1df; padding: 7px; margin-top: 10px; }
+  .info { margin: 14px 0; line-height: 1.8; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th { background: #222; color: #fff; padding: 8px 6px; }
+  td { padding: 8px 6px; border-bottom: 1px solid #ddd; }
+  .right { text-align: right; }
+  .total { text-align: right; margin-top: 18px; font-size: 15px; font-weight: bold; border-top: 2px solid #d6a900; padding-top: 12px; }
+  .approved { text-align: center; color: #238451; font-weight: bold; margin-top: 18px; }
+  .footer { text-align: center; margin-top: 35px; color: #666; font-size: 9px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <p class="brand">CUBEX</p>
+    <p class="tagline">Gira, piensa y conquista</p>
+    <p class="subtitle">COMPROBANTE DE COMPRA</p>
+    <div class="folio"><strong>Folio:</strong> {{ folio }}</div>
+  </div>
+  <div class="info">
+    <div><strong>Pedido:</strong> #{{ pedido_id }}</div>
+    <div><strong>Fecha:</strong> {{ fecha }}</div>
+    <div><strong>Cliente:</strong> {{ cliente_nombre }}</div>
+  </div>
+  <table>
+    <thead><tr><th>Cant.</th><th>Producto</th><th class="right">P. unitario</th><th class="right">Importe</th></tr></thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.cantidad }}</td>
+        <td>{{ item.producto }}</td>
+        <td class="right">${{ "%.2f"|format(item.precio_unitario) }}</td>
+        <td class="right">${{ "%.2f"|format(item.importe) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="total">TOTAL PAGADO: ${{ "%.2f"|format(total) }} MXN</div>
+  <div class="approved">PAGO CONFIRMADO</div>
+  <div class="footer">Gracias por comprar en CUBEX. Conserva este comprobante para cualquier aclaración.</div>
+</body>
+</html>

@@ -8,6 +8,7 @@
     <title>CUBEX | Gira, piensa y conquista</title>
 
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/carrito.css">
 </head>
 
 <body>
@@ -559,10 +560,43 @@
 </script>
 
 
+<!-- CATÁLOGO DINÁMICO Y DETALLE -->
+<script src="js/main.js"></script>
 
-    <!-- CATÁLOGO DINÁMICO Y DETALLE -->
-    <script src="js/main.js"></script>
+<!-- CONTENEDOR DEL CARRITO -->
+<div id="contenedorCarrito"></div>
 
+<!-- CARGAR PRIMERO EL HTML DEL CARRITO -->
+<script>
+(async function cargarCarritoHTML() {
+    const contenedor = document.getElementById("contenedorCarrito");
+
+    try {
+        const respuesta = await fetch("pages/carrito.html");
+
+        if (!respuesta.ok) {
+            throw new Error("No se encontró pages/carrito.html: " + respuesta.status);
+        }
+
+        const html = await respuesta.text();
+        contenedor.innerHTML = html;
+
+        console.log("HTML del carrito cargado correctamente.");
+        console.log("Panel encontrado:", !!document.getElementById("panelCarrito"));
+
+        // Ejecutar carrito.js después de insertar el HTML
+        const scriptCarrito = document.createElement("script");
+        scriptCarrito.src = "js/carrito.js";
+
+        document.body.appendChild(scriptCarrito);
+
+    } catch (error) {
+        console.error("Error al cargar el carrito:", error);
+    }
+})();
+</script>
+<!-- JAVASCRIPT DEL CARRITO -->
+<script src="js/carrito.js"></script>
 </body>
 
 </html>

@@ -17,7 +17,7 @@ formulario.addEventListener("submit", async (evento) => {
     try {
         // 1. Iniciar sesión
         const respuesta = await fetch(
-            "http://localhost:3000/api/v1/auth/login",
+            "http://localhost:3020/api/v1/auth/login",
             {
                 method: "POST",
                 headers: {
@@ -53,7 +53,7 @@ formulario.addEventListener("submit", async (evento) => {
 
         // 3. Consultar el rol actualizado
         const respuestaRol = await fetch(
-            `http://localhost:3003/usuarios/${usuario.idUsuario}/rol`,
+            `http://localhost:3023/usuarios/${usuario.idUsuario}/rol`,
             {
                 method: "GET",
                 headers: {
