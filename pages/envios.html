@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBEX | Envíos y rastreo</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body class="envios-page">
+
+    <main class="envios-contenedor">
+
+        <section class="envios-encabezado">
+            <div>
+                <p class="envios-sobrelinea">LOGÍSTICA</p>
+                <h1>Envíos y rastreo</h1>
+                <p class="envios-descripcion">
+                    Administra los envíos y consulta el seguimiento de los pedidos de CUBEX.
+                </p>
+            </div>
+
+            <button type="button" class="envios-btn envios-btn-principal"
+                    id="btnActualizar">
+                ↻ Actualizar
+            </button>
+        </section>
+
+        <section class="envios-estadisticas">
+            <article class="envios-stat-card">
+                <span class="envios-stat-icono">📦</span>
+                <div>
+                    <p>Total de envíos</p>
+                    <strong id="totalEnvios">0</strong>
+                </div>
+            </article>
+
+            <article class="envios-stat-card">
+                <span class="envios-stat-icono">🕒</span>
+                <div>
+                    <p>Preparando</p>
+                    <strong id="totalPreparando">0</strong>
+                </div>
+            </article>
+
+            <article class="envios-stat-card">
+                <span class="envios-stat-icono">🚚</span>
+                <div>
+                    <p>En tránsito</p>
+                    <strong id="totalTransito">0</strong>
+                </div>
+            </article>
+
+            <article class="envios-stat-card">
+                <span class="envios-stat-icono">✓</span>
+                <div>
+                    <p>Entregados</p>
+                    <strong id="totalEntregados">0</strong>
+                </div>
+            </article>
+        </section>
+
+        <section class="envios-panel">
+
+            <div class="envios-panel-encabezado">
+                <div>
+                    <h2>Registrar envío</h2>
+                    <p>Completa los datos para registrar el envío de un pedido.</p>
+                </div>
+            </div>
+
+            <form id="formEnvio" class="envios-formulario">
+
+                <input type="hidden" id="envioId">
+
+                <div class="envios-campo">
+                    <label for="pedidoId">Número de pedido *</label>
+                    <input type="number" id="pedidoId" min="1"
+                           placeholder="Ej. 18" required>
+                </div>
+
+                <div class="envios-campo">
+                    <label for="paqueteria">Paquetería *</label>
+                    <select id="paqueteria" required>
+                        <option value="">Selecciona una paquetería</option>
+                        <option value="DHL">DHL</option>
+                        <option value="FedEx">FedEx</option>
+                        <option value="Estafeta">Estafeta</option>
+                        <option value="Redpack">Redpack</option>
+                        <option value="Correos de México">Correos de México</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+
+                <div class="envios-campo">
+                    <label for="numeroGuia">Número de guía</label>
+                    <input type="text" id="numeroGuia"
+                           placeholder="Ingresa el número de guía">
+                </div>
+
+                <div class="envios-campo">
+                    <label for="fechaEnvio">Fecha de envío</label>
+                    <input type="date" id="fechaEnvio">
+                </div>
+
+                <div class="envios-campo">
+                    <label for="fechaEstimada">Entrega estimada</label>
+                    <input type="date" id="fechaEstimada">
+                </div>
+
+                <div class="envios-campo">
+                    <label for="estadoEnvio">Estado del envío *</label>
+                    <select id="estadoEnvio" required>
+                        <option value="Preparando">Preparando</option>
+                        <option value="Enviado">Enviado</option>
+                        <option value="En tránsito">En tránsito</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Incidencia">Incidencia</option>
+                    </select>
+                </div>
+
+                <div class="envios-campo envios-campo-completo">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" rows="3"
+                              placeholder="Información adicional del envío..."></textarea>
+                </div>
+
+                <div class="envios-form-acciones envios-campo-completo">
+                    <button type="reset" class="envios-btn envios-btn-secundario"
+                            id="btnLimpiar">
+                        Limpiar
+                    </button>
+
+                    <button type="submit" class="envios-btn envios-btn-principal"
+                            id="btnGuardar">
+                        Guardar envío
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+        <section class="envios-panel">
+
+            <div class="envios-panel-encabezado envios-listado-encabezado">
+                <div>
+                    <h2>Seguimiento de pedidos</h2>
+                    <p>Consulta y actualiza el estado de los envíos registrados.</p>
+                </div>
+            </div>
+
+            <div class="envios-filtros">
+                <input type="search" id="buscarEnvio"
+                       placeholder="Buscar por pedido, guía o paquetería...">
+
+                <select id="filtroEstado">
+                    <option value="">Todos los estados</option>
+                    <option value="Preparando">Preparando</option>
+                    <option value="Enviado">Enviado</option>
+                    <option value="En tránsito">En tránsito</option>
+                    <option value="Entregado">Entregado</option>
+                    <option value="Incidencia">Incidencia</option>
+                </select>
+            </div>
+
+            <div id="mensajeEnvios" class="envios-mensaje" role="status"
+                 aria-live="polite"></div>
+
+            <div class="envios-tabla-contenedor">
+                <table class="envios-tabla">
+                    <thead>
+                        <tr>
+                            <th>Pedido</th>
+                            <th>Paquetería</th>
+                            <th>Número de guía</th>
+                            <th>Fecha de envío</th>
+                            <th>Entrega estimada</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaEnvios">
+                        <tr>
+                            <td colspan="7" class="envios-vacio">
+                                Cargando envíos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="envios-nota">
+                Los datos de seguimiento se obtienen del microservicio de logística.
+            </p>
+
+        </section>
+
+    </main>
+
+    <script src="../js/envios.js"></script>
+</body>
+</html>

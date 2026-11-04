@@ -3398,3 +3398,474 @@ body {
     overflow: hidden;
     background: transparent;
 }
+/* =====================================================
+   CUBEX - MÓDULO DE ENVÍOS Y RASTREO
+   Agregar al final de css/admin.css
+===================================================== */
+
+.envios-page {
+    margin: 0;
+    min-height: 100vh;
+    background: #111827;
+    color: #f1f5f9;
+    font-family: inherit;
+}
+
+.envios-page * {
+    box-sizing: border-box;
+}
+
+.envios-contenedor {
+    width: 100%;
+    padding: 28px 30px;
+}
+
+.envios-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.envios-sobrelinea {
+    color: #1685ff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin: 0 0 10px;
+}
+
+.envios-encabezado h1 {
+    color: #f8fafc;
+    font-size: 30px;
+    margin: 0 0 10px;
+}
+
+.envios-descripcion {
+    color: #a9b8ca;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.envios-btn {
+    border: 1px solid transparent;
+    border-radius: 9px;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.envios-btn-principal {
+    background: #087fbd;
+    border-color: #0b9bdc;
+    color: #ffffff;
+}
+
+.envios-btn-principal:hover {
+    background: #069bdc;
+    transform: translateY(-1px);
+}
+
+.envios-btn-secundario {
+    background: #202c3e;
+    color: #dbeafe;
+    border-color: #34445a;
+}
+
+.envios-btn-secundario:hover {
+    background: #293a50;
+}
+
+.envios-estadisticas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.envios-stat-card {
+    background: #182233;
+    border: 1px solid #2b394c;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+
+.envios-stat-icono {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+    background: #102e49;
+    color: #20b8ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    flex-shrink: 0;
+}
+
+.envios-stat-card p {
+    color: #aab8ca;
+    font-size: 12px;
+    margin: 0 0 7px;
+}
+
+.envios-stat-card strong {
+    color: #f8fafc;
+    font-size: 25px;
+}
+
+.envios-panel {
+    background: #182233;
+    border: 1px solid #2b394c;
+    border-radius: 13px;
+    padding: 24px;
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.envios-panel-encabezado {
+    margin-bottom: 22px;
+}
+
+.envios-panel-encabezado h2 {
+    color: #f8fafc;
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+.envios-panel-encabezado p {
+    color: #aab8ca;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.envios-formulario {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 19px 22px;
+}
+
+.envios-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.envios-campo label {
+    color: #e5edf7;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.envios-campo input,
+.envios-campo select,
+.envios-campo textarea,
+.envios-filtros input,
+.envios-filtros select {
+    width: 100%;
+    min-width: 0;
+    background: #0c1421;
+    border: 1px solid #35465d;
+    border-radius: 8px;
+    color: #f1f5f9;
+    padding: 12px 13px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.envios-campo input,
+.envios-campo select {
+    min-height: 44px;
+}
+
+.envios-campo textarea {
+    resize: vertical;
+}
+
+.envios-campo input:focus,
+.envios-campo select:focus,
+.envios-campo textarea:focus,
+.envios-filtros input:focus,
+.envios-filtros select:focus {
+    border-color: #079bd8;
+    box-shadow: 0 0 0 3px rgba(7, 155, 216, 0.13);
+}
+
+.envios-campo input::placeholder,
+.envios-campo textarea::placeholder,
+.envios-filtros input::placeholder {
+    color: #718198;
+}
+
+.envios-campo-completo {
+    grid-column: 1 / -1;
+}
+
+.envios-form-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 5px;
+}
+
+.envios-filtros {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 220px;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.envios-mensaje {
+    display: none;
+    padding: 13px 15px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.envios-mensaje.visible {
+    display: block;
+}
+
+.envios-mensaje.exito {
+    background: rgba(22, 163, 74, 0.12);
+    border: 1px solid rgba(22, 163, 74, 0.4);
+    color: #86efac;
+}
+
+.envios-mensaje.error {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+.envios-mensaje.info {
+    background: rgba(14, 165, 233, 0.12);
+    border: 1px solid rgba(14, 165, 233, 0.35);
+    color: #7dd3fc;
+}
+
+.envios-tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+.envios-tabla {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.envios-tabla thead {
+    background: #101a2a;
+}
+
+.envios-tabla th {
+    color: #b9c8da;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 16px 14px;
+    white-space: nowrap;
+}
+
+.envios-tabla td {
+    color: #e1eaf5;
+    font-size: 13px;
+    padding: 16px 14px;
+    border-bottom: 1px solid #2b394c;
+    vertical-align: middle;
+}
+
+.envios-tabla tbody tr {
+    transition: background 0.2s;
+}
+
+.envios-tabla tbody tr:hover {
+    background: #202d40;
+}
+
+.envios-tabla .envios-vacio {
+    text-align: center;
+    color: #aab8ca;
+    padding: 38px 15px;
+}
+
+.envios-estado {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.envios-estado.preparando {
+    background: rgba(234, 179, 8, 0.13);
+    color: #facc15;
+}
+
+.envios-estado.enviado {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+}
+
+.envios-estado.transito {
+    background: rgba(6, 182, 212, 0.14);
+    color: #67e8f9;
+}
+
+.envios-estado.entregado {
+    background: rgba(34, 197, 94, 0.14);
+    color: #86efac;
+}
+
+.envios-estado.incidencia {
+    background: rgba(239, 68, 68, 0.14);
+    color: #fca5a5;
+}
+
+.envios-acciones {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.envios-btn-tabla {
+    border: 1px solid #087fbd;
+    background: #10334c;
+    color: #7dd3fc;
+    border-radius: 7px;
+    padding: 8px 11px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.envios-btn-tabla:hover {
+    background: #124765;
+}
+
+.envios-nota {
+    color: #93a6bd;
+    font-size: 12px;
+    margin: 18px 0 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .envios-estadisticas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .envios-contenedor {
+        padding: 22px 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .envios-encabezado {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .envios-encabezado h1 {
+        font-size: 25px;
+    }
+
+    .envios-estadisticas {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .envios-stat-card {
+        padding: 13px;
+        gap: 10px;
+    }
+
+    .envios-stat-icono {
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+    }
+
+    .envios-stat-card strong {
+        font-size: 21px;
+    }
+
+    .envios-formulario {
+        grid-template-columns: 1fr;
+    }
+
+    .envios-campo-completo {
+        grid-column: auto;
+    }
+
+    .envios-filtros {
+        grid-template-columns: 1fr;
+    }
+
+    .envios-panel {
+        padding: 17px;
+    }
+
+    .envios-form-acciones {
+        flex-direction: column-reverse;
+    }
+
+    .envios-form-acciones button {
+        width: 100%;
+    }
+}
+
+/* =========================================
+   PRODUCTOS: ALTURA AUTOMÁTICA
+========================================= */
+
+#productos {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+}
+
+#productos .iframe-productos {
+    display: block;
+    width: 100%;
+    height: 1200px; /* Altura inicial */
+    min-height: 1200px;
+    border: none;
+    overflow: hidden;
+}
+
+/* PRODUCTOS: PERMITIR VER TODA LA LISTA */
+
+#productos {
+    display: block;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+}
+
+#iframeProductos {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 330px);
+    min-height: 500px;
+    border: none;
+    overflow: auto;
+}

@@ -258,8 +258,7 @@
             <iframe
                 src="pages/productos.html"
                 title="Gestión de productos CUBEX"
-                class="iframe-productos"
-                scrolling="no">
+                class="iframe-productos">
             </iframe>
 
         </section>
@@ -872,5 +871,19 @@ window.confirmarEliminacionResena = function () {
 </script>
 <script src="js/admin.js"></script>
 <script src="js/comentarios.js"></script>
+<script>
+window.addEventListener('message', function(event) {
+
+    if (event.data && event.data.tipo === 'altura-productos') {
+
+        const iframe = document.querySelector('#productos .iframe-productos');
+
+        if (iframe && Number.isFinite(Number(event.data.altura))) {
+            iframe.style.height = (Number(event.data.altura) + 20) + 'px';
+        }
+    }
+
+});
+</script>
 </body>
 </html>
