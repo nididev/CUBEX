@@ -361,95 +361,15 @@
 
 
         <!-- COMPRAS -->
-        <section class="vista" id="compras">
+       <section class="vista" id="compras">
 
-            <div class="encabezado-seccion">
-                <div>
-                    <p class="sobrelinea">ABASTECIMIENTO</p>
-                    <h2>Compras a proveedores</h2>
-                    <p class="texto-secundario">Consulta órdenes de compra y sus detalles.</p>
-                </div>
+    <iframe
+        src="pages/compras.html"
+        title="Compras a proveedores"
+        class="iframe-compras">
+    </iframe>
 
-                <a href="#nueva-compra" class="boton-principal">+ Nueva compra</a>
-            </div>
-
-            <div class="panel-contenido">
-                <div class="tabla-contenedor">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Folio</th>
-                                <th>Proveedor</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>--</td>
-                                <td>Las compras aparecerán aquí</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td><span class="estado pendiente">Sin conectar</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="encabezado-seccion espacio-arriba" id="nueva-compra">
-                <div>
-                    <p class="sobrelinea">ABASTECIMIENTO</p>
-                    <h2>Registrar orden de compra</h2>
-                </div>
-            </div>
-
-            <div class="panel-contenido">
-                <form class="formulario">
-
-                    <div class="campo">
-                        <label for="compra-proveedor">Proveedor</label>
-                        <select id="compra-proveedor">
-                            <option value="">Selecciona proveedor</option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label for="compra-fecha">Fecha</label>
-                        <input id="compra-fecha" type="date">
-                    </div>
-
-                    <div class="campo">
-                        <label for="compra-producto">Producto</label>
-                        <select id="compra-producto">
-                            <option value="">Selecciona producto</option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label for="compra-cantidad">Cantidad</label>
-                        <input id="compra-cantidad" type="number" min="1" placeholder="Cantidad">
-                    </div>
-
-                    <div class="campo">
-                        <label for="compra-costo">Costo unitario (MXN)</label>
-                        <input id="compra-costo" type="number" min="0" step="0.01" placeholder="0.00">
-                    </div>
-
-                    <div class="formulario-acciones campo-completo">
-                        <button type="reset" class="boton-secundario">Limpiar campos</button>
-                        <button type="button" class="boton-principal">Guardar compra</button>
-                    </div>
-
-                </form>
-
-                <p class="nota-tabla">Formulario visual; todavía no registra compras.</p>
-            </div>
-
-        </section>
-
+</section>
 
         <!-- PEDIDOS -->
 <!-- PEDIDOS -->

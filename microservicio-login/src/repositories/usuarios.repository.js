@@ -80,26 +80,75 @@ export async function registrarIntentoFallido(idUsuario, maxIntentos, minutosBlo
   }
 }
 
-export async function crearUsuario({ nombreUsuario, passwordHash, email, nombreCompleto, rol }) {
-  const sql = `
-    INSERT INTO usuarios (nombre_usuario, password_hash, email, nombre_completo, rol_id)
-    SELECT ?, ?, ?, ?, id FROM roles WHERE nombre = ?
-  `;
+export async function crearUsuario({
+    nombreUsuario,
+    passwordHash,
+    email,
+    nombreCompleto,
+    rol
+}) {
+    const conexion = await pool.getConnection();
 
-  try {
-    const [resultado] = await pool.execute(sql, [
-      nombreUsuario,
-      passwordHash,
-      email ?? null,
-      nombreCompleto ?? null,
-      rol
-    ]);
+    try {
+        await conexion.beginTransaction();
 
-    if (resultado.affectedRows === 0) {
-      throw new Error(`El rol "${rol}" no existe en el catalogo de roles.`);
+        // 1. Crear usuario
+        const sqlUsuario = `
+            INSERT INTO usuarios (
+                nombre_usuario,
+                password_hash,
+                email,
+                nombre_completo,
+                rol_id
+            )
+            SELECT ?, ?, ?, ?, id
+            FROM roles
+            WHERE nombre = ?
+        `;
+
+        const [resultadoUsuario] = await conexion.execute(sqlUsuario, [
+            nombreUsuario,
+            passwordHash,
+            email ?? null,
+            nombreCompleto ?? null,
+            rol
+        ]);
+
+        if (resultadoUsuario.affectedRows === 0) {
+            throw new Error(`El rol "${rol}" no existe en el catalogo de roles.`);
+        }
+
+        const idUsuario = resultadoUsuario.insertId;
+
+        // 2. Crear cliente asociado al usuario
+        const sqlCliente = `
+            INSERT INTO clientes (id_usuario)
+            VALUES (?)
+        `;
+
+        await conexion.execute(sqlCliente, [idUsuario]);
+
+        // 3. Confirmar ambas inserciones
+        await conexion.commit();
+
+        return idUsuario;
+
+    } catch (error) {
+        await conexion.rollback();
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            throw new ErrorAplicacion(
+                'El nombre de usuario o el email ya estan registrados.',
+                {
+                    estadoHttp: 409,
+                    codigo: 'USUARIO_YA_EXISTE'
+                }
+            );
+        }
+
+        throw traducirError(error);
+
+    } finally {
+        conexion.release();
     }
-    return resultado.insertId;
-  } catch (error) {
-    throw traducirError(error);
-  }
 }

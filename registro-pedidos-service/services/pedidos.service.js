@@ -1,7 +1,9 @@
 
 const pool = require('../config/database');
 
-// Consultar todos los pedidos
+// ========================================
+// CONSULTAR TODOS LOS PEDIDOS
+// ========================================
 const obtenerPedidos = async () => {
     const [pedidos] = await pool.query(`
         SELECT *
@@ -12,7 +14,26 @@ const obtenerPedidos = async () => {
     return pedidos;
 };
 
-// Consultar un pedido por ID
+// ========================================
+// CONSULTAR LAS COMPRAS DE UN USUARIO
+// ========================================
+const obtenerPedidosPorUsuario = async (id_usuario) => {
+    const [pedidos] = await pool.query(`
+        SELECT
+            p.*
+        FROM pedidos p
+        INNER JOIN clientes c
+            ON c.id = p.id_cliente
+        WHERE c.id_usuario = ?
+        ORDER BY p.fecha DESC
+    `, [id_usuario]);
+
+    return pedidos;
+};
+
+// ========================================
+// CONSULTAR UN PEDIDO POR ID
+// ========================================
 const obtenerPedido = async (id) => {
     const [pedidos] = await pool.query(
         'SELECT * FROM pedidos WHERE id = ?',
@@ -22,7 +43,9 @@ const obtenerPedido = async (id) => {
     return pedidos[0] || null;
 };
 
-// Registrar un pedido pendiente
+// ========================================
+// REGISTRAR UN PEDIDO PENDIENTE
+// ========================================
 const registrarPedido = async (datos) => {
     const conexion = await pool.getConnection();
 
@@ -31,7 +54,7 @@ const registrarPedido = async (datos) => {
 
         const { id_usuario, id_direccion, productos } = datos;
 
-        // 1. Validar los datos recibidos
+        // Validar datos
         if (!id_usuario || !id_direccion) {
             const error = new Error(
                 'Falta el usuario o el domicilio del pedido'
@@ -48,7 +71,7 @@ const registrarPedido = async (datos) => {
             throw error;
         }
 
-        // 2. Buscar el cliente asociado al usuario
+        // Buscar cliente
         const [clientes] = await conexion.query(
             `SELECT id
              FROM clientes
@@ -67,7 +90,7 @@ const registrarPedido = async (datos) => {
 
         const id_cliente = clientes[0].id;
 
-        // 3. Verificar que el domicilio pertenezca al cliente
+        // Verificar domicilio
         const [direcciones] = await conexion.query(
             `SELECT id
              FROM direcciones
@@ -84,7 +107,7 @@ const registrarPedido = async (datos) => {
             throw error;
         }
 
-        // 4. Obtener el tipo de pago Tarjeta
+        // Obtener tipo de pago
         const [tiposPago] = await conexion.query(
             `SELECT id
              FROM tipos_pago
@@ -102,7 +125,7 @@ const registrarPedido = async (datos) => {
 
         const id_tipo_pago = tiposPago[0].id;
 
-        // 5. Validar los productos y sus cantidades
+        // Validar productos
         const productosValidados = [];
 
         for (const producto of productos) {
@@ -122,7 +145,6 @@ const registrarPedido = async (datos) => {
                 throw error;
             }
 
-            // Comprobar que el producto exista
             const [existentes] = await conexion.query(
                 `SELECT id
                  FROM productos
@@ -145,7 +167,7 @@ const registrarPedido = async (datos) => {
             });
         }
 
-        // 6. Crear el carrito cerrado en MySQL
+        // Crear carrito cerrado
         const [nuevoCarrito] = await conexion.query(
             `INSERT INTO carrito (id_cliente, estado)
              VALUES (?, 'cerrado')`,
@@ -154,7 +176,7 @@ const registrarPedido = async (datos) => {
 
         const id_carrito = nuevoCarrito.insertId;
 
-        // 7. Guardar los productos en detalle_carrito
+        // Guardar productos
         for (const producto of productosValidados) {
             await conexion.query(
                 `INSERT INTO detalle_carrito
@@ -168,7 +190,7 @@ const registrarPedido = async (datos) => {
             );
         }
 
-        // 8. Crear el pedido pendiente, sin tarjeta asignada
+        // Crear pedido pendiente
         const [resultadoPedido] = await conexion.query(
             `INSERT INTO pedidos
                 (id_carrito, id_cliente, id_direccion,
@@ -184,15 +206,12 @@ const registrarPedido = async (datos) => {
 
         const id_pedido = resultadoPedido.insertId;
 
-        // 9. Confirmar todas las operaciones
         await conexion.commit();
 
-        // 10. Devolver el pedido creado
         return await obtenerPedido(id_pedido);
 
     } catch (error) {
         await conexion.rollback();
-
         throw error;
 
     } finally {
@@ -200,17 +219,71 @@ const registrarPedido = async (datos) => {
     }
 };
 
-// Actualizar el estado de un pedido
+// ========================================
+// CONFIRMAR PEDIDO DESPUÉS DEL PAGO
+// ========================================
+const confirmarPago = async (id) => {
+
+    const pedidoActual = await obtenerPedido(id);
+
+    if (!pedidoActual) {
+        return null;
+    }
+
+    if (String(pedidoActual.estado).toLowerCase() === 'confirmado') {
+        return pedidoActual;
+    }
+
+    if (String(pedidoActual.estado).toLowerCase() === 'cancelado') {
+        const error = new Error(
+            'No se puede confirmar un pedido cancelado'
+        );
+        error.status = 409;
+        throw error;
+    }
+
+    const [resultado] = await pool.query(
+        `UPDATE pedidos
+         SET estado = 'confirmado'
+         WHERE id = ?
+         AND LOWER(estado) = 'pendiente'`,
+        [id]
+    );
+
+    if (resultado.affectedRows === 0) {
+        const pedido = await obtenerPedido(id);
+
+        if (
+            pedido &&
+            String(pedido.estado).toLowerCase() === 'confirmado'
+        ) {
+            return pedido;
+        }
+
+        const error = new Error(
+            'No fue posible confirmar el pedido'
+        );
+        error.status = 409;
+        throw error;
+    }
+
+    return await obtenerPedido(id);
+};
+
+// ========================================
+// ACTUALIZAR ESTADO ADMINISTRATIVO
+// ========================================
 const actualizarEstado = async (id, estado) => {
     const estadosPermitidos = [
         'pendiente',
-        'pagado',
         'confirmado',
         'cancelado'
     ];
 
     if (!estadosPermitidos.includes(String(estado).toLowerCase())) {
-        const error = new Error('El estado del pedido no es válido');
+        const error = new Error(
+            'El estado del pedido no es válido'
+        );
         error.status = 400;
         throw error;
     }
@@ -229,9 +302,14 @@ const actualizarEstado = async (id, estado) => {
     return await obtenerPedido(id);
 };
 
+// ========================================
+// EXPORTAR FUNCIONES
+// ========================================
 module.exports = {
     obtenerPedidos,
+    obtenerPedidosPorUsuario,
     obtenerPedido,
     registrarPedido,
+    confirmarPago,
     actualizarEstado
 };

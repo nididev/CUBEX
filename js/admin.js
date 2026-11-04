@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. CONFIGURACIÓN Y SESIÓN
     // =====================================
 
-    const API_ROLES = "http://localhost:3003";
+    const API_ROLES = "http://localhost:3000";
     const token = sessionStorage.getItem("cubex_token");
     const usuarioGuardado = sessionStorage.getItem("cubex_usuario");
 

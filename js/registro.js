@@ -6,7 +6,7 @@ const estadoVerificacion = document.getElementById("estado-verificacion");
 const tokenInput = document.getElementById("tokenVerificacion");
 const campoTrampa = document.getElementById("sitioWeb");
 
-const API_LOGIN = "http://localhost:3000/api/v1";
+const API_LOGIN = "http://localhost:3020/api/v1";
 const API_BOTS = "http://localhost:3001/api/verify";
 
 let momentoToken = 0;

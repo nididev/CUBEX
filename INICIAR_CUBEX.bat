@@ -82,10 +82,17 @@ REM Iniciar servidor web
 start "CUBEX - Pagina Web" cmd /k "cd /d "%~dp0" && py -m http.server 5500 --bind 127.0.0.1"
 
 REM Esperar a que los servicios arranquen
-timeout /t 7 /nobreak >nul
+
 
 REM Abrir CUBEX
 start "" "http://127.0.0.1:5500/index.html"
+
+REM ==========================================
+REM SERVICIO DE TICKETS PDF - Puerto 3025
+REM ==========================================
+
+start "CUBEX - Tickets PDF" cmd /k "cd /d ""%~dp0ticket_service"" && call venv\Scripts\activate.bat && python -m uvicorn app.main:app --reload --port 3025"
+
 
 echo.
 echo CUBEX se esta iniciando.

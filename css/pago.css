@@ -651,3 +651,26 @@ body {
     font-size: 12px;
     text-align: center;
 }
+
+/* Botón para regresar al inicio */
+.btn-regresar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 13px 24px;
+    background: transparent;
+    color: #E6B800;
+    border: 1px solid #E6B800;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-regresar:hover {
+    background: #E6B800;
+    color: #111;
+    transform: translateY(-2px);
+}

@@ -1,10 +1,10 @@
-
 /* =========================================================
    CUBEX - PAGO EN LÍNEA
    ========================================================= */
 
 const API_TARJETAS = "http://localhost:3024";
 const API_PAGOS = "http://localhost:3012/api/pagos";
+const API_PEDIDOS = "http://localhost:3011/api/Pedidos";
 const API_TICKETS = "http://localhost:3025";
 
 const obtenerToken = () =>
@@ -18,19 +18,15 @@ const nombreTitular = document.getElementById("nombreTitular");
 const mesExpiracion = document.getElementById("mesExpiracion");
 const anioExpiracion = document.getElementById("anioExpiracion");
 const cvv = document.getElementById("cvv");
-
 const guardarTarjeta = document.getElementById("guardarTarjeta");
 const btnPagar = document.getElementById("btnPagar");
 const mensajeTarjeta = document.getElementById("mensajeTarjeta");
-
 const contenedorTarjetas = document.getElementById("contenedorTarjetas");
 const tarjetaGuardada = document.getElementById("tarjetaGuardada");
 const btnNuevaTarjeta = document.getElementById("btnNuevaTarjeta");
-
 const subtotalCompra = document.getElementById("subtotalCompra");
 const envioCompra = document.getElementById("envioCompra");
 const totalCompra = document.getElementById("totalCompra");
-
 const resultadoPago = document.getElementById("resultadoPago");
 const btnDescargarTicket = document.getElementById("btnDescargarTicket");
 const folioPedido = document.getElementById("folioPedido");
@@ -39,7 +35,6 @@ let tarjetasCliente = [];
 let pedidosCliente = [];
 let usandoTarjetaGuardada = false;
 let pedidoPagadoId = null;
-
 
 /* =========================================================
    UTILIDADES
@@ -145,12 +140,14 @@ function obtenerCorreoUsuario() {
 
         try {
             const usuario = JSON.parse(valor);
+
             const correo =
                 usuario.correo ||
                 usuario.email ||
                 usuario.payerEmail;
 
             if (correo) return correo;
+
         } catch {
             if (valor.includes("@")) return valor;
         }
@@ -185,7 +182,6 @@ function obtenerMontoPedido(pedido) {
     return monto;
 }
 
-
 /* =========================================================
    CARGAR PEDIDOS
    ========================================================= */
@@ -216,7 +212,6 @@ async function cargarPedidosPendientes() {
     envioCompra.textContent = "Incluido en el pedido";
 }
 
-
 /* =========================================================
    CARGAR TARJETAS
    ========================================================= */
@@ -242,6 +237,7 @@ async function cargarTarjetas() {
         const opcion = document.createElement("option");
 
         opcion.value = tarjeta.id;
+
         opcion.textContent =
             `${tarjeta.marca} ${tarjeta.mascara}` +
             (tarjeta.vencida ? " (VENCIDA)" : "");
@@ -253,7 +249,6 @@ async function cargarTarjetas() {
         tarjetaGuardada.appendChild(opcion);
     });
 }
-
 
 /* =========================================================
    TARJETA NUEVA O GUARDADA
@@ -272,6 +267,7 @@ function habilitarNuevaTarjeta() {
     cvv.disabled = false;
 
     tarjetaGuardada.value = "";
+
     limpiarMensaje();
 }
 
@@ -286,8 +282,8 @@ tarjetaGuardada.addEventListener("change", () => {
         mesExpiracion.disabled = true;
         anioExpiracion.disabled = true;
         guardarTarjeta.disabled = true;
-        guardarTarjeta.checked = false;
 
+        guardarTarjeta.checked = false;
         cvv.disabled = false;
         cvv.focus();
 
@@ -295,13 +291,13 @@ tarjetaGuardada.addEventListener("change", () => {
             "Tarjeta seleccionada. Ingresa su CVV.",
             "info"
         );
+
     } else {
         habilitarNuevaTarjeta();
     }
 });
 
 btnNuevaTarjeta.addEventListener("click", habilitarNuevaTarjeta);
-
 
 /* =========================================================
    FORMATO Y AÑOS
@@ -324,6 +320,7 @@ function cargarAnios() {
 
     for (let i = 0; i <= 20; i++) {
         const anio = actual + i;
+
         const opcion = document.createElement("option");
 
         opcion.value = String(anio);
@@ -332,7 +329,6 @@ function cargarAnios() {
         anioExpiracion.appendChild(opcion);
     }
 }
-
 
 /* =========================================================
    VALIDAR Y REGISTRAR TARJETA
@@ -369,43 +365,48 @@ async function registrarTarjetaNode(datos) {
     });
 }
 
-
 /* =========================================================
    CONFIRMAR PEDIDO PAGADO
    ========================================================= */
 
-/*
- IMPORTANTE:
- Este endpoint debe existir en el microservicio 3024.
- Debe verificar la referencia del pago aprobado y actualizar
- pedidos.estado a 'pagado' en MySQL.
-
- No se debe cambiar el estado desde el navegador.
-*/
+// Después de autorizar el pago, se llama al microservicio
+// de pedidos (puerto 3011) para cambiar el estado en MySQL.
 
 async function confirmarPedidoPagado(idPedido, pago) {
-    const resultado = await solicitarNode("/pagos/confirmar-pago", {
-        method: "POST",
-        body: JSON.stringify({
-            idPedido: Number(idPedido),
-            paymentId: pago.payment_id || pago.id,
-            externalReference: String(idPedido),
-            estadoPago: pago.status
-        })
-    });
+    const respuesta = await fetch(
+        `${API_PEDIDOS}/${idPedido}/confirmar-pago`,
+        {
+            method: "PATCH",
+            headers: obtenerHeaders()
+        }
+    );
 
-    if (
-        resultado.exitoso !== true ||
-        String(resultado.estado || "").toLowerCase() !== "pagado"
-    ) {
+    const resultado = await respuesta.json().catch(() => ({}));
+
+    if (!respuesta.ok || resultado.exitoso === false) {
         throw new Error(
-            "El pago fue aprobado, pero no se pudo confirmar el pedido en la base de datos."
+            resultado.mensaje ||
+            resultado.error ||
+            "El pago fue autorizado, pero no se pudo confirmar el pedido en MySQL."
+        );
+    }
+
+    const pedidoActualizado =
+        resultado.pedido || resultado.data || resultado;
+
+    const estado = String(
+        pedidoActualizado.estado || resultado.estado || ""
+    ).toLowerCase();
+
+    if (estado && estado !== "confirmado") {
+        throw new Error(
+            resultado.mensaje ||
+            `El pedido respondió con estado "${estado}" en lugar de "confirmado".`
         );
     }
 
     return resultado;
 }
-
 
 /* =========================================================
    MOSTRAR CONFIRMACIÓN Y TICKET
@@ -415,14 +416,15 @@ function mostrarPagoExitoso(idPedido) {
     pedidoPagadoId = idPedido;
 
     formulario.hidden = true;
+
     document.getElementById("seccionTarjeta").hidden = true;
 
     resultadoPago.hidden = false;
+
     folioPedido.textContent = `Pedido #${idPedido}`;
 
     btnPagar.disabled = true;
 }
-
 
 /* =========================================================
    DESCARGAR TICKET
@@ -441,18 +443,21 @@ async function descargarTicket(idPedido) {
 
         throw new Error(
             error.detail ||
-            "No se pudo generar el ticket. Verifica que el pedido esté pagado."
+            "No se pudo generar el ticket. Verifica que el pedido esté confirmado."
         );
     }
 
     const archivo = await respuesta.blob();
+
     const url = URL.createObjectURL(archivo);
 
     const enlace = document.createElement("a");
+
     enlace.href = url;
     enlace.download = `CUBEX-ticket-${idPedido}.pdf`;
 
     document.body.appendChild(enlace);
+
     enlace.click();
     enlace.remove();
 
@@ -462,6 +467,7 @@ async function descargarTicket(idPedido) {
 btnDescargarTicket.addEventListener("click", async () => {
     try {
         btnDescargarTicket.disabled = true;
+
         btnDescargarTicket.innerHTML =
             '<i class="fa-solid fa-spinner fa-spin"></i> Generando ticket...';
 
@@ -472,11 +478,11 @@ btnDescargarTicket.addEventListener("click", async () => {
 
     } finally {
         btnDescargarTicket.disabled = false;
+
         btnDescargarTicket.innerHTML =
             '<i class="fa-solid fa-download"></i> Descargar ticket PDF';
     }
 });
-
 
 /* =========================================================
    PAGO CON TARJETA NUEVA
@@ -486,10 +492,13 @@ async function pagarConTarjetaNueva() {
     mostrarMensaje("Verificando los datos de tu tarjeta...", "info");
 
     const datosTarjeta = await validarTarjetaNode();
+
     const pedido = obtenerPedidoPendiente();
+
     const monto = obtenerMontoPedido(pedido);
 
     const nombre = obtenerNombreSeparado(nombreTitular.value);
+
     const correo = obtenerCorreo();
 
     if (!nombre.nombre || !nombre.apellidos) {
@@ -510,7 +519,10 @@ async function pagarConTarjetaNueva() {
         payerEmail: correo,
         cardNumber: datosTarjeta.numero,
         cvv: datosTarjeta.cvv,
-        expiry: `${datosTarjeta.mes}/${datosTarjeta.anio.slice(-2)}`,
+
+        expiry:
+            `${datosTarjeta.mes}/${datosTarjeta.anio.slice(-2)}`,
+
         description: `Compra CUBEX - Pedido ${pedido.id}`,
         externalReference: String(pedido.id)
     });
@@ -527,18 +539,22 @@ async function pagarConTarjetaNueva() {
     if (guardarTarjeta.checked) {
         try {
             await registrarTarjetaNode(datosTarjeta);
+
         } catch (error) {
-            console.error("No se pudo guardar la tarjeta:", error);
+            console.error(
+                "No se pudo guardar la tarjeta:",
+                error
+            );
         }
     }
 
-    // Confirmación real en el backend.
+    // Confirmar el pedido en la tabla pedidos de MySQL.
     await confirmarPedidoPagado(pedido.id, pago);
 
     mostrarMensaje("¡Pago realizado con éxito!", "success");
+
     mostrarPagoExitoso(pedido.id);
 }
-
 
 /* =========================================================
    PAGO CON TARJETA GUARDADA
@@ -546,6 +562,7 @@ async function pagarConTarjetaNueva() {
 
 async function pagarConTarjetaGuardada() {
     const idTarjeta = tarjetaGuardada.value;
+
     const codigo = cvv.value.trim();
 
     if (!idTarjeta) {
@@ -562,10 +579,14 @@ async function pagarConTarjetaGuardada() {
         throw new Error("No se encontró un pedido pendiente.");
     }
 
-    mostrarMensaje("Verificando y autorizando el pago...", "info");
+    mostrarMensaje(
+        "Verificando y autorizando el pago...",
+        "info"
+    );
 
     const resultado = await solicitarNode("/pagos/verificar-tarjeta", {
         method: "POST",
+
         body: JSON.stringify({
             idTarjeta: Number(idTarjeta),
             cvv: codigo,
@@ -575,21 +596,18 @@ async function pagarConTarjetaGuardada() {
 
     if (!resultado.aprobado) {
         throw new Error(
-            resultado.error || "El pago no pudo ser autorizado."
+            resultado.error ||
+            "El pago no pudo ser autorizado."
         );
     }
 
-    // El backend debe devolver el estado actualizado.
-    if (String(resultado.estado || "").toLowerCase() !== "pagado") {
-        throw new Error(
-            "El pago fue autorizado, pero el pedido todavía no está pagado en la base de datos."
-        );
-    }
+    // El pago fue autorizado; confirmar pedido en el microservicio 3011.
+    await confirmarPedidoPagado(pedido.id, resultado);
 
     mostrarMensaje("¡Pago realizado con éxito!", "success");
+
     mostrarPagoExitoso(pedido.id);
 }
-
 
 /* =========================================================
    BOTÓN PAGAR
@@ -603,18 +621,21 @@ formulario.addEventListener("submit", async event => {
             "Debes iniciar sesión para realizar una compra.",
             "error"
         );
+
         return;
     }
 
     limpiarMensaje();
 
     btnPagar.disabled = true;
+
     btnPagar.innerHTML =
         '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
 
     try {
         if (usandoTarjetaGuardada) {
             await pagarConTarjetaGuardada();
+
         } else {
             await pagarConTarjetaNueva();
         }
@@ -623,16 +644,17 @@ formulario.addEventListener("submit", async event => {
         console.error("Error al procesar el pago:", error);
 
         mostrarMensaje(
-            error.message || "Ocurrió un error al procesar el pago.",
+            error.message ||
+            "Ocurrió un error al procesar el pago.",
             "error"
         );
 
         btnPagar.disabled = false;
+
         btnPagar.innerHTML =
             '<i class="fa-solid fa-lock"></i> Verificar y pagar';
     }
 });
-
 
 /* =========================================================
    INICIALIZACIÓN
@@ -648,6 +670,7 @@ async function inicializarPago() {
         );
 
         btnPagar.disabled = true;
+
         return;
     }
 
@@ -658,7 +681,10 @@ async function inicializarPago() {
         ]);
 
     } catch (error) {
-        console.error("Error al inicializar el pago:", error);
+        console.error(
+            "Error al inicializar el pago:",
+            error
+        );
 
         mostrarMensaje(
             error.message ||

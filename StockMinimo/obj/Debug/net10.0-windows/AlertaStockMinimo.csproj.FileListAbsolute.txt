@@ -1,0 +1,17 @@
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\bin\Debug\net10.0-windows\AlertaStockMinimo.exe
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\bin\Debug\net10.0-windows\AlertaStockMinimo.deps.json
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\bin\Debug\net10.0-windows\AlertaStockMinimo.runtimeconfig.json
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\bin\Debug\net10.0-windows\AlertaStockMinimo.dll
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\bin\Debug\net10.0-windows\AlertaStockMinimo.pdb
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.FormPrincipal.resources
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.csproj.GenerateResource.cache
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.AssemblyInfoInputs.cache
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.AssemblyInfo.cs
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.csproj.CoreCompileInputs.cache
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.dll
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\refint\AlertaStockMinimo.dll
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.pdb
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaStockMinimo.genruntimeconfig.cache
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\ref\AlertaStockMinimo.dll
+C:\Users\angel\source\repos\AlertaStockMinimo\AlertaStockMinimo\obj\Debug\net10.0-windows\AlertaSt.3391CDF4.Up2Date

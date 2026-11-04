@@ -1,23 +1,16 @@
 # Dependencias
-**/node_modules/
+node_modules/
 
-# Archivos privados y variables de entorno
-**/.env
-**/.env.*
-!**/.env.example
+# Variables y credenciales
+.env
+.env.*
+!.env.example
 
-# Registros
-*.log
-npm-debug.log*
+# Python
+__pycache__/
+*.pyc
+*.pyo
 
 # Archivos del sistema
 .DS_Store
 Thumbs.db
-
-# Respaldo Git
-microservicio-login/.git-respaldo/
-
-# Archivos generados de .NET
-**/bin/
-**/obj/
-*.csproj.user

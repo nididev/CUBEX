@@ -88,29 +88,52 @@ export async function autenticar({ nombreUsuario, contrasena }) {
   return abrirSesion(usuario);
 }
 
-export async function registrar({ nombreUsuario, contrasena, email, nombreCompleto }) {
-  if (await buscarUsuarioPorNombre(nombreUsuario)) {
-    throw new ErrorAplicacion('El nombre de usuario ya esta registrado.', {
-      estadoHttp: 409,
-      codigo: 'USUARIO_YA_EXISTE'
-    });
-  }
-
-  try {
-    const passwordHash = await generarHash(contrasena);
-    await crearUsuario({ nombreUsuario, passwordHash, email, nombreCompleto, rol: ROL_REGISTRO });
-  } catch (error) {
-    // La base impide nombres o emails duplicados; si llegan aqui, ya existe la cuenta.
-    if (error.code === 'ER_DUP_ENTRY') {
-      throw new ErrorAplicacion('El nombre de usuario o el email ya estan registrados.', {
-        estadoHttp: 409,
-        codigo: 'USUARIO_YA_EXISTE'
-      });
+export async function registrar({
+    nombreUsuario,
+    contrasena,
+    email,
+    nombreCompleto
+}) {
+    if (await buscarUsuarioPorNombre(nombreUsuario)) {
+        throw new ErrorAplicacion(
+            'El nombre de usuario ya esta registrado.',
+            {
+                estadoHttp: 409,
+                codigo: 'USUARIO_YA_EXISTE'
+            }
+        );
     }
-    throw error;
-  }
 
-  const nuevo = await buscarUsuarioPorNombre(nombreUsuario);
-  logger.info(`Usuario registrado "${nombreUsuario}" (id ${nuevo.id}, rol ${nuevo.rol}).`);
-  return abrirSesion(nuevo);
+    try {
+        const passwordHash = await generarHash(contrasena);
+
+        await crearUsuario({
+            nombreUsuario,
+            passwordHash,
+            email,
+            nombreCompleto,
+            rol: ROL_REGISTRO
+        });
+
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            throw new ErrorAplicacion(
+                'El nombre de usuario o el email ya estan registrados.',
+                {
+                    estadoHttp: 409,
+                    codigo: 'USUARIO_YA_EXISTE'
+                }
+            );
+        }
+
+        throw error;
+    }
+
+    const nuevo = await buscarUsuarioPorNombre(nombreUsuario);
+
+    logger.info(
+        `Usuario registrado "${nombreUsuario}" (id ${nuevo.id}, rol ${nuevo.rol}).`
+    );
+
+    return abrirSesion(nuevo);
 }

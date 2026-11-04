@@ -8,10 +8,10 @@ const API_REPORTES_INVENTARIO =
     'http://localhost:3008/api/v1/reportes/inventario';
 
 const API_REPORTES_COMPRAS =
-    'http://localhost:3010/api/v1/reportes/compras';
+    'http://localhost:3021/api/v1/reportes/compras';
 
 const API_PROVEEDORES =
-    'http://localhost:3009/api/proveedores';
+    'http://localhost:3000/api/proveedores';
 
 // =============================================
 // VARIABLES GLOBALES
