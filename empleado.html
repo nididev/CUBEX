@@ -177,56 +177,73 @@
         </section>
 
         <!-- PEDIDOS -->
-        <section class="ventana" id="pedidos">
+        <!-- PEDIDOS -->
+<section class="ventana" id="pedidos">
 
-            <div class="titulo-seccion">
-                <span class="etiqueta">OPERACIÓN</span>
-                <h2>Pedidos</h2>
-                <p>Consulta los pedidos y da seguimiento a su preparación.</p>
+    <div class="titulo-seccion">
+        <span class="etiqueta">OPERACIÓN</span>
+        <h2>Pedidos</h2>
+        <p>Consulta los pedidos y da seguimiento a su preparación.</p>
+    </div>
+
+    <section class="panel">
+
+        <div class="panel-titulo">
+            <div>
+                <h2>Listado de pedidos</h2>
+                <p>Pedidos registrados en CUBEX.</p>
             </div>
+            <button type="button" id="actualizarPedidos" class="boton-actualizar">
+                ↻ Actualizar
+            </button>
+        </div>
 
-            <section class="panel">
+        <div class="filtros-pedidos">
+            <input
+                type="text"
+                id="buscarPedidoEmpleado"
+                placeholder="Buscar por número de pedido o cliente..."
+            >
 
-                <div class="panel-titulo">
-                    <div>
-                        <h2>Listado de pedidos</h2>
-                        <p>Los pedidos se mostrarán al conectar el servicio correspondiente.</p>
-                    </div>
-                </div>
+            <select id="filtroEstadoEmpleado">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Confirmado">Confirmado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
 
-                <div class="tabla-contenedor">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>N.º de pedido</th>
-                                <th>Cliente</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>N.º de pedido</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
 
-                        <tbody>
-                            <tr>
-                                <td colspan="6" class="tabla-vacia">
-                                    <span>📦</span>
-                                    <strong>Aún no hay pedidos para mostrar</strong>
-                                    <p>Los datos aparecerán al conectar el microservicio de pedidos.</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <tbody id="tablaPedidosEmpleado">
+                    <tr>
+                        <td colspan="5" class="tabla-vacia">
+                            Cargando pedidos...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                <div class="nota">
-                    <strong>Permisos:</strong>
-                    el empleado podrá consultar los pedidos y cambiar sus estados
-                    cuando el servicio esté conectado.
-                </div>
+        <p id="mensajePedidosEmpleado" class="nota"></p>
 
-            </section>
-        </section>
+        <div class="nota">
+            <strong>Permisos:</strong>
+            el empleado puede consultar los pedidos y actualizar su estado.
+        </div>
+
+    </section>
+</section>
 
         <!-- COMENTARIOS Y RESEÑAS -->
        

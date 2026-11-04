@@ -1,380 +1,747 @@
-// =========================================
-// CUBEX - ADMINISTRACIÓN DE PEDIDOS
-// =========================================
 
-const API_PEDIDOS = 'http://localhost:3011/api/Pedidos';
+document.addEventListener("DOMContentLoaded", () => {
 
-let listaPedidos = [];
+    // =========================================
+    // 1. VALIDAR SESIÓN Y ROL
+    // =========================================
 
-// Elementos HTML
-const tablaPedidos = document.getElementById('tablaPedidos');
-const totalPedidos = document.getElementById('totalPedidos');
-const pedidosPendientes = document.getElementById('pedidosPendientes');
-const pedidosConfirmados = document.getElementById('pedidosConfirmados');
-const buscarPedido = document.getElementById('buscarPedido');
-const filtroEstado = document.getElementById('filtroEstado');
-const mensajePedidos = document.getElementById('mensajePedidos');
+    const token = sessionStorage.getItem("cubex_token");
+    const usuarioGuardado = sessionStorage.getItem("cubex_usuario");
 
-// =========================================
-// MENSAJES
-// =========================================
-
-function mostrarMensaje(texto, tipo = 'exito') {
-    mensajePedidos.textContent = texto;
-    mensajePedidos.className = `pedidos-mensaje ${tipo}`;
-
-    setTimeout(() => {
-        mensajePedidos.className = 'pedidos-mensaje';
-        mensajePedidos.textContent = '';
-    }, 4000);
-}
-
-// =========================================
-// ESCAPAR TEXTO HTML
-// =========================================
-
-function escaparHTML(valor) {
-    return String(valor ?? '').replace(/[&<>"']/g, caracter => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    })[caracter]);
-}
-
-// =========================================
-// CONSULTAR PEDIDOS
-// =========================================
-
-async function cargarPedidos() {
-    tablaPedidos.innerHTML = `
-        <tr>
-            <td colspan="5" class="pedidos-vacio">
-                Cargando pedidos...
-            </td>
-        </tr>
-    `;
-
-    try {
-        const respuesta = await fetch(API_PEDIDOS);
-
-        if (!respuesta.ok) {
-            throw new Error('No fue posible consultar los pedidos.');
-        }
-
-        const resultado = await respuesta.json();
-
-        if (resultado.exitoso === false) {
-            throw new Error(resultado.mensaje || 'Error al consultar pedidos.');
-        }
-
-        listaPedidos = Array.isArray(resultado)
-            ? resultado
-            : (resultado.datos || []);
-
-        actualizarEstadisticas();
-        mostrarPedidos();
-
-    } catch (error) {
-        console.error('Error al cargar pedidos:', error);
-
-        tablaPedidos.innerHTML = `
-            <tr>
-                <td colspan="5" class="pedidos-vacio">
-                    No se pudieron cargar los pedidos.
-                    Verifica que el microservicio esté funcionando.
-                </td>
-            </tr>
-        `;
-
-        mostrarMensaje(error.message, 'error');
-    }
-}
-
-// =========================================
-// ESTADÍSTICAS
-// =========================================
-
-function actualizarEstadisticas() {
-    totalPedidos.textContent = listaPedidos.length;
-
-    pedidosPendientes.textContent = listaPedidos.filter(
-        pedido => pedido.estado === 'Pendiente'
-    ).length;
-
-    pedidosConfirmados.textContent = listaPedidos.filter(
-        pedido => pedido.estado === 'Confirmado'
-    ).length;
-}
-
-// =========================================
-// FORMATO DE FECHA
-// =========================================
-
-function formatearFecha(fecha) {
-    if (!fecha) return 'Sin fecha';
-
-    const fechaObjeto = new Date(fecha);
-
-    if (isNaN(fechaObjeto.getTime())) {
-        return escaparHTML(fecha);
-    }
-
-    return fechaObjeto.toLocaleString('es-MX', {
-        dateStyle: 'short',
-        timeStyle: 'short'
-    });
-}
-
-// =========================================
-// MOSTRAR PEDIDOS
-// =========================================
-
-function mostrarPedidos() {
-    const busqueda = buscarPedido.value.trim().toLowerCase();
-    const estadoSeleccionado = filtroEstado.value;
-
-    const pedidosFiltrados = listaPedidos.filter(pedido => {
-        const coincideBusqueda =
-            String(pedido.id).includes(busqueda) ||
-            String(pedido.id_cliente).includes(busqueda);
-
-        const coincideEstado =
-            !estadoSeleccionado ||
-            pedido.estado === estadoSeleccionado;
-
-        return coincideBusqueda && coincideEstado;
-    });
-
-    if (pedidosFiltrados.length === 0) {
-        tablaPedidos.innerHTML = `
-            <tr>
-                <td colspan="5" class="pedidos-vacio">
-                    No hay pedidos para mostrar.
-                </td>
-            </tr>
-        `;
+    if (!token || !usuarioGuardado) {
+        window.location.replace("login.html");
         return;
     }
 
-    tablaPedidos.innerHTML = pedidosFiltrados.map(pedido => {
+    let usuario;
 
-        const estado = pedido.estado || 'Pendiente';
+    try {
+        usuario = JSON.parse(usuarioGuardado);
+    } catch (error) {
+        sessionStorage.removeItem("cubex_token");
+        sessionStorage.removeItem("cubex_usuario");
+        window.location.replace("login.html");
+        return;
+    }
 
-        let claseEstado = 'pendiente';
+    if (!usuario || usuario.rol !== "VENDEDOR") {
+        if (usuario?.rol === "ADMIN") {
+            window.location.replace("admin.html");
+        } else {
+            window.location.replace("index.html");
+        }
+        return;
+    }
 
-        if (estado === 'Confirmado') {
-            claseEstado = 'confirmado';
-        } else if (estado === 'Cancelado') {
-            claseEstado = 'cancelado';
+
+    // =========================================
+    // 2. DATOS DEL EMPLEADO
+    // =========================================
+
+    const nombreCompleto =
+        usuario.nombreCompleto ||
+        usuario.nombreUsuario ||
+        "Empleado";
+
+    const nombreUsuario = usuario.nombreUsuario || "empleado";
+    const correo = usuario.email || usuario.correo || "No disponible";
+    const rol = usuario.rol || "VENDEDOR";
+
+    const inicial = nombreCompleto.trim().charAt(0).toUpperCase();
+
+    function colocarTexto(id, texto) {
+        const elemento = document.getElementById(id);
+
+        if (elemento) {
+            elemento.textContent = texto;
+        }
+    }
+
+    // Barra lateral
+    colocarTexto("nombreEmpleado", "@" + nombreUsuario);
+    colocarTexto("inicialEmpleado", inicial);
+
+    // Modal de perfil
+    colocarTexto("inicialModal", inicial);
+    colocarTexto("modalNombre", nombreCompleto);
+    colocarTexto("modalNombreCompleto", nombreCompleto);
+    colocarTexto("modalUsuario", "@" + nombreUsuario);
+    colocarTexto("modalCorreo", correo);
+    colocarTexto("modalRol", rol);
+
+    // Perfil adicional, si existe en el HTML
+    colocarTexto("inicialPerfil", inicial);
+    colocarTexto("perfilNombre", nombreCompleto);
+    colocarTexto("perfilNombreCompleto", nombreCompleto);
+    colocarTexto("perfilCorreo", correo);
+    colocarTexto("perfilRol", rol);
+
+
+    // =========================================
+    // 3. NOTIFICACIONES
+    // =========================================
+
+    function notificar(mensaje, tipo = "exito") {
+
+        const contenedor = document.getElementById(
+            "contenedorNotificaciones"
+        );
+
+        if (!contenedor) {
+            console.log(mensaje);
+            return;
         }
 
-        return `
+        const notificacion = document.createElement("div");
+
+        notificacion.className = `notificacion ${tipo}`;
+        notificacion.textContent = mensaje;
+
+        contenedor.appendChild(notificacion);
+
+        setTimeout(() => {
+            notificacion.classList.add("ocultar");
+
+            setTimeout(() => {
+                notificacion.remove();
+            }, 300);
+
+        }, 2500);
+    }
+
+
+    // =========================================
+    // 4. MODAL DE PERFIL
+    // =========================================
+
+    const modalPerfil = document.getElementById("modalPerfil");
+
+    function abrirModalPerfil() {
+
+        if (!modalPerfil) {
+            console.error("No se encontró el modal #modalPerfil.");
+            return;
+        }
+
+        modalPerfil.classList.add("mostrar");
+        modalPerfil.setAttribute("aria-hidden", "false");
+
+        document.body.style.overflow = "hidden";
+    }
+
+    function cerrarModalPerfil() {
+
+        if (!modalPerfil) return;
+
+        modalPerfil.classList.remove("mostrar");
+        modalPerfil.setAttribute("aria-hidden", "true");
+
+        document.body.style.overflow = "";
+    }
+
+    // Abrir perfil
+    document.getElementById("abrirPerfil")
+        ?.addEventListener("click", function (evento) {
+            evento.preventDefault();
+            abrirModalPerfil();
+        });
+
+    document.getElementById("abrirPerfilTarjeta")
+        ?.addEventListener("click", function (evento) {
+            evento.preventDefault();
+            abrirModalPerfil();
+        });
+
+
+    // =========================================
+    // 5. CERRAR MODAL DE PERFIL
+    // =========================================
+
+    const botonX = document.querySelector(
+        "#cerrarModal, #cerrarModalPerfil"
+    );
+
+    const botonCerrarPerfil = document.querySelector(
+        "#botonCerrarModal, #botonCerrarPerfil"
+    );
+
+    if (botonX) {
+        botonX.type = "button";
+    }
+
+    if (botonCerrarPerfil) {
+        botonCerrarPerfil.type = "button";
+    }
+
+    document.addEventListener("click", function (evento) {
+
+        const clicEnX = evento.target.closest(
+            "#cerrarModal, #cerrarModalPerfil"
+        );
+
+        const clicEnCerrar = evento.target.closest(
+            "#botonCerrarModal, #botonCerrarPerfil"
+        );
+
+        if (clicEnX || clicEnCerrar) {
+
+            evento.preventDefault();
+            evento.stopPropagation();
+
+            cerrarModalPerfil();
+        }
+
+    }, true);
+
+    // Cerrar al hacer clic fuera del cuadro
+    modalPerfil?.addEventListener("click", function (evento) {
+
+        if (evento.target === modalPerfil) {
+            cerrarModalPerfil();
+        }
+
+    });
+
+
+    // =========================================
+    // 6. MODAL DE CERRAR SESIÓN
+    // =========================================
+
+    const modalCerrarSesion = document.getElementById(
+        "modalCerrarSesion"
+    );
+
+    const botonCerrarSesion = document.getElementById(
+        "cerrarSesion"
+    );
+
+    const cancelarCerrarSesion = document.getElementById(
+        "cancelarCerrarSesion"
+    );
+
+    const confirmarCerrarSesion = document.getElementById(
+        "confirmarCerrarSesion"
+    );
+
+    function abrirModalCerrarSesion() {
+
+        if (!modalCerrarSesion) return;
+
+        modalCerrarSesion.classList.add("mostrar");
+        modalCerrarSesion.setAttribute("aria-hidden", "false");
+
+        document.body.style.overflow = "hidden";
+    }
+
+    function cerrarModalCerrarSesion() {
+
+        if (!modalCerrarSesion) return;
+
+        modalCerrarSesion.classList.remove("mostrar");
+        modalCerrarSesion.setAttribute("aria-hidden", "true");
+
+        document.body.style.overflow = "";
+    }
+
+    botonCerrarSesion?.addEventListener("click", function (evento) {
+
+        evento.preventDefault();
+        abrirModalCerrarSesion();
+
+    });
+
+    cancelarCerrarSesion?.addEventListener("click", function () {
+
+        cerrarModalCerrarSesion();
+
+    });
+
+    confirmarCerrarSesion?.addEventListener("click", function () {
+
+        sessionStorage.removeItem("cubex_token");
+        sessionStorage.removeItem("cubex_usuario");
+
+        cerrarModalCerrarSesion();
+
+        window.location.replace("login.html");
+
+    });
+
+    modalCerrarSesion?.addEventListener("click", function (evento) {
+
+        if (evento.target === modalCerrarSesion) {
+            cerrarModalCerrarSesion();
+        }
+
+    });
+
+
+    // =========================================
+    // 7. NAVEGACIÓN Y SECCIÓN ACTIVA
+    // =========================================
+
+    const enlaces = document.querySelectorAll(
+        ".navegacion .enlace-menu"
+    );
+
+    function actualizarMenuActivo() {
+
+        const seccion =
+            window.location.hash.replace("#", "") || "resumen";
+
+        enlaces.forEach(enlace => {
+
+            const destino = enlace.dataset.seccion;
+
+            enlace.classList.toggle(
+                "activo",
+                destino === seccion
+            );
+
+        });
+    }
+
+    enlaces.forEach(enlace => {
+
+        enlace.addEventListener("click", function () {
+
+            const destino = this.dataset.seccion;
+
+            if (destino) {
+
+                enlaces.forEach(item => {
+                    item.classList.remove("activo");
+                });
+
+                this.classList.add("activo");
+            }
+
+        });
+
+    });
+
+    // Accesos desde las tarjetas del resumen
+    document.querySelectorAll(".funcion[href^='#']").forEach(enlace => {
+
+        enlace.addEventListener("click", function () {
+
+            const destino = this.getAttribute("href").substring(1);
+
+            const enlaceMenu = document.querySelector(
+                `.enlace-menu[data-seccion="${destino}"]`
+            );
+
+            if (enlaceMenu) {
+
+                enlaces.forEach(item => {
+                    item.classList.remove("activo");
+                });
+
+                enlaceMenu.classList.add("activo");
+            }
+
+        });
+
+    });
+
+    window.addEventListener("hashchange", actualizarMenuActivo);
+
+    actualizarMenuActivo();
+
+
+    // =========================================
+    // 8. CERRAR MODALES CON ESCAPE
+    // =========================================
+
+    document.addEventListener("keydown", function (evento) {
+
+        if (evento.key === "Escape") {
+
+            cerrarModalPerfil();
+            cerrarModalCerrarSesion();
+
+        }
+
+    });
+
+
+    // =========================================
+    // 9. GESTIÓN DE PEDIDOS
+    // =========================================
+
+    const API_PEDIDOS_EMPLEADO = "http://localhost:3011/api/Pedidos";
+
+    let listaPedidosEmpleado = [];
+
+    const tablaPedidosEmpleado = document.getElementById(
+        "tablaPedidosEmpleado"
+    );
+
+    const buscarPedidoEmpleado = document.getElementById(
+        "buscarPedidoEmpleado"
+    );
+
+    const filtroEstadoEmpleado = document.getElementById(
+        "filtroEstadoEmpleado"
+    );
+
+    const mensajePedidosEmpleado = document.getElementById(
+        "mensajePedidosEmpleado"
+    );
+
+    const actualizarPedidosEmpleado = document.getElementById(
+        "actualizarPedidos"
+    );
+
+
+    // -----------------------------------------
+    // CARGAR PEDIDOS
+    // -----------------------------------------
+
+    async function cargarPedidosEmpleado() {
+
+        if (!tablaPedidosEmpleado) return;
+
+        tablaPedidosEmpleado.innerHTML = `
             <tr>
-                <td>#${escaparHTML(pedido.id)}</td>
-
-                <td>
-                    Cliente #${escaparHTML(pedido.id_cliente)}
+                <td colspan="5" class="tabla-vacia">
+                    Cargando pedidos...
                 </td>
+            </tr>
+        `;
 
-                <td>
-                    ${formatearFecha(pedido.fecha)}
-                </td>
+        if (mensajePedidosEmpleado) {
+            mensajePedidosEmpleado.textContent = "";
+        }
 
-                <td>
-                    <span class="pedido-estado ${claseEstado}">
-                        ${escaparHTML(estado)}
-                    </span>
-                </td>
+        try {
 
-                <td>
-                    <div class="pedido-acciones">
+            const respuesta = await fetch(API_PEDIDOS_EMPLEADO, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
 
-                        <button
-                            class="pedido-boton"
-                            onclick="verDetallePedido(${Number(pedido.id)})">
-                            Ver
-                        </button>
+            if (!respuesta.ok) {
+                throw new Error("No se pudieron consultar los pedidos.");
+            }
 
+            const resultado = await respuesta.json();
+
+            if (resultado.exitoso === false) {
+                throw new Error(
+                    resultado.mensaje || "Error al cargar pedidos."
+                );
+            }
+
+            listaPedidosEmpleado = Array.isArray(resultado)
+                ? resultado
+                : resultado.datos || [];
+
+            if (!Array.isArray(listaPedidosEmpleado)) {
+                listaPedidosEmpleado = [];
+            }
+
+            mostrarPedidosEmpleado();
+
+        } catch (error) {
+
+            console.error("Error al cargar pedidos:", error);
+
+            tablaPedidosEmpleado.innerHTML = `
+                <tr>
+                    <td colspan="5" class="tabla-vacia">
+                        No fue posible cargar los pedidos.
+                    </td>
+                </tr>
+            `;
+
+            if (mensajePedidosEmpleado) {
+                mensajePedidosEmpleado.textContent =
+                    "Verifica que el microservicio de pedidos esté iniciado y que la conexión sea correcta.";
+            }
+        }
+    }
+
+
+    // -----------------------------------------
+    // MOSTRAR PEDIDOS
+    // -----------------------------------------
+
+    function mostrarPedidosEmpleado() {
+
+        if (!tablaPedidosEmpleado) return;
+
+        const busqueda = buscarPedidoEmpleado?.value
+            .trim()
+            .toLowerCase() || "";
+
+        const estadoSeleccionado = filtroEstadoEmpleado?.value || "";
+
+        const pedidosFiltrados = listaPedidosEmpleado.filter(pedido => {
+
+            const id = String(pedido.id ?? "");
+            const cliente = String(pedido.id_cliente ?? "");
+            const estado = String(pedido.estado ?? "");
+
+            const coincideBusqueda =
+                id.toLowerCase().includes(busqueda) ||
+                cliente.toLowerCase().includes(busqueda);
+
+            const coincideEstado =
+                !estadoSeleccionado ||
+                estado === estadoSeleccionado;
+
+            return coincideBusqueda && coincideEstado;
+
+        });
+
+        if (pedidosFiltrados.length === 0) {
+
+            tablaPedidosEmpleado.innerHTML = `
+                <tr>
+                    <td colspan="5" class="tabla-vacia">
+                        <span>📦</span>
+                        <strong>No hay pedidos para mostrar</strong>
+                        <p>No se encontraron pedidos con esos criterios.</p>
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        tablaPedidosEmpleado.innerHTML = pedidosFiltrados.map(pedido => {
+
+            const fecha = pedido.fecha
+                ? new Date(pedido.fecha).toLocaleDateString("es-MX")
+                : "No disponible";
+
+            const estado = pedido.estado || "Sin estado";
+
+            return `
+                <tr>
+                    <td>#${pedido.id}</td>
+
+                    <td>Cliente #${pedido.id_cliente ?? "N/D"}</td>
+
+                    <td>${fecha}</td>
+
+                    <td>
                         <select
-                            class="pedido-estado-select"
-                            aria-label="Cambiar estado del pedido ${Number(pedido.id)}"
-                            onchange="cambiarEstadoPedido(${Number(pedido.id)}, this.value)">
-
+                            class="selector-estado-pedido"
+                            data-id="${pedido.id}"
+                            aria-label="Cambiar estado del pedido ${pedido.id}"
+                        >
                             <option value="Pendiente"
-                                ${estado === 'Pendiente' ? 'selected' : ''}>
+                                ${estado === "Pendiente" ? "selected" : ""}>
                                 Pendiente
                             </option>
 
                             <option value="Confirmado"
-                                ${estado === 'Confirmado' ? 'selected' : ''}>
+                                ${estado === "Confirmado" ? "selected" : ""}>
                                 Confirmado
                             </option>
 
                             <option value="Cancelado"
-                                ${estado === 'Cancelado' ? 'selected' : ''}>
+                                ${estado === "Cancelado" ? "selected" : ""}>
                                 Cancelado
                             </option>
-
                         </select>
+                    </td>
 
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
+                    <td>
+                        <button
+                            type="button"
+                            class="boton-ver-pedido"
+                            data-id="${pedido.id}"
+                        >
+                            Ver detalles
+                        </button>
+                    </td>
+                </tr>
+            `;
 
-// =========================================
-// BUSCAR Y FILTRAR
-// =========================================
+        }).join("");
 
-buscarPedido.addEventListener('input', mostrarPedidos);
-filtroEstado.addEventListener('change', mostrarPedidos);
+    }
 
-// =========================================
-// VER DETALLES DE UN PEDIDO
-// =========================================
 
-async function verDetallePedido(id) {
-    const modal = document.getElementById('modalPedido');
-    const contenido = document.getElementById('contenidoDetallePedido');
+    // -----------------------------------------
+    // VER DETALLES DEL PEDIDO
+    // -----------------------------------------
 
-    contenido.innerHTML = '<p>Consultando información...</p>';
-    modal.classList.add('mostrar');
+    async function verDetallePedidoEmpleado(id) {
 
-    try {
-        const respuesta = await fetch(`${API_PEDIDOS}/${id}`);
+        try {
 
-        if (!respuesta.ok) {
-            throw new Error('No se pudo consultar el pedido.');
+            const respuesta = await fetch(
+                `${API_PEDIDOS_EMPLEADO}/${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudo consultar el pedido.");
+            }
+
+            const resultado = await respuesta.json();
+
+            const pedido = resultado.datos || resultado;
+
+            alert(
+                `DETALLES DEL PEDIDO\n\n` +
+                `Número: ${pedido.id ?? "N/D"}\n` +
+                `Cliente: ${pedido.id_cliente ?? "N/D"}\n` +
+                `Carrito: ${pedido.id_carrito ?? "N/D"}\n` +
+                `Dirección: ${pedido.id_direccion ?? "N/D"}\n` +
+                `Tipo de pago: ${pedido.id_tipo_pago ?? "N/D"}\n` +
+                `Fecha: ${pedido.fecha ?? "N/D"}\n` +
+                `Estado: ${pedido.estado ?? "N/D"}`
+            );
+
+        } catch (error) {
+
+            console.error("Error al consultar detalle:", error);
+
+            notificar(
+                "No fue posible consultar el detalle del pedido.",
+                "error"
+            );
+
+        }
+    }
+
+
+    // -----------------------------------------
+    // CAMBIAR ESTADO DEL PEDIDO
+    // -----------------------------------------
+
+    async function cambiarEstadoPedidoEmpleado(id, nuevoEstado) {
+
+        const estadosPermitidos = [
+            "Pendiente",
+            "Confirmado",
+            "Cancelado"
+        ];
+
+        if (!estadosPermitidos.includes(nuevoEstado)) {
+
+            notificar("El estado seleccionado no es válido.", "error");
+
+            return;
         }
 
-        const resultado = await respuesta.json();
+        const confirmar = confirm(
+            `¿Deseas cambiar el estado del pedido #${id} a "${nuevoEstado}"?`
+        );
 
-        if (resultado.exitoso === false) {
-            throw new Error(resultado.mensaje || 'No se encontró el pedido.');
+        if (!confirmar) {
+            mostrarPedidosEmpleado();
+            return;
         }
 
-        const pedido = resultado.datos || resultado.pedido || resultado;
+        try {
 
-        contenido.innerHTML = `
-            <div class="pedido-detalle">
-                <span>Número de pedido</span>
-                <strong>#${escaparHTML(pedido.id)}</strong>
-            </div>
+            const respuesta = await fetch(
+                `${API_PEDIDOS_EMPLEADO}/${id}/estado`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        estado: nuevoEstado
+                    })
+                }
+            );
 
-            <div class="pedido-detalle">
-                <span>ID del cliente</span>
-                <strong>${escaparHTML(pedido.id_cliente)}</strong>
-            </div>
+            const resultado = await respuesta.json();
 
-            <div class="pedido-detalle">
-                <span>ID del carrito</span>
-                <strong>${escaparHTML(pedido.id_carrito)}</strong>
-            </div>
+            if (!respuesta.ok || resultado.exitoso === false) {
+                throw new Error(
+                    resultado.mensaje ||
+                    "No se pudo actualizar el estado."
+                );
+            }
 
-            <div class="pedido-detalle">
-                <span>ID de dirección</span>
-                <strong>${escaparHTML(pedido.id_direccion)}</strong>
-            </div>
+            notificar("Estado del pedido actualizado correctamente.");
 
-            <div class="pedido-detalle">
-                <span>Tipo de pago</span>
-                <strong>${escaparHTML(pedido.id_tipo_pago)}</strong>
-            </div>
+            await cargarPedidosEmpleado();
 
-            <div class="pedido-detalle">
-                <span>Fecha</span>
-                <strong>${formatearFecha(pedido.fecha)}</strong>
-            </div>
+        } catch (error) {
 
-            <div class="pedido-detalle">
-                <span>Estado</span>
-                <strong>${escaparHTML(pedido.estado)}</strong>
-            </div>
-        `;
+            console.error("Error al cambiar estado:", error);
 
-    } catch (error) {
-        contenido.innerHTML = `
-            <p>${escaparHTML(error.message)}</p>
-        `;
-    }
-}
+            notificar(
+                error.message || "Error al actualizar el pedido.",
+                "error"
+            );
 
-// =========================================
-// CERRAR DETALLES
-// =========================================
-
-function cerrarDetallePedido() {
-    document.getElementById('modalPedido').classList.remove('mostrar');
-}
-
-// Cerrar al hacer clic fuera del modal
-document.getElementById('modalPedido').addEventListener('click', event => {
-    if (event.target.id === 'modalPedido') {
-        cerrarDetallePedido();
-    }
-});
-
-// =========================================
-// ACTUALIZAR ESTADO DEL PEDIDO
-// =========================================
-
-async function cambiarEstadoPedido(id, nuevoEstado) {
-    const estadosPermitidos = [
-        'Pendiente',
-        'Confirmado',
-        'Cancelado'
-    ];
-
-    if (!estadosPermitidos.includes(nuevoEstado)) {
-        mostrarMensaje('Estado no válido.', 'error');
-        return;
+            await cargarPedidosEmpleado();
+        }
     }
 
-    const confirmar = confirm(
-        `¿Deseas cambiar el estado del pedido #${id} a ${nuevoEstado}?`
+
+    // -----------------------------------------
+    // EVENTOS DE BÚSQUEDA Y FILTRO
+    // -----------------------------------------
+
+    buscarPedidoEmpleado?.addEventListener(
+        "input",
+        mostrarPedidosEmpleado
     );
 
-    if (!confirmar) {
-        mostrarPedidos();
-        return;
-    }
+    filtroEstadoEmpleado?.addEventListener(
+        "change",
+        mostrarPedidosEmpleado
+    );
 
-    try {
-        const respuesta = await fetch(`${API_PEDIDOS}/${id}/estado`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                estado: nuevoEstado
-            })
-        });
+    actualizarPedidosEmpleado?.addEventListener(
+        "click",
+        cargarPedidosEmpleado
+    );
 
-        const resultado = await respuesta.json();
 
-        if (!respuesta.ok || resultado.exitoso === false) {
-            throw new Error(
-                resultado.mensaje || 'No se pudo actualizar el pedido.'
-            );
+    // -----------------------------------------
+    // EVENTOS DE LA TABLA
+    // -----------------------------------------
+
+    tablaPedidosEmpleado?.addEventListener("click", function (evento) {
+
+        const boton = evento.target.closest(".boton-ver-pedido");
+
+        if (boton) {
+            verDetallePedidoEmpleado(boton.dataset.id);
         }
 
-        mostrarMensaje('Estado del pedido actualizado correctamente.');
+    });
 
-        await cargarPedidos();
+    tablaPedidosEmpleado?.addEventListener("change", function (evento) {
 
-    } catch (error) {
-        console.error('Error al actualizar estado:', error);
-        mostrarMensaje(error.message, 'error');
-        await cargarPedidos();
-    }
-}
+        if (
+            evento.target.classList.contains("selector-estado-pedido")
+        ) {
 
-// =========================================
-// INICIAR MÓDULO
-// =========================================
+            const id = evento.target.dataset.id;
+            const nuevoEstado = evento.target.value;
 
-document.addEventListener('DOMContentLoaded', cargarPedidos);
+            cambiarEstadoPedidoEmpleado(id, nuevoEstado);
+        }
+
+    });
+
+
+    // -----------------------------------------
+    // INICIAR CARGA DE PEDIDOS
+    // -----------------------------------------
+
+    cargarPedidosEmpleado();
+
+});

@@ -1184,3 +1184,465 @@ body.modo-empleado .mensaje {
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+
+/* ==========================================
+   CUBEX - DISEÑO PROFESIONAL DE PEDIDOS
+========================================== */
+
+#pedidos {
+    width: 100%;
+    animation: aparecerPedidos 0.35s ease;
+}
+
+@keyframes aparecerPedidos {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* TARJETA PRINCIPAL */
+
+#pedidos .card,
+#pedidos .contenedor-pedidos,
+#pedidos .tabla-container {
+    background: #171f30;
+    border: 1px solid #2b394e;
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.16);
+}
+
+/* ENCABEZADO */
+
+#pedidos h2,
+#pedidos h3 {
+    color: #f1f5f9;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+#pedidos p {
+    color: #aab8ca;
+    line-height: 1.6;
+}
+
+/* CONTROLES DE BÚSQUEDA */
+
+#pedidos #buscarPedidoEmpleado,
+#pedidos #filtroEstadoEmpleado {
+    height: 43px;
+    padding: 0 14px;
+    border: 1px solid #35445c;
+    border-radius: 9px;
+    background: #101827;
+    color: #e5edf7;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+#pedidos #buscarPedidoEmpleado {
+    width: 270px;
+    max-width: 100%;
+}
+
+#pedidos #filtroEstadoEmpleado {
+    min-width: 175px;
+    cursor: pointer;
+}
+
+#pedidos #buscarPedidoEmpleado:focus,
+#pedidos #filtroEstadoEmpleado:focus {
+    border-color: #00bcd4;
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.12);
+}
+
+#pedidos #buscarPedidoEmpleado::placeholder {
+    color: #718198;
+}
+
+/* BOTÓN ACTUALIZAR */
+
+#pedidos #actualizarPedidos {
+    background: #00bcd4;
+    color: #07151d;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 17px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#pedidos #actualizarPedidos:hover {
+    background: #35d5e8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+}
+
+/* TABLA */
+
+#pedidos table:has(#tablaPedidosEmpleado) {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    background: #171f30;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+#pedidos table:has(#tablaPedidosEmpleado) thead {
+    background: #101827;
+}
+
+#pedidos table:has(#tablaPedidosEmpleado) th {
+    padding: 17px 15px;
+    text-align: left;
+    color: #b8c7da;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid #35445c;
+    white-space: nowrap;
+}
+
+#tablaPedidosEmpleado tr {
+    transition: background 0.2s ease;
+}
+
+#tablaPedidosEmpleado td {
+    padding: 17px 15px;
+    color: #e0e8f2;
+    font-size: 13px;
+    border-bottom: 1px solid #29364a;
+    vertical-align: middle;
+}
+
+#tablaPedidosEmpleado tr:hover {
+    background: #202c40;
+}
+
+#tablaPedidosEmpleado tr:last-child td {
+    border-bottom: none;
+}
+
+/* NÚMERO DE PEDIDO */
+
+#tablaPedidosEmpleado td:first-child {
+    color: #00c9df;
+    font-weight: 700;
+}
+
+/* SELECTOR DE ESTADO */
+
+#tablaPedidosEmpleado .selector-estado-pedido {
+    min-width: 135px;
+    padding: 9px 12px;
+    background: #101827;
+    color: #e5edf7;
+    border: 1px solid #35445c;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+#tablaPedidosEmpleado .selector-estado-pedido:hover,
+#tablaPedidosEmpleado .selector-estado-pedido:focus {
+    border-color: #00bcd4;
+}
+
+/* BOTÓN VER DETALLES */
+
+#tablaPedidosEmpleado .boton-ver-pedido {
+    background: rgba(0, 188, 212, 0.12);
+    color: #38d5e7;
+    border: 1px solid rgba(0, 188, 212, 0.35);
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+#tablaPedidosEmpleado .boton-ver-pedido:hover {
+    background: #00bcd4;
+    color: #07151d;
+    transform: translateY(-1px);
+}
+
+/* MENSAJES DE LA TABLA */
+
+#tablaPedidosEmpleado .tabla-vacia {
+    text-align: center;
+    padding: 55px 15px;
+    color: #aab8ca;
+}
+
+#tablaPedidosEmpleado .tabla-vacia span {
+    display: block;
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+#tablaPedidosEmpleado .tabla-vacia strong {
+    display: block;
+    color: #e5edf7;
+    font-size: 15px;
+    margin-bottom: 7px;
+}
+
+/* MENSAJE DE PERMISOS */
+
+#pedidos .permisos-pedidos {
+    background: #14243a;
+    border: 1px solid #29486b;
+    border-radius: 10px;
+    padding: 15px;
+    color: #b8c7da;
+    font-size: 13px;
+    margin-top: 22px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    #pedidos .card,
+    #pedidos .contenedor-pedidos,
+    #pedidos .tabla-container {
+        padding: 16px;
+    }
+
+    #pedidos #buscarPedidoEmpleado {
+        width: 100%;
+    }
+
+    #pedidos #filtroEstadoEmpleado {
+        width: 100%;
+    }
+
+    #pedidos table:has(#tablaPedidosEmpleado) {
+        min-width: 650px;
+    }
+
+    #pedidos .tabla-container {
+        overflow-x: auto;
+    }
+}
+
+/* ==========================================
+   MODAL DE DETALLES DE PEDIDOS - CUBEX
+========================================== */
+
+#modalDetallePedido {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background: rgba(3, 8, 17, 0.82);
+    backdrop-filter: blur(7px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 0.25s ease,
+                visibility 0.25s ease;
+}
+
+#modalDetallePedido.mostrar-detalle-pedido {
+    opacity: 1;
+    visibility: visible;
+}
+
+.detalle-pedido-contenido {
+    width: 100%;
+    max-width: 550px;
+
+    background: #171f30;
+    border: 1px solid #34445c;
+    border-radius: 18px;
+
+    padding: 28px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.25s ease;
+}
+
+#modalDetallePedido.mostrar-detalle-pedido
+.detalle-pedido-contenido {
+    transform: translateY(0) scale(1);
+}
+
+/* ENCABEZADO */
+
+.detalle-pedido-encabezado {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    padding-bottom: 22px;
+    border-bottom: 1px solid #304057;
+}
+
+.detalle-etiqueta {
+    color: #00c5db;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.detalle-pedido-encabezado h2 {
+    color: #f1f5f9;
+    font-size: 23px;
+    margin: 9px 0 5px;
+}
+
+.detalle-pedido-encabezado p {
+    color: #91a3bb;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* BOTÓN X */
+
+.cerrar-detalle-pedido {
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid #35445c;
+    border-radius: 9px;
+
+    background: #202c40;
+    color: #cbd5e1;
+
+    font-size: 24px;
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.cerrar-detalle-pedido:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+/* INFORMACIÓN */
+
+.detalle-pedido-cuerpo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+
+    padding: 24px 0;
+}
+
+.detalle-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    padding: 15px;
+
+    background: #101827;
+    border: 1px solid #2b394e;
+    border-radius: 10px;
+}
+
+.detalle-item span {
+    color: #91a3bb;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.detalle-item strong {
+    color: #e8f0fa;
+    font-size: 14px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.detalle-item.detalle-estado {
+    grid-column: 1 / -1;
+
+    background: rgba(0, 188, 212, 0.08);
+    border-color: rgba(0, 188, 212, 0.3);
+}
+
+.detalle-estado strong {
+    color: #00c9df;
+}
+
+/* PIE */
+
+.detalle-pedido-pie {
+    display: flex;
+    justify-content: flex-end;
+
+    padding-top: 18px;
+    border-top: 1px solid #304057;
+}
+
+.detalle-pedido-pie button {
+    background: #00bcd4;
+    color: #07151d;
+
+    border: none;
+    border-radius: 9px;
+
+    padding: 11px 25px;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.detalle-pedido-pie button:hover {
+    background: #39d9e9;
+    transform: translateY(-2px);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 550px) {
+
+    .detalle-pedido-contenido {
+        padding: 20px;
+    }
+
+    .detalle-pedido-encabezado h2 {
+        font-size: 19px;
+    }
+
+    .detalle-pedido-cuerpo {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-item.detalle-estado {
+        grid-column: auto;
+    }
+}
