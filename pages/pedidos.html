@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Pedidos | CUBEX</title>
 
     <link rel="stylesheet" href="../css/admin.css">
@@ -355,13 +354,14 @@
 
 </main>
 
-<div class="pedido-modal" id="modalPedido">
+<div class="pedido-modal" id="modalPedido" aria-hidden="true">
     <div class="pedido-modal-contenido">
         <h3>Detalles del pedido</h3>
 
         <div id="contenidoDetallePedido"></div>
 
         <button
+            type="button"
             class="pedido-modal-cerrar"
             onclick="cerrarDetallePedido()">
             Cerrar

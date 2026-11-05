@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
 
     // =========================================
@@ -8,8 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = sessionStorage.getItem("cubex_token");
     const usuarioGuardado = sessionStorage.getItem("cubex_usuario");
 
+    const tabla = document.getElementById("tablaPedidos");
+    const mensaje = document.getElementById("mensajePedidos");
+
     if (!token || !usuarioGuardado) {
-        window.location.replace("login.html");
+        mostrarMensaje("Tu sesión no está activa. Inicia sesión nuevamente.", "error");
         return;
     }
 
@@ -18,405 +20,117 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         usuario = JSON.parse(usuarioGuardado);
     } catch (error) {
-        sessionStorage.removeItem("cubex_token");
-        sessionStorage.removeItem("cubex_usuario");
-        window.location.replace("login.html");
+        mostrarMensaje("No fue posible validar la sesión. Vuelve a iniciar sesión.", "error");
         return;
     }
 
-    if (!usuario || usuario.rol !== "VENDEDOR") {
-        if (usuario?.rol === "ADMIN") {
-            window.location.replace("admin.html");
-        } else {
-            window.location.replace("index.html");
-        }
+    if (!usuario || usuario.rol !== "ADMIN") {
+        mostrarMensaje("No tienes permisos para administrar los pedidos.", "error");
         return;
     }
 
+    // =========================================
+    // 2. CONFIGURACIÓN
+    // =========================================
+
+    const API_PEDIDOS = "http://localhost:3011/api/Pedidos";
+
+    let listaPedidos = [];
+
+    const busqueda = document.getElementById("buscarPedido");
+    const filtroEstado = document.getElementById("filtroEstado");
+
+    const modal = document.getElementById("modalPedido");
+    const contenidoDetalle = document.getElementById("contenidoDetallePedido");
 
     // =========================================
-    // 2. DATOS DEL EMPLEADO
+    // 3. FUNCIONES AUXILIARES
     // =========================================
 
-    const nombreCompleto =
-        usuario.nombreCompleto ||
-        usuario.nombreUsuario ||
-        "Empleado";
+    function escaparHTML(valor) {
+        return String(valor ?? "").replace(/[&<>"']/g, caracter => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[caracter]);
+    }
 
-    const nombreUsuario = usuario.nombreUsuario || "empleado";
-    const correo = usuario.email || usuario.correo || "No disponible";
-    const rol = usuario.rol || "VENDEDOR";
+    function normalizarEstado(estado) {
+        return String(estado ?? "").trim().toLowerCase();
+    }
 
-    const inicial = nombreCompleto.trim().charAt(0).toUpperCase();
+    function mostrarMensaje(texto, tipo = "exito") {
 
-    function colocarTexto(id, texto) {
-        const elemento = document.getElementById(id);
+        if (!mensaje) return;
 
-        if (elemento) {
-            elemento.textContent = texto;
+        mensaje.textContent = texto;
+        mensaje.className = `pedidos-mensaje ${tipo}`;
+    }
+
+    function ocultarMensaje() {
+
+        if (!mensaje) return;
+
+        mensaje.textContent = "";
+        mensaje.className = "pedidos-mensaje";
+    }
+
+    // =========================================
+    // 4. ACTUALIZAR ESTADÍSTICAS
+    // =========================================
+
+    function actualizarEstadisticas() {
+
+        const total = listaPedidos.length;
+
+        const pendientes = listaPedidos.filter(
+            pedido => normalizarEstado(pedido.estado) === "pendiente"
+        ).length;
+
+        const confirmados = listaPedidos.filter(
+            pedido => normalizarEstado(pedido.estado) === "confirmado"
+        ).length;
+
+        const elementoTotal = document.getElementById("totalPedidos");
+        const elementoPendientes = document.getElementById("pedidosPendientes");
+        const elementoConfirmados = document.getElementById("pedidosConfirmados");
+
+        if (elementoTotal) {
+            elementoTotal.textContent = total;
+        }
+
+        if (elementoPendientes) {
+            elementoPendientes.textContent = pendientes;
+        }
+
+        if (elementoConfirmados) {
+            elementoConfirmados.textContent = confirmados;
         }
     }
 
-    // Barra lateral
-    colocarTexto("nombreEmpleado", "@" + nombreUsuario);
-    colocarTexto("inicialEmpleado", inicial);
-
-    // Modal de perfil
-    colocarTexto("inicialModal", inicial);
-    colocarTexto("modalNombre", nombreCompleto);
-    colocarTexto("modalNombreCompleto", nombreCompleto);
-    colocarTexto("modalUsuario", "@" + nombreUsuario);
-    colocarTexto("modalCorreo", correo);
-    colocarTexto("modalRol", rol);
-
-    // Perfil adicional, si existe en el HTML
-    colocarTexto("inicialPerfil", inicial);
-    colocarTexto("perfilNombre", nombreCompleto);
-    colocarTexto("perfilNombreCompleto", nombreCompleto);
-    colocarTexto("perfilCorreo", correo);
-    colocarTexto("perfilRol", rol);
-
-
     // =========================================
-    // 3. NOTIFICACIONES
+    // 5. CARGAR PEDIDOS DESDE LA API
     // =========================================
 
-    function notificar(mensaje, tipo = "exito") {
+    async function cargarPedidos() {
 
-        const contenedor = document.getElementById(
-            "contenedorNotificaciones"
-        );
+        if (!tabla) return;
 
-        if (!contenedor) {
-            console.log(mensaje);
-            return;
-        }
-
-        const notificacion = document.createElement("div");
-
-        notificacion.className = `notificacion ${tipo}`;
-        notificacion.textContent = mensaje;
-
-        contenedor.appendChild(notificacion);
-
-        setTimeout(() => {
-            notificacion.classList.add("ocultar");
-
-            setTimeout(() => {
-                notificacion.remove();
-            }, 300);
-
-        }, 2500);
-    }
-
-
-    // =========================================
-    // 4. MODAL DE PERFIL
-    // =========================================
-
-    const modalPerfil = document.getElementById("modalPerfil");
-
-    function abrirModalPerfil() {
-
-        if (!modalPerfil) {
-            console.error("No se encontró el modal #modalPerfil.");
-            return;
-        }
-
-        modalPerfil.classList.add("mostrar");
-        modalPerfil.setAttribute("aria-hidden", "false");
-
-        document.body.style.overflow = "hidden";
-    }
-
-    function cerrarModalPerfil() {
-
-        if (!modalPerfil) return;
-
-        modalPerfil.classList.remove("mostrar");
-        modalPerfil.setAttribute("aria-hidden", "true");
-
-        document.body.style.overflow = "";
-    }
-
-    // Abrir perfil
-    document.getElementById("abrirPerfil")
-        ?.addEventListener("click", function (evento) {
-            evento.preventDefault();
-            abrirModalPerfil();
-        });
-
-    document.getElementById("abrirPerfilTarjeta")
-        ?.addEventListener("click", function (evento) {
-            evento.preventDefault();
-            abrirModalPerfil();
-        });
-
-
-    // =========================================
-    // 5. CERRAR MODAL DE PERFIL
-    // =========================================
-
-    const botonX = document.querySelector(
-        "#cerrarModal, #cerrarModalPerfil"
-    );
-
-    const botonCerrarPerfil = document.querySelector(
-        "#botonCerrarModal, #botonCerrarPerfil"
-    );
-
-    if (botonX) {
-        botonX.type = "button";
-    }
-
-    if (botonCerrarPerfil) {
-        botonCerrarPerfil.type = "button";
-    }
-
-    document.addEventListener("click", function (evento) {
-
-        const clicEnX = evento.target.closest(
-            "#cerrarModal, #cerrarModalPerfil"
-        );
-
-        const clicEnCerrar = evento.target.closest(
-            "#botonCerrarModal, #botonCerrarPerfil"
-        );
-
-        if (clicEnX || clicEnCerrar) {
-
-            evento.preventDefault();
-            evento.stopPropagation();
-
-            cerrarModalPerfil();
-        }
-
-    }, true);
-
-    // Cerrar al hacer clic fuera del cuadro
-    modalPerfil?.addEventListener("click", function (evento) {
-
-        if (evento.target === modalPerfil) {
-            cerrarModalPerfil();
-        }
-
-    });
-
-
-    // =========================================
-    // 6. MODAL DE CERRAR SESIÓN
-    // =========================================
-
-    const modalCerrarSesion = document.getElementById(
-        "modalCerrarSesion"
-    );
-
-    const botonCerrarSesion = document.getElementById(
-        "cerrarSesion"
-    );
-
-    const cancelarCerrarSesion = document.getElementById(
-        "cancelarCerrarSesion"
-    );
-
-    const confirmarCerrarSesion = document.getElementById(
-        "confirmarCerrarSesion"
-    );
-
-    function abrirModalCerrarSesion() {
-
-        if (!modalCerrarSesion) return;
-
-        modalCerrarSesion.classList.add("mostrar");
-        modalCerrarSesion.setAttribute("aria-hidden", "false");
-
-        document.body.style.overflow = "hidden";
-    }
-
-    function cerrarModalCerrarSesion() {
-
-        if (!modalCerrarSesion) return;
-
-        modalCerrarSesion.classList.remove("mostrar");
-        modalCerrarSesion.setAttribute("aria-hidden", "true");
-
-        document.body.style.overflow = "";
-    }
-
-    botonCerrarSesion?.addEventListener("click", function (evento) {
-
-        evento.preventDefault();
-        abrirModalCerrarSesion();
-
-    });
-
-    cancelarCerrarSesion?.addEventListener("click", function () {
-
-        cerrarModalCerrarSesion();
-
-    });
-
-    confirmarCerrarSesion?.addEventListener("click", function () {
-
-        sessionStorage.removeItem("cubex_token");
-        sessionStorage.removeItem("cubex_usuario");
-
-        cerrarModalCerrarSesion();
-
-        window.location.replace("login.html");
-
-    });
-
-    modalCerrarSesion?.addEventListener("click", function (evento) {
-
-        if (evento.target === modalCerrarSesion) {
-            cerrarModalCerrarSesion();
-        }
-
-    });
-
-
-    // =========================================
-    // 7. NAVEGACIÓN Y SECCIÓN ACTIVA
-    // =========================================
-
-    const enlaces = document.querySelectorAll(
-        ".navegacion .enlace-menu"
-    );
-
-    function actualizarMenuActivo() {
-
-        const seccion =
-            window.location.hash.replace("#", "") || "resumen";
-
-        enlaces.forEach(enlace => {
-
-            const destino = enlace.dataset.seccion;
-
-            enlace.classList.toggle(
-                "activo",
-                destino === seccion
-            );
-
-        });
-    }
-
-    enlaces.forEach(enlace => {
-
-        enlace.addEventListener("click", function () {
-
-            const destino = this.dataset.seccion;
-
-            if (destino) {
-
-                enlaces.forEach(item => {
-                    item.classList.remove("activo");
-                });
-
-                this.classList.add("activo");
-            }
-
-        });
-
-    });
-
-    // Accesos desde las tarjetas del resumen
-    document.querySelectorAll(".funcion[href^='#']").forEach(enlace => {
-
-        enlace.addEventListener("click", function () {
-
-            const destino = this.getAttribute("href").substring(1);
-
-            const enlaceMenu = document.querySelector(
-                `.enlace-menu[data-seccion="${destino}"]`
-            );
-
-            if (enlaceMenu) {
-
-                enlaces.forEach(item => {
-                    item.classList.remove("activo");
-                });
-
-                enlaceMenu.classList.add("activo");
-            }
-
-        });
-
-    });
-
-    window.addEventListener("hashchange", actualizarMenuActivo);
-
-    actualizarMenuActivo();
-
-
-    // =========================================
-    // 8. CERRAR MODALES CON ESCAPE
-    // =========================================
-
-    document.addEventListener("keydown", function (evento) {
-
-        if (evento.key === "Escape") {
-
-            cerrarModalPerfil();
-            cerrarModalCerrarSesion();
-
-        }
-
-    });
-
-
-    // =========================================
-    // 9. GESTIÓN DE PEDIDOS
-    // =========================================
-
-    const API_PEDIDOS_EMPLEADO = "http://localhost:3011/api/Pedidos";
-
-    let listaPedidosEmpleado = [];
-
-    const tablaPedidosEmpleado = document.getElementById(
-        "tablaPedidosEmpleado"
-    );
-
-    const buscarPedidoEmpleado = document.getElementById(
-        "buscarPedidoEmpleado"
-    );
-
-    const filtroEstadoEmpleado = document.getElementById(
-        "filtroEstadoEmpleado"
-    );
-
-    const mensajePedidosEmpleado = document.getElementById(
-        "mensajePedidosEmpleado"
-    );
-
-    const actualizarPedidosEmpleado = document.getElementById(
-        "actualizarPedidos"
-    );
-
-
-    // -----------------------------------------
-    // CARGAR PEDIDOS
-    // -----------------------------------------
-
-    async function cargarPedidosEmpleado() {
-
-        if (!tablaPedidosEmpleado) return;
-
-        tablaPedidosEmpleado.innerHTML = `
+        tabla.innerHTML = `
             <tr>
-                <td colspan="5" class="tabla-vacia">
+                <td colspan="5" class="pedidos-vacio">
                     Cargando pedidos...
                 </td>
             </tr>
         `;
 
-        if (mensajePedidosEmpleado) {
-            mensajePedidosEmpleado.textContent = "";
-        }
+        ocultarMensaje();
 
         try {
 
-            const respuesta = await fetch(API_PEDIDOS_EMPLEADO, {
+            const respuesta = await fetch(API_PEDIDOS, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -424,87 +138,87 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!respuesta.ok) {
-                throw new Error("No se pudieron consultar los pedidos.");
+                throw new Error(
+                    `No se pudieron consultar los pedidos (HTTP ${respuesta.status}).`
+                );
             }
 
             const resultado = await respuesta.json();
 
-            if (resultado.exitoso === false) {
+            if (resultado?.exitoso === false) {
                 throw new Error(
                     resultado.mensaje || "Error al cargar pedidos."
                 );
             }
 
-            listaPedidosEmpleado = Array.isArray(resultado)
+            const datos = Array.isArray(resultado)
                 ? resultado
-                : resultado.datos || [];
+                : resultado?.datos;
 
-            if (!Array.isArray(listaPedidosEmpleado)) {
-                listaPedidosEmpleado = [];
-            }
+            listaPedidos = Array.isArray(datos) ? datos : [];
 
-            mostrarPedidosEmpleado();
+            actualizarEstadisticas();
+
+            mostrarPedidos();
 
         } catch (error) {
 
             console.error("Error al cargar pedidos:", error);
 
-            tablaPedidosEmpleado.innerHTML = `
+            tabla.innerHTML = `
                 <tr>
-                    <td colspan="5" class="tabla-vacia">
+                    <td colspan="5" class="pedidos-vacio">
                         No fue posible cargar los pedidos.
                     </td>
                 </tr>
             `;
 
-            if (mensajePedidosEmpleado) {
-                mensajePedidosEmpleado.textContent =
-                    "Verifica que el microservicio de pedidos esté iniciado y que la conexión sea correcta.";
-            }
+            mostrarMensaje(
+                `${error.message} Verifica que el microservicio de pedidos esté iniciado.`,
+                "error"
+            );
         }
     }
 
+    // =========================================
+    // 6. MOSTRAR Y FILTRAR PEDIDOS
+    // =========================================
 
-    // -----------------------------------------
-    // MOSTRAR PEDIDOS
-    // -----------------------------------------
+    function mostrarPedidos() {
 
-    function mostrarPedidosEmpleado() {
+        if (!tabla) return;
 
-        if (!tablaPedidosEmpleado) return;
-
-        const busqueda = buscarPedidoEmpleado?.value
+        const texto = (busqueda?.value || "")
             .trim()
-            .toLowerCase() || "";
+            .toLowerCase();
 
-        const estadoSeleccionado = filtroEstadoEmpleado?.value || "";
+        const estadoElegido = filtroEstado?.value || "";
 
-        const pedidosFiltrados = listaPedidosEmpleado.filter(pedido => {
+        const filtrados = listaPedidos.filter(pedido => {
 
             const id = String(pedido.id ?? "");
             const cliente = String(pedido.id_cliente ?? "");
-            const estado = String(pedido.estado ?? "");
 
-            const coincideBusqueda =
-                id.toLowerCase().includes(busqueda) ||
-                cliente.toLowerCase().includes(busqueda);
+            const coincideTexto =
+                id.toLowerCase().includes(texto) ||
+                cliente.toLowerCase().includes(texto);
 
             const coincideEstado =
-                !estadoSeleccionado ||
-                estado === estadoSeleccionado;
+                !estadoElegido ||
+                normalizarEstado(pedido.estado) === normalizarEstado(estadoElegido);
 
-            return coincideBusqueda && coincideEstado;
-
+            return coincideTexto && coincideEstado;
         });
 
-        if (pedidosFiltrados.length === 0) {
+        if (filtrados.length === 0) {
 
-            tablaPedidosEmpleado.innerHTML = `
+            tabla.innerHTML = `
                 <tr>
-                    <td colspan="5" class="tabla-vacia">
-                        <span>📦</span>
+                    <td colspan="5" class="pedidos-vacio">
+                        📦<br>
                         <strong>No hay pedidos para mostrar</strong>
-                        <p>No se encontraron pedidos con esos criterios.</p>
+                        <br>
+                        No se encontraron pedidos con esos criterios.
                     </td>
                 </tr>
             `;
@@ -512,72 +226,80 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        tablaPedidosEmpleado.innerHTML = pedidosFiltrados.map(pedido => {
+        tabla.innerHTML = filtrados.map(pedido => {
+
+            const estado = String(pedido.estado || "Pendiente");
 
             const fecha = pedido.fecha
                 ? new Date(pedido.fecha).toLocaleDateString("es-MX")
                 : "No disponible";
 
-            const estado = pedido.estado || "Sin estado";
+            const id = escaparHTML(pedido.id);
+            const cliente = escaparHTML(pedido.id_cliente ?? "N/D");
+
+            const opciones = [
+                "Pendiente",
+                "Confirmado",
+                "Cancelado"
+            ].map(opcion => `
+                <option
+                    value="${opcion}"
+                    ${normalizarEstado(estado) === normalizarEstado(opcion) ? "selected" : ""}>
+                    ${opcion}
+                </option>
+            `).join("");
 
             return `
                 <tr>
-                    <td>#${pedido.id}</td>
 
-                    <td>Cliente #${pedido.id_cliente ?? "N/D"}</td>
+                    <td>#${id}</td>
 
-                    <td>${fecha}</td>
+                    <td>Cliente #${cliente}</td>
+
+                    <td>${escaparHTML(fecha)}</td>
 
                     <td>
                         <select
-                            class="selector-estado-pedido"
-                            data-id="${pedido.id}"
-                            aria-label="Cambiar estado del pedido ${pedido.id}"
-                        >
-                            <option value="Pendiente"
-                                ${estado === "Pendiente" ? "selected" : ""}>
-                                Pendiente
-                            </option>
+                            class="pedido-estado-select"
+                            data-id="${id}"
+                            aria-label="Cambiar estado del pedido ${id}">
 
-                            <option value="Confirmado"
-                                ${estado === "Confirmado" ? "selected" : ""}>
-                                Confirmado
-                            </option>
+                            ${opciones}
 
-                            <option value="Cancelado"
-                                ${estado === "Cancelado" ? "selected" : ""}>
-                                Cancelado
-                            </option>
                         </select>
                     </td>
 
                     <td>
-                        <button
-                            type="button"
-                            class="boton-ver-pedido"
-                            data-id="${pedido.id}"
-                        >
-                            Ver detalles
-                        </button>
+                        <div class="pedido-acciones">
+
+                            <button
+                                type="button"
+                                class="pedido-boton boton-ver-pedido"
+                                data-id="${id}">
+
+                                Ver detalles
+
+                            </button>
+
+                        </div>
                     </td>
+
                 </tr>
             `;
 
         }).join("");
-
     }
 
+    // =========================================
+    // 7. CONSULTAR DETALLES DEL PEDIDO
+    // =========================================
 
-    // -----------------------------------------
-    // VER DETALLES DEL PEDIDO
-    // -----------------------------------------
-
-    async function verDetallePedidoEmpleado(id) {
+    async function verDetallePedido(id) {
 
         try {
 
             const respuesta = await fetch(
-                `${API_PEDIDOS_EMPLEADO}/${id}`,
+                `${API_PEDIDOS}/${encodeURIComponent(id)}`,
                 {
                     method: "GET",
                     headers: {
@@ -592,37 +314,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const resultado = await respuesta.json();
 
-            const pedido = resultado.datos || resultado;
+            const pedido = resultado?.datos || resultado;
 
-            alert(
-                `DETALLES DEL PEDIDO\n\n` +
-                `Número: ${pedido.id ?? "N/D"}\n` +
-                `Cliente: ${pedido.id_cliente ?? "N/D"}\n` +
-                `Carrito: ${pedido.id_carrito ?? "N/D"}\n` +
-                `Dirección: ${pedido.id_direccion ?? "N/D"}\n` +
-                `Tipo de pago: ${pedido.id_tipo_pago ?? "N/D"}\n` +
-                `Fecha: ${pedido.fecha ?? "N/D"}\n` +
-                `Estado: ${pedido.estado ?? "N/D"}`
-            );
+            const campos = [
+                ["Número de pedido", pedido.id],
+                ["Cliente", pedido.id_cliente],
+                ["Carrito", pedido.id_carrito],
+                ["Dirección", pedido.id_direccion],
+                ["Tipo de pago", pedido.id_tipo_pago],
+                ["Fecha", pedido.fecha],
+                ["Estado", pedido.estado]
+            ];
+
+            contenidoDetalle.innerHTML = campos.map(([etiqueta, valor]) => `
+                <div class="pedido-detalle">
+
+                    <span>${escaparHTML(etiqueta)}</span>
+
+                    <strong>
+                        ${escaparHTML(valor ?? "No disponible")}
+                    </strong>
+
+                </div>
+            `).join("");
+
+            modal?.classList.add("mostrar");
+            modal?.setAttribute("aria-hidden", "false");
 
         } catch (error) {
 
             console.error("Error al consultar detalle:", error);
 
-            notificar(
-                "No fue posible consultar el detalle del pedido.",
+            mostrarMensaje(
+                error.message || "No fue posible consultar el detalle.",
                 "error"
             );
-
         }
     }
 
+    // =========================================
+    // 8. CAMBIAR ESTADO DEL PEDIDO
+    // =========================================
 
-    // -----------------------------------------
-    // CAMBIAR ESTADO DEL PEDIDO
-    // -----------------------------------------
-
-    async function cambiarEstadoPedidoEmpleado(id, nuevoEstado) {
+    async function cambiarEstadoPedido(id, nuevoEstado, selector) {
 
         const estadosPermitidos = [
             "Pendiente",
@@ -632,7 +366,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!estadosPermitidos.includes(nuevoEstado)) {
 
-            notificar("El estado seleccionado no es válido.", "error");
+            mostrarMensaje(
+                "El estado seleccionado no es válido.",
+                "error"
+            );
+
+            await cargarPedidos();
 
             return;
         }
@@ -642,106 +381,138 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (!confirmar) {
-            mostrarPedidosEmpleado();
+
+            await cargarPedidos();
+
             return;
+        }
+
+        if (selector) {
+            selector.disabled = true;
         }
 
         try {
 
             const respuesta = await fetch(
-                `${API_PEDIDOS_EMPLEADO}/${id}/estado`,
+                `${API_PEDIDOS}/${encodeURIComponent(id)}/estado`,
                 {
                     method: "PATCH",
+
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
+
                     body: JSON.stringify({
                         estado: nuevoEstado
                     })
                 }
             );
 
-            const resultado = await respuesta.json();
+            let resultado = {};
 
-            if (!respuesta.ok || resultado.exitoso === false) {
+            try {
+                resultado = await respuesta.json();
+            } catch (error) {
+                resultado = {};
+            }
+
+            if (!respuesta.ok || resultado?.exitoso === false) {
+
                 throw new Error(
-                    resultado.mensaje ||
-                    "No se pudo actualizar el estado."
+                    resultado?.mensaje ||
+                    `No se pudo actualizar el estado (HTTP ${respuesta.status}).`
                 );
             }
 
-            notificar("Estado del pedido actualizado correctamente.");
+            mostrarMensaje(
+                "Estado del pedido actualizado correctamente.",
+                "exito"
+            );
 
-            await cargarPedidosEmpleado();
+            await cargarPedidos();
 
         } catch (error) {
 
             console.error("Error al cambiar estado:", error);
 
-            notificar(
+            mostrarMensaje(
                 error.message || "Error al actualizar el pedido.",
                 "error"
             );
 
-            await cargarPedidosEmpleado();
+            await cargarPedidos();
         }
     }
 
+    // =========================================
+    // 9. CERRAR MODAL DE DETALLES
+    // =========================================
 
-    // -----------------------------------------
-    // EVENTOS DE BÚSQUEDA Y FILTRO
-    // -----------------------------------------
+    window.cerrarDetallePedido = function () {
 
-    buscarPedidoEmpleado?.addEventListener(
-        "input",
-        mostrarPedidosEmpleado
-    );
+        modal?.classList.remove("mostrar");
 
-    filtroEstadoEmpleado?.addEventListener(
-        "change",
-        mostrarPedidosEmpleado
-    );
+        modal?.setAttribute("aria-hidden", "true");
+    };
 
-    actualizarPedidosEmpleado?.addEventListener(
-        "click",
-        cargarPedidosEmpleado
-    );
+    // =========================================
+    // 10. EVENTOS DE BÚSQUEDA Y FILTRO
+    // =========================================
 
+    busqueda?.addEventListener("input", mostrarPedidos);
 
-    // -----------------------------------------
-    // EVENTOS DE LA TABLA
-    // -----------------------------------------
+    filtroEstado?.addEventListener("change", mostrarPedidos);
 
-    tablaPedidosEmpleado?.addEventListener("click", function (evento) {
+    // =========================================
+    // 11. EVENTOS DE LA TABLA
+    // =========================================
+
+    tabla?.addEventListener("click", evento => {
 
         const boton = evento.target.closest(".boton-ver-pedido");
 
         if (boton) {
-            verDetallePedidoEmpleado(boton.dataset.id);
+            verDetallePedido(boton.dataset.id);
         }
-
     });
 
-    tablaPedidosEmpleado?.addEventListener("change", function (evento) {
+    tabla?.addEventListener("change", evento => {
 
-        if (
-            evento.target.classList.contains("selector-estado-pedido")
-        ) {
+        const selector = evento.target.closest(".pedido-estado-select");
 
-            const id = evento.target.dataset.id;
-            const nuevoEstado = evento.target.value;
+        if (selector) {
 
-            cambiarEstadoPedidoEmpleado(id, nuevoEstado);
+            cambiarEstadoPedido(
+                selector.dataset.id,
+                selector.value,
+                selector
+            );
         }
-
     });
 
+    // =========================================
+    // 12. EVENTOS DEL MODAL
+    // =========================================
 
-    // -----------------------------------------
-    // INICIAR CARGA DE PEDIDOS
-    // -----------------------------------------
+    modal?.addEventListener("click", evento => {
 
-    cargarPedidosEmpleado();
+        if (evento.target === modal) {
+            window.cerrarDetallePedido();
+        }
+    });
+
+    document.addEventListener("keydown", evento => {
+
+        if (evento.key === "Escape") {
+            window.cerrarDetallePedido();
+        }
+    });
+
+    // =========================================
+    // 13. INICIAR CARGA
+    // =========================================
+
+    cargarPedidos();
 
 });
